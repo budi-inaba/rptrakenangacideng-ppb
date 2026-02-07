@@ -418,15 +418,44 @@
             else { btn.classList.remove('hidden'); loader.classList.add('hidden'); }
         }
 
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const el = document.createElement('div');
-            el.className = `${type === 'success' ? 'bg-green-600' : 'bg-red-600'} px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 fade-in`;
-            el.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i> ${msg}`;
-            container.appendChild(el);
-            lucide.createIcons();
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
-        }
+       function showToast(msg, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const backdrop = document.getElementById('toast-backdrop');
+
+    backdrop.classList.remove('hidden');
+    backdrop.classList.add('opacity-100');
+
+    const el = document.createElement('div');
+    el.className = `
+        ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}
+        px-6 py-4 rounded-2xl shadow-2xl
+        text-white text-sm font-semibold
+        flex items-center gap-2
+        fade-in
+        pointer-events-auto
+        max-w-[90%]
+        text-center
+    `;
+
+    el.innerHTML = `
+        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5"></i>
+        <span>${msg}</span>
+    `;
+
+    container.appendChild(el);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        el.style.opacity = '0';
+        backdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            el.remove();
+            backdrop.classList.add('hidden');
+        }, 300);
+    }, 3000);
+}
+
     </script>
 
     <!-- BLUR BACKDROP -->

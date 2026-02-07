@@ -41,23 +41,60 @@
             background-color: #fef2f2 !important;
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
         }
-    .fade-in {
-      animation: fadeInScale 0.25s ease-out;
-    }
+        /* Loading Overlay Style */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.6); /* Slate 900 dengan opacity */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        #loading-overlay.active {
+            display: flex;
+        }
 
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.92);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
+        .spinner {
+            width: 56px;
+            height: 56px;
+            display: grid;
+            border: 4px solid #0000;
+            border-radius: 50%;
+            border-right-color: #3b82f6;
+            animation: spinner-d3o0km 1s infinite linear;
+        }
+        .spinner::before,
+        .spinner::after {
+            content: "";
+            grid-area: 1/1;
+            margin: 2px;
+            border: inherit;
+            border-radius: 50%;
+            animation: spinner-d3o0km 2s infinite;
+        }
+        .spinner::after {
+            margin: 8px;
+            animation-duration: 3s;
+        }
+        @keyframes spinner-d3o0km {
+            100% { transform: rotate(1turn); }
+        }
+
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 font-sans text-gray-800">
+    
+    <!-- LOADING OVERLAY (GLASSMORPHISM) -->
+    <div id="loading-overlay">
+        <div class="spinner mb-4"></div>
+        <h3 class="text-white font-bold text-lg tracking-wide">Memproses Data</h3>
+        <p class="text-blue-200 text-sm">Mohon tunggu sebentar...</p>
+    </div>
 
     <!-- KONFIGURASI -->
     <script>
@@ -365,6 +402,10 @@
 
     toggleLoading(true, 'btn-submit');
 
+     // --- ANIMASI LOADING AKTIF ---
+            const loader = document.getElementById('loading-overlay');
+            loader.classList.add('active');
+
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
@@ -372,6 +413,7 @@
         });
 
         const result = await res.json();
+        loader.classList.remove('active'); // Matikan loading
         toggleLoading(false, 'btn-submit');
 
         if (!result.success) {
@@ -472,7 +514,7 @@
 
     </script>
 
-    <!-- BLUR BACKDROP -->
+<!-- BLUR BACKDROP -->
 <div 
   id="toast-backdrop"
   class="fixed inset-0 z-[55] hidden bg-black/30 backdrop-blur-sm transition-opacity duration-300">
@@ -486,7 +528,3 @@
 
 </body>
 </html>
-
-
-
-

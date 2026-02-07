@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifikasi Pendaftaran</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+  <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+    <h1 class="text-xl font-bold mb-4">Verifikasi Pendaftaran</h1>
+
+    <div id="status" class="text-gray-600">Memuat data...</div>
+
+    <div id="data" class="hidden mt-4 space-y-2">
+      <p><b>ID:</b> <span id="v-id"></span></p>
+      <p><b>Nama:</b> <span id="v-nama"></span></p>
+      <p><b>Kelurahan:</b> <span id="v-kelurahan"></span></p>
+      <p><b>Produk:</b> <span id="v-produk"></span></p>
+      <p><b>Waktu:</b> <span id="v-waktu"></span></p>
+    </div>
+  </div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+
+if (!id) {
+  document.getElementById('status').textContent = 'ID tidak ditemukan';
+} else {
+  fetch(`https://script.google.com/macros/s/AKfycbwLc0oNOX7YrXG0Nc1L7RDg_j9e_KMZ87sADg8jEN_aIfqaJY3fm2NJGZWhFzb-yVUVlQ/exec?id=${id}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        document.getElementById('status').textContent = 'Data tidak valid';
+        return;
+      }
+
+      document.getElementById('status').classList.add('hidden');
+      document.getElementById('data').classList.remove('hidden');
+
+      document.getElementById('v-id').textContent = data.id;
+      document.getElementById('v-nama').textContent = data.nama;
+      document.getElementById('v-kelurahan').textContent = data.kelurahan;
+      document.getElementById('v-produk').textContent = data.produk;
+      document.getElementById('v-waktu').textContent = data.waktu;
+    });
+}
+</script>
+
+</body>
+</html>

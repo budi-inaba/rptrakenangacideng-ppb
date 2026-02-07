@@ -428,6 +428,20 @@
             setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
         }
     </script>
+
+    <!-- BLUR BACKDROP -->
+<div 
+  id="toast-backdrop"
+  class="fixed inset-0 z-[55] hidden bg-black/30 backdrop-blur-sm transition-opacity duration-300">
+</div>
+
+<!-- TOAST CONTAINER -->
+<div 
+  id="toast-container"
+  class="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none">
+</div>
+
 </body>
 </html>
+
 

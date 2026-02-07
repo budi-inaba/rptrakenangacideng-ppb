@@ -47,7 +47,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-SnhNrgmuX_biJA6cbDFzRh74XbBpyGpRa1r1e6lyCuy2V9fuHEmOpcg3Fe_ENrp2jg/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLc0oNOX7YrXG0Nc1L7RDg_j9e_KMZ87sADg8jEN_aIfqaJY3fm2NJGZWhFzb-yVUVlQ/exec";
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -400,17 +400,12 @@
         registeredData.kk.substring(12);
 
     // ✅ DATA YANG MASUK KE QR CODE
-    const qrPayload = {
-        id: registeredData.id,
-        kk: maskedKK,
-        nama: registeredData.nama_pemilik,
-        produk: registeredData.produk,
-        waktu: waktuWIB
-    };
+    const verifikasiURL =
+        `https://rptra.vercel.app/verifikasi.html?id=${registeredData.id}`;
 
     // ✅ Generate QR
     document.getElementById('qr-image').src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(JSON.stringify(qrPayload))}`;
+        `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(verifikasiURL)}`;
 }
 
         function toggleLoading(isLoading, btnId) {
@@ -432,4 +427,3 @@
     </script>
 </body>
 </html>
-

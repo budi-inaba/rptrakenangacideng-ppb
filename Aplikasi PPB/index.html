@@ -345,7 +345,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpOwEXhwgevxlQQ5-ghSq4q2M-b_YOXodXEjMB9Jp9JUq42_Jv-qfJwAOKbQsSKfPfLA/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1ZQ1cuE8k78KVee1sFSWEsYJDsuHJKIek903CCuvkSE9RzhdlNZr6rsum9ysLwZSAng/exec";
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -373,6 +373,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+             // 🔐 Batasi KK hanya angka
+        document.getElementById('input-kk')
+        .addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
             
             const katSelect = document.getElementById('input-kategori');
             const containerSusu = document.getElementById('container-susu');
@@ -440,21 +445,22 @@
         return;
     }
 
-    toggleLoading(true, 'btn-submit');
-
      // --- ANIMASI LOADING AKTIF ---
             const loader = document.getElementById('loading-overlay');
             loader.classList.add('active');
 
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
         });
+
 
         const result = await res.json();
         loader.classList.remove('active'); // Matikan loading
-        toggleLoading(false, 'btn-submit');
 
         if (!result.success) {
             showToast(result.message, 'error');
@@ -468,12 +474,18 @@
         e.target.reset();
 
     } catch (err) {
-        toggleLoading(false, 'btn-submit');
+        loader.classList.remove('active');
         showToast('Gagal menghubungi server', 'error');
     }
 });
 
         function renderReview() {
+    // 🔐 Masking KK (AMAN)
+    const maskedKK =
+        registeredData.kk.substring(0, 4) +
+        '********' +
+        registeredData.kk.substring(12);
+
     // ✅ Format waktu WIB
     const waktuWIB = new Date(registeredData.timestamp)
         .toLocaleString('id-ID', {
@@ -485,35 +497,19 @@
             minute: '2-digit'
         }) + ' WIB';
 
-    // ✅ Tampilkan ke halaman review
     document.getElementById('review-waktu').textContent = waktuWIB;
     document.getElementById('review-id').textContent = registeredData.id;
-    document.getElementById('review-kk').textContent = registeredData.kk;
+    document.getElementById('review-kk').textContent = maskedKK;
     document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
     document.getElementById('review-produk').textContent = registeredData.produk;
 
-    // 🔐 Masking KK (aman untuk QR)
-    const maskedKK =
-        registeredData.kk.substring(0, 4) +
-        '********' +
-        registeredData.kk.substring(12);
-
-    // ✅ DATA YANG MASUK KE QR CODE
     const verifikasiURL =
         window.location.href.replace('index.html', '') +
         `verifikasi.html?id=${registeredData.id}`;
 
-    // ✅ Generate QR
     document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(verifikasiURL)}`;
 }
-
-        function toggleLoading(isLoading, btnId) {
-            const btn = document.getElementById(btnId);
-            const loader = document.getElementById('loading-indicator');
-            if(isLoading) { btn.classList.add('hidden'); loader.classList.remove('hidden'); }
-            else { btn.classList.remove('hidden'); loader.classList.add('hidden'); }
-        }
 
         function showToast(msg, type = 'success') {
     const container = document.getElementById('toast-container');
@@ -575,31 +571,41 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbxV9Qo49DrErnfj8KPwovRu8wKHGALC3Y_Q622DtLNmmt_PLIFBG4drzevIk2YQMfWO/exec';
 
 let countdownInterval = null;
+let serverOffset = 0;
 
 async function cekOperasional() {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action: 'statusOperasional' })
-  });
+  try {
+    const res = await fetch(`${API_URL}?action=statusOperasional`);
+    const data = await res.json();
 
-  const data = await res.json();
-
-  const cover = document.getElementById('cover');
-  const form = document.getElementById('form-container');
-  const countdownEl = document.getElementById('countdown');
-
-  if (!data.buka) {
-    cover.classList.remove('hidden');
-    form.classList.add('hidden');
-
-    // ⏳ JALANKAN COUNTDOWN
-    if (data.bukaPada) {
-      startCountdown(new Date(data.bukaPada), countdownEl);
+    if (!data.success) {
+      console.error('Status operasional gagal:', data.message);
+      return;
     }
-  } else {
-    cover.classList.add('hidden');
-    form.classList.remove('hidden');
-    stopCountdown();
+
+    const cover = document.getElementById('cover');
+    const form = document.getElementById('form-container');
+    const countdownEl = document.getElementById('countdown');
+
+    // ⏱️ Sinkron waktu server
+    const serverNow = new Date(data.serverTime).getTime();
+    serverOffset = serverNow - Date.now();
+
+    if (!data.buka) {
+      cover.classList.remove('hidden');
+      form.classList.add('hidden');
+
+      if (data.bukaPada) {
+        startCountdown(new Date(data.bukaPada).getTime(), countdownEl);
+      }
+    } else {
+      cover.classList.add('hidden');
+      form.classList.remove('hidden');
+      stopCountdown();
+    }
+
+  } catch (err) {
+    console.error('Gagal cek operasional:', err);
   }
 }
 
@@ -607,21 +613,21 @@ function startCountdown(targetTime, el) {
   stopCountdown();
 
   countdownInterval = setInterval(() => {
-    const now = new Date();
+    const now = Date.now() + serverOffset;
     const diff = targetTime - now;
 
     if (diff <= 0) {
       el.innerHTML = "⏳ Pendaftaran sedang dibuka...";
       stopCountdown();
-      cekOperasional(); // refresh status
+      cekOperasional();
       return;
     }
 
-    const jam = Math.floor(diff / (1000 * 60 * 60));
-    const menit = Math.floor((diff / (1000 * 60)) % 60);
-    const detik = Math.floor((diff / 1000) % 60);
+    const jam = Math.floor(diff / 3600000);
+    const menit = Math.floor((diff % 3600000) / 60000);
+    const detik = Math.floor((diff % 60000) / 1000);
 
-    el.innerHTML = `Membuka dalam: ${jam}j ${menit}m ${detik}d`;
+    el.innerHTML = `Membuka dalam : ${jam}j ${menit}m ${detik}d`;
   }, 1000);
 }
 
@@ -632,11 +638,9 @@ function stopCountdown() {
   }
 }
 
-// 🚀 JALANKAN SAAT HALAMAN DIBUKA
-cekOperasional();
+// 🚀 WAJIB jalan setelah DOM siap
+document.addEventListener('DOMContentLoaded', cekOperasional);
 </script>
-
+    
 </body>
 </html>
-
-

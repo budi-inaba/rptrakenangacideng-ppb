@@ -511,13 +511,6 @@
         `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(verifikasiURL)}`;
 }
 
-        function toggleLoading(isLoading, btnId) {
-            const btn = document.getElementById(btnId);
-            const loader = document.getElementById('loading-indicator');
-            if(isLoading) { btn.classList.add('hidden'); loader.classList.remove('hidden'); }
-            else { btn.classList.remove('hidden'); loader.classList.add('hidden'); }
-        }
-
         function showToast(msg, type = 'success') {
     const container = document.getElementById('toast-container');
     const backdrop = document.getElementById('toast-backdrop');

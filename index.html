@@ -581,36 +581,45 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbxV9Qo49DrErnfj8KPwovRu8wKHGALC3Y_Q622DtLNmmt_PLIFBG4drzevIk2YQMfWO/exec';
 
 let countdownInterval = null;
-let serverOffset = 0; // ⏱️ selisih waktu server vs client
+let serverOffset = 0;
 
 async function cekOperasional() {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action: 'statusOperasional' })
-  });
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'statusOperasional' })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  const cover = document.getElementById('cover');
-  const form = document.getElementById('form-container');
-  const countdownEl = document.getElementById('countdown');
-
-  // 🕒 HITUNG OFFSET WAKTU SERVER
-  const serverNow = new Date(data.serverTime).getTime();
-  const clientNow = Date.now();
-  serverOffset = serverNow - clientNow;
-
-  if (!data.buka) {
-    cover.classList.remove('hidden');
-    form.classList.add('hidden');
-
-    if (data.bukaPada) {
-      startCountdown(new Date(data.bukaPada).getTime(), countdownEl);
+    if (!data.success) {
+      console.error('Status operasional gagal:', data.message);
+      return;
     }
-  } else {
-    cover.classList.add('hidden');
-    form.classList.remove('hidden');
-    stopCountdown();
+
+    const cover = document.getElementById('cover');
+    const form = document.getElementById('form-container');
+    const countdownEl = document.getElementById('countdown');
+
+    // ⏱️ Sinkron waktu server
+    const serverNow = new Date(data.serverTime).getTime();
+    serverOffset = serverNow - Date.now();
+
+    if (!data.buka) {
+      cover.classList.remove('hidden');
+      form.classList.add('hidden');
+
+      if (data.bukaPada) {
+        startCountdown(new Date(data.bukaPada).getTime(), countdownEl);
+      }
+    } else {
+      cover.classList.add('hidden');
+      form.classList.remove('hidden');
+      stopCountdown();
+    }
+
+  } catch (err) {
+    console.error('Gagal cek operasional:', err);
   }
 }
 
@@ -618,21 +627,21 @@ function startCountdown(targetTime, el) {
   stopCountdown();
 
   countdownInterval = setInterval(() => {
-    const nowServer = Date.now() + serverOffset;
-    const diff = targetTime - nowServer;
+    const now = Date.now() + serverOffset;
+    const diff = targetTime - now;
 
     if (diff <= 0) {
       el.innerHTML = "⏳ Pendaftaran sedang dibuka...";
       stopCountdown();
-      cekOperasional(); // refresh status
+      cekOperasional();
       return;
     }
 
-    const jam = Math.floor(diff / (1000 * 60 * 60));
-    const menit = Math.floor((diff / (1000 * 60)) % 60);
-    const detik = Math.floor((diff / 1000) % 60);
+    const jam = Math.floor(diff / 3600000);
+    const menit = Math.floor((diff % 3600000) / 60000);
+    const detik = Math.floor((diff % 60000) / 1000);
 
-    el.innerHTML = `Membuka dalam: ${jam}j ${menit}m ${detik}d`;
+    el.innerHTML = `Membuka dalam : ${jam}j ${menit}m ${detik}d`;
   }, 1000);
 }
 
@@ -643,9 +652,10 @@ function stopCountdown() {
   }
 }
 
-// 🚀 AUTO JALAN
-cekOperasional();
+// 🚀 WAJIB jalan setelah DOM siap
+document.addEventListener('DOMContentLoaded', cekOperasional);
 </script>
+
 
 </body>
 </html>

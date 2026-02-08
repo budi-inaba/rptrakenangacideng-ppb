@@ -445,8 +445,6 @@
         return;
     }
 
-    toggleLoading(true, 'btn-submit');
-
      // --- ANIMASI LOADING AKTIF ---
             const loader = document.getElementById('loading-overlay');
             loader.classList.add('active');
@@ -459,7 +457,6 @@
 
         const result = await res.json();
         loader.classList.remove('active'); // Matikan loading
-        toggleLoading(false, 'btn-submit');
 
         if (!result.success) {
             showToast(result.message, 'error');

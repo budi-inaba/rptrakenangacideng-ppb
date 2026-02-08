@@ -480,6 +480,12 @@
 });
 
         function renderReview() {
+    // 🔐 Masking KK (AMAN)
+    const maskedKK =
+        registeredData.kk.substring(0, 4) +
+        '********' +
+        registeredData.kk.substring(12);
+
     // ✅ Format waktu WIB
     const waktuWIB = new Date(registeredData.timestamp)
         .toLocaleString('id-ID', {
@@ -491,25 +497,16 @@
             minute: '2-digit'
         }) + ' WIB';
 
-    // ✅ Tampilkan ke halaman review
     document.getElementById('review-waktu').textContent = waktuWIB;
     document.getElementById('review-id').textContent = registeredData.id;
     document.getElementById('review-kk').textContent = maskedKK;
     document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
     document.getElementById('review-produk').textContent = registeredData.produk;
 
-    // 🔐 Masking KK (aman untuk QR)
-    const maskedKK =
-        registeredData.kk.substring(0, 4) +
-        '********' +
-        registeredData.kk.substring(12);
-
-    // ✅ DATA YANG MASUK KE QR CODE
     const verifikasiURL =
         window.location.href.replace('index.html', '') +
         `verifikasi.html?id=${registeredData.id}`;
 
-    // ✅ Generate QR
     document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(verifikasiURL)}`;
 }

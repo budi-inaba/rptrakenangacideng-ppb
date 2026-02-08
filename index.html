@@ -581,6 +581,7 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbxV9Qo49DrErnfj8KPwovRu8wKHGALC3Y_Q622DtLNmmt_PLIFBG4drzevIk2YQMfWO/exec';
 
 let countdownInterval = null;
+let serverOffset = 0; // ⏱️ selisih waktu server vs client
 
 async function cekOperasional() {
   const res = await fetch(API_URL, {
@@ -594,13 +595,17 @@ async function cekOperasional() {
   const form = document.getElementById('form-container');
   const countdownEl = document.getElementById('countdown');
 
+  // 🕒 HITUNG OFFSET WAKTU SERVER
+  const serverNow = new Date(data.serverTime).getTime();
+  const clientNow = Date.now();
+  serverOffset = serverNow - clientNow;
+
   if (!data.buka) {
     cover.classList.remove('hidden');
     form.classList.add('hidden');
 
-    // ⏳ JALANKAN COUNTDOWN
     if (data.bukaPada) {
-      startCountdown(new Date(data.bukaPada), countdownEl);
+      startCountdown(new Date(data.bukaPada).getTime(), countdownEl);
     }
   } else {
     cover.classList.add('hidden');
@@ -613,8 +618,8 @@ function startCountdown(targetTime, el) {
   stopCountdown();
 
   countdownInterval = setInterval(() => {
-    const now = new Date();
-    const diff = targetTime - now;
+    const nowServer = Date.now() + serverOffset;
+    const diff = targetTime - nowServer;
 
     if (diff <= 0) {
       el.innerHTML = "⏳ Pendaftaran sedang dibuka...";
@@ -638,9 +643,10 @@ function stopCountdown() {
   }
 }
 
-// 🚀 JALANKAN SAAT HALAMAN DIBUKA
+// 🚀 AUTO JALAN
 cekOperasional();
 </script>
+
 
 </body>
 </html>

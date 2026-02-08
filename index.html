@@ -450,33 +450,35 @@
             loader.classList.add('active');
 
     try {
-        const res = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-        });
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
 
+  if (!res.ok) {
+    throw new Error('HTTP ' + res.status);
+  }
 
-        const result = await res.json();
-        loader.classList.remove('active'); // Matikan loading
+  const result = await res.json();
 
-        if (!result.success) {
-            showToast(result.message, 'error');
-            return;
-        }
+  if (!result.success) {
+    loader.classList.remove('active');
+    showToast(result.message, 'error');
+    return;
+  }
 
-        registeredData = { ...payload, id: result.id };
-        renderReview();
-        switchView('review');
-        showToast('Pendaftaran berhasil !');
-        e.target.reset();
+  loader.classList.remove('active');
+  registeredData = { ...payload, id: result.id };
+  renderReview();
+  switchView('review');
+  showToast('Pendaftaran berhasil!');
 
-    } catch (err) {
-        loader.classList.remove('active');
-        showToast('Gagal menghubungi server', 'error');
-    }
+} catch (err) {
+  loader.classList.remove('active');
+  console.error(err);
+  showToast('Server tidak dapat dihubungi', 'error');
+}
 });
 
         function renderReview() {

@@ -42,7 +42,7 @@
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeScale {
         from { opacity: 0; transform: scale(0.95); }
         to   { opacity: 1; transform: scale(1); }
         }
@@ -55,9 +55,90 @@
 </head>
 <body class="min-h-screen bg-slate-50 font-sans text-gray-800">
 
+<!-- COVER OPERASIONAL -->
+<div id="operasional-cover"
+     class="fixed inset-0 z-[999] hidden flex items-center justify-center">
+
+  <!-- Background Gradient -->
+  <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-fuchsia-600 to-purple-700"></div>
+
+  <!-- Content Card -->
+  <div class="relative z-10 bg-white text-gray-800 
+              rounded-3xl shadow-2xl 
+              w-[92%] max-w-md 
+              p-8 md:p-10 
+              text-center 
+              animate-fadeIn">
+
+    <!-- Logo Container Putih -->
+    <div class="bg-white rounded-2xl shadow-md p-4 inline-block mb-6">
+      <img src="logo-rptra.png"
+           alt="Logo RPTRA"
+           class="h-16 mx-auto"
+           onerror="this.style.display='none'">
+    </div>
+
+    <!-- Judul -->
+    <h1 class="text-xl md:text-2xl font-bold mb-4">
+      Program Pangan Bersubsidi
+    </h1>
+
+    <!-- Info Tanggal -->
+    <p class="text-sm text-gray-600 mb-2">
+      Pendaftaran di buka pada tanggal :
+    </p>
+
+    <p id="cover-tanggal"
+       class="text-lg font-semibold text-purple-700 mb-4">
+    </p>
+
+    <!-- Premium Jam Operasional -->
+<div class="bg-gradient-to-r from-purple-50 to-pink-50 
+            rounded-2xl p-5 mb-6 border border-purple-100 shadow-sm">
+
+  <!-- Header -->
+  <div class="flex items-center justify-center gap-2 mb-4">
+    <div class="bg-purple-100 p-2 rounded-full">
+      <i data-lucide="clock" class="w-5 h-5 text-purple-600"></i>
+    </div>
+    <h3 class="text-sm font-semibold text-purple-700 tracking-wide">
+      Jam Operasional
+    </h3>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-purple-200 mb-4"></div>
+
+  <!-- Jam Detail -->
+  <div class="space-y-3 text-sm">
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Buka</span>
+      <span id="cover-jam-buka"
+            class="font-bold text-purple-700"></span>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Tutup</span>
+      <span id="cover-jam-tutup"
+            class="font-bold text-purple-700"></span>
+    </div>
+
+  </div>
+</div>
+
+
+    <!-- Pesan -->
+    <p class="text-sm text-gray-500">
+      Silahkan kembali pada saat jam operasional di buka.
+    </p>
+
+  </div>
+</div>
+
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjcm7YLLgryl_rr7bEaydQQr7qTNk-H5UDbJKAwx2q2yfxKWwIIWEx0RVi1f2qQV8h/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxup2ZSUER_zJftAgVxmUBzjDdnKOPQubJbAFJD73WU3jb5OMTKUCHjdjlgZrXd4v-U/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -367,6 +448,7 @@
         return;
     }
 
+    toggleLoading(true, 'btn-submit');
     showGlobalLoading(true);
 
     try {
@@ -384,7 +466,7 @@
             return;
         }
 
-        registeredData = { ...payload, id: result.id };
+        registeredData = { ...payload, id: result.id, waktu: result.waktu};
         renderReview();
         switchView('review');
         showToast('Pendaftaran berhasil !');
@@ -479,7 +561,72 @@ function getWaktuOperasionalText() {
   </div>
 </div>
 
+<script>
+// ================================
+// KONFIGURASI JADWAL (SAMA DENGAN APPS SCRIPT)
+// ================================
+const OPERASIONAL_TAHUN  = 2026;
+const OPERASIONAL_BULAN  = 2;  // Februari
+const OPERASIONAL_TANGGAL = 16;
+
+const JAM_BUKA  = 8;   // 08.00 WIB
+const JAM_TUTUP = 23;  // 23.00 WIB
+
+
+function cekJamOperasional() {
+
+  const now = new Date();
+  const wib = new Date(
+    now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
+  );
+
+  const tahun = wib.getFullYear();
+  const bulan = wib.getMonth() + 1;
+  const tanggal = wib.getDate();
+  const jam = wib.getHours();
+  const menit = wib.getMinutes();
+  const totalMenit = jam * 60 + menit;
+
+  const tanggalSesuai =
+    tahun === OPERASIONAL_TAHUN &&
+    bulan === OPERASIONAL_BULAN &&
+    tanggal === OPERASIONAL_TANGGAL;
+
+  const jamSesuai =
+    totalMenit >= JAM_BUKA * 60 &&
+    totalMenit <= JAM_TUTUP * 60;
+
+  const cover = document.getElementById('operasional-cover');
+
+  // Isi informasi tanggal & jam
+  const namaBulan = [
+    'Januari','Februari','Maret','April','Mei','Juni',
+    'Juli','Agustus','September','Oktober','November','Desember'
+  ];
+
+  document.getElementById('cover-tanggal').textContent =
+    `${OPERASIONAL_TANGGAL} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
+
+  document.getElementById('cover-jam-buka').textContent =
+    JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
+
+  document.getElementById('cover-jam-tutup').textContent =
+    JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
+
+
+  if (tanggalSesuai && jamSesuai) {
+    // ✅ BUKA → Cover hilang
+    cover.classList.add('hidden');
+  } else {
+    // ❌ TUTUP → Cover muncul
+    cover.classList.remove('hidden');
+    cover.classList.add('flex');
+  }
+}
+
+// Jalankan saat halaman load
+document.addEventListener('DOMContentLoaded', cekJamOperasional);
+</script>
+
 </body>
 </html>
-
-

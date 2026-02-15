@@ -4,34 +4,74 @@
   <meta charset="UTF-8">
   <title>Verifikasi Pendaftaran</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .neon-green {
+      background: #00ff88;
+      box-shadow:
+        0 0 5px #00ff88,
+        0 0 10px #00ff88,
+        0 0 20px #00ff88;
+    }
+
+    .popup-success {
+      animation: fadeScale 0.3s ease-out;
+    }
+
+    @keyframes fadeScale {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 
-  <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
-    <h1 class="text-xl font-bold mb-4">Verifikasi Pendaftaran</h1>
+  <div class="max-w-md w-full bg-white p-6 rounded-2xl shadow-xl">
+    <h1 class="text-xl font-bold mb-4 text-center">
+      Verifikasi Pendaftaran
+    </h1>
 
-    <div id="status" class="text-gray-600">Memuat data...</div>
+    <div id="status" class="text-gray-600 text-center">
+      Memuat data...
+    </div>
 
-    <div id="data" class="hidden mt-4 space-y-2">
+    <div id="data" class="hidden mt-4 space-y-2 text-sm">
       <p><b>ID:</b> <span id="v-id"></span></p>
       <p><b>Nama:</b> <span id="v-nama"></span></p>
       <p><b>Kelurahan:</b> <span id="v-kelurahan"></span></p>
       <p><b>Produk:</b> <span id="v-produk"></span></p>
       <p><b>Waktu:</b> <span id="v-waktu"></span></p>
+
+      <button id="btn-approve"
+        class="w-full mt-6 py-3 rounded-xl font-bold text-black neon-green transition active:scale-95">
+        ✔ Setujui
+      </button>
+    </div>
+  </div>
+
+  <!-- NOTIFIKASI -->
+  <div id="popup"
+    class="fixed inset-0 hidden items-center justify-center bg-black/40">
+    <div class="bg-white px-8 py-6 rounded-2xl shadow-2xl popup-success text-center">
+      <h2 class="text-lg font-bold text-green-600">
+        Berhasil Disetujui
+      </h2>
     </div>
   </div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
+const API_URL = "https://script.google.com/macros/s/AKfycbxup2ZSUER_zJftAgVxmUBzjDdnKOPQubJbAFJD73WU3jb5OMTKUCHjdjlgZrXd4v-U/exec";
 
 if (!id) {
   document.getElementById('status').textContent = 'ID tidak ditemukan';
 } else {
-  const API_URL = "https://script.google.com/macros/s/AKfycbz9u1cp72TuHbePfpArdOW6DF_wlKf1q35hLHXUGxpchhuzmys3-e67L4gK7yUitr6Z/exec";
+
   fetch(`${API_URL}?id=${encodeURIComponent(id)}`)
     .then(res => res.json())
     .then(data => {
+
       if (!data.success) {
         document.getElementById('status').textContent = 'Data tidak valid';
         return;
@@ -45,7 +85,42 @@ if (!id) {
       document.getElementById('v-kelurahan').textContent = data.kelurahan;
       document.getElementById('v-produk').textContent = data.produk;
       document.getElementById('v-waktu').textContent = data.waktu;
+
+      document.getElementById('btn-approve').addEventListener('click', () => {
+        approveData(data.id);
+      });
+
     });
+}
+
+function approveData(id) {
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "approve",
+      id: id
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+
+    if (result.success) {
+
+      const popup = document.getElementById('popup');
+      popup.classList.remove('hidden');
+      popup.classList.add('flex');
+
+      setTimeout(() => {
+        popup.classList.add('hidden');
+        popup.classList.remove('flex');
+      }, 2000);
+
+    } else {
+      alert("Gagal menyetujui data");
+    }
+
+  });
 }
 </script>
 

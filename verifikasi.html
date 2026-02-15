@@ -28,7 +28,7 @@ const id = params.get('id');
 if (!id) {
   document.getElementById('status').textContent = 'ID tidak ditemukan';
 } else {
-  const API_URL = "https://script.google.com/macros/s/AKfycbxup2ZSUER_zJftAgVxmUBzjDdnKOPQubJbAFJD73WU3jb5OMTKUCHjdjlgZrXd4v-U/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbz2bhd_m9krye38OuyOgjoCX-BXMpqBywGGiMH7wm6LEyuKePHoHtM5UG02LhihVDk/exec";
   fetch(`${API_URL}?id=${encodeURIComponent(id)}`)
     .then(res => res.json())
     .then(data => {

@@ -455,7 +455,7 @@
             document.getElementById('input-nama_pemilik').addEventListener('input', restrictToLetters);
 
             // Validasi Angka & Input Lainnya
-            document.getElementById('input-kk').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            document.getElementById('input-kk').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); });
             document.getElementById('input-kelurahan').addEventListener('input', e => e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''));
             document.getElementById('input-ktp').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
             document.getElementById('input-atm').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));

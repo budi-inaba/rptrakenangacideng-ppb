@@ -138,7 +138,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_Gyf5_Jo3mpaxwl7bHPEnc3hItPqzy16c5qGlOQv8F2Ry6fqZVbzkRCFcL8KavopJ/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxPZNd0lJ3io5G4HfuxqLgp77K4A6qHrSgcdhSSUw8wHIBrJZESZ89pxfwuJZQuqZf/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -318,7 +318,7 @@
                     <i data-lucide="check-circle" class="text-green-600 w-8 h-8"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Pendaftaran Berhasil !</h2>
-                <p class="text-gray-500 text-sm mb-6">Tunjukkan QR Code ini kepada petugas verifikasi.</p>
+                <p class="text-gray-500 text-sm mb-6">Tunjukkan QR Code ini kepada petugas.</p>
 
                 <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300 mb-6 flex justify-center">
                     <img id="qr-image" src="" alt="QR Code" class="rounded-lg shadow-sm">
@@ -328,12 +328,12 @@
                     <!-- WAKTU OPERASIONAL -->
                     <div class="flex justify-between">
                     <span class="text-gray-500">Waktu</span>
-                    <span id="review-waktu" class="font-medium text-gray-800"></span>
+                    <span id="review-waktu" class="font-semibold text-green-600"></span>
                     </div>
 
                     <div class="flex justify-between">
                         <span class="text-gray-500">ID Registrasi</span>
-                        <span id="review-id" class="font-mono font-medium"></span>
+                        <span id="review-id" class="font-mono font-bold"></span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">No. Kartu Keluarga</span>
@@ -343,6 +343,12 @@
                         <span class="text-gray-500">Nama Pemilik Kartu</span>
                         <span id="review-nama_pemilik" class="font-medium"></span>
                     </div>
+
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Kategori Penerima</span>
+                        <span id="review-kategori" class="text-pink-600 font-bold"></span>
+                    </div>
+                    
                     <div class="flex justify-between">
                         <span class="text-gray-500">Komoditas</span>
                         <span id="review-produk" class="font-medium text-blue-600 text-right max-w-[60%]"></span>
@@ -350,17 +356,17 @@
                     <!-- LOKASI -->
                     <div>
                     <p class="text-gray-500 text-xs mb-1">Lokasi</p>
-                    <p class="font-medium text-gray-800">RPTRA Kenanga Cideng
+                    <p class="font-medium text-gray-800">RPTRA Melati Duri Pulo
                     </p>
                     <p class="text-gray-600 text-xs leading-relaxed">
-                    Jl. Makian No. 1 RT. 002 RW. 005<br>
-                    Kelurahan Cideng – Kecamatan Gambir<br>
+                    Jl. Petojo Barat XI No. 5 RT. 012 RW. 001<br>
+                    Kelurahan Duri Pulo – Kecamatan Gambir<br>
                     Jakarta Pusat
                     </p>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Status</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-white-800">Disetujui</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-white-800">Belum disetujui</span>
                     </div>
                 </div>
 
@@ -369,6 +375,40 @@
                 </button>
             </div>
         </div>
+
+          <!-- VIEW: VERIFIKASI QR -->
+<div id="view-verifikasi" class="max-w-md mx-auto py-10 px-4 hidden-view fade-in">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+
+    <div id="verifikasi-loading" class="py-6">
+      <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+      <p class="text-sm text-gray-500 mt-4">Memverifikasi data...</p>
+    </div>
+
+    <div id="verifikasi-result" class="hidden space-y-4">
+
+      <div id="verifikasi-status-icon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto"></div>
+
+      <h2 id="verifikasi-status-text" class="text-xl font-bold"></h2>
+
+      <div class="text-left text-sm space-y-2 border-t pt-4">
+        <div><strong>ID:</strong> <span id="v-id"></span></div>
+        <div><strong>Nama:</strong> <span id="v-nama"></span></div>
+        <div><strong>KK:</strong> <span id="v-kk"></span></div>
+        <div><strong>Produk:</strong> <span id="v-produk"></span></div>
+        <div><strong>Status:</strong> <span id="v-status"></span></div>
+      </div>
+
+      <button onclick="switchView('form')" 
+        class="mt-6 text-blue-600 text-sm font-medium hover:underline">
+        Kembali ke Form
+      </button>
+
+    </div>
+
+  </div>
+</div>
+        
     </main>
 
     <script>
@@ -377,9 +417,10 @@
         let registeredData = null;
 
         const views = {
-            form: document.getElementById('view-form'),
-            review: document.getElementById('view-review')
-        };
+    form: document.getElementById('view-form'),
+    review: document.getElementById('view-review'),
+    verifikasi: document.getElementById('view-verifikasi')
+};
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
@@ -507,10 +548,16 @@ function getWaktuOperasionalText() {
             document.getElementById('review-id').textContent = registeredData.id;
             document.getElementById('review-kk').textContent = registeredData.kk;
             document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
+            document.getElementById('review-kategori').textContent = registeredData.kategori;
             document.getElementById('review-produk').textContent = registeredData.produk;
-            const qrData = JSON.stringify({id: registeredData.id, kk: registeredData.kk});
-            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
-        }
+            // =========================// URL REAL VERIFIKASI// =========================
+            const baseUrl = window.location.origin;
+            const path = window.location.pathname.replace('index.html','');
+            const verifikasiUrl = `${baseUrl}${path}verifikasi.html?id=${registeredData.id}`;
+
+            document.getElementById('qr-image').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;
+}
 
         function toggleLoading(isLoading, btnId) {
             const btn = document.getElementById(btnId);
@@ -567,9 +614,9 @@ function getWaktuOperasionalText() {
 // ================================
 const OPERASIONAL_TAHUN  = 2026;
 const OPERASIONAL_BULAN  = 3;  // Maret
-const OPERASIONAL_TANGGAL = 1;
+const OPERASIONAL_TANGGAL = 9;
 
-const JAM_BUKA  = 8;   // 08.00 WIB
+const JAM_BUKA  = 7;   // 10.00 WIB
 const JAM_TUTUP = 23;  // 23.00 WIB
 
 
@@ -605,7 +652,7 @@ function cekJamOperasional() {
   ];
 
   document.getElementById('cover-tanggal').textContent =
-    `${OPERASIONAL_TANGGAL} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
+    `${String(OPERASIONAL_TANGGAL).padStart(2, '0')} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
 
   document.getElementById('cover-jam-buka').textContent =
     JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
@@ -626,7 +673,93 @@ function cekJamOperasional() {
 
 // Jalankan saat halaman load
 document.addEventListener('DOMContentLoaded', cekJamOperasional);
-</script>
 
+    // ===============================
+// AUTO MODE VERIFIKASI
+// ===============================
+async function cekModeVerifikasi() {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+
+  if (!id) return; // tidak ada parameter → normal form
+
+  switchView('verifikasi');
+
+  const loading = document.getElementById('verifikasi-loading');
+  const resultBox = document.getElementById('verifikasi-result');
+
+  try {
+
+    const res = await fetch(
+      `${GOOGLE_SCRIPT_URL}?action=getById&id=${id}`
+    );
+
+    const data = await res.json();
+
+    loading.classList.add('hidden');
+    resultBox.classList.remove('hidden');
+
+    if (!data.success) {
+      tampilkanTidakValid("Data tidak ditemukan");
+      return;
+    }
+
+    isiDataVerifikasi(data);
+
+  } catch (err) {
+    loading.classList.add('hidden');
+    resultBox.classList.remove('hidden');
+    tampilkanTidakValid("Gagal menghubungi server");
+  }
+}
+
+function isiDataVerifikasi(data) {
+
+  document.getElementById('v-id').textContent = data.id;
+  document.getElementById('v-nama').textContent = data.nama_pemilik;
+  document.getElementById('v-kk').textContent = data.kk;
+  document.getElementById('v-produk').textContent = data.produk;
+  document.getElementById('v-status').textContent = data.status;
+
+  if (data.status === "Disetujui") {
+    tampilkanValid();
+  } else {
+    tampilkanTidakValid("Belum Disetujui");
+  }
+}
+
+function tampilkanValid() {
+  const icon = document.getElementById('verifikasi-status-icon');
+  const text = document.getElementById('verifikasi-status-text');
+
+  icon.className = "w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto";
+  icon.innerHTML = '<i data-lucide="check-circle" class="text-green-600 w-8 h-8"></i>';
+
+  text.textContent = "DATA VALID";
+  text.className = "text-xl font-bold text-green-600";
+
+  lucide.createIcons();
+}
+
+function tampilkanTidakValid(pesan) {
+  const icon = document.getElementById('verifikasi-status-icon');
+  const text = document.getElementById('verifikasi-status-text');
+
+  icon.className = "w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto";
+  icon.innerHTML = '<i data-lucide="x-circle" class="text-red-600 w-8 h-8"></i>';
+
+  text.textContent = "TIDAK VALID";
+  text.className = "text-xl font-bold text-red-600";
+
+  document.getElementById('v-status').textContent = pesan;
+
+  lucide.createIcons();
+}
+
+document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
+    
+</script>
+    
 </body>
 </html>

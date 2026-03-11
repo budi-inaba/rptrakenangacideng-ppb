@@ -432,7 +432,9 @@
     // =========================
     // CEK KK OTOMATIS
     // =========================
-        document.getElementById('input-kk').addEventListener('blur', cekKK);
+document.getElementById('input-kk').addEventListener('blur', cekKK);
+document.getElementById('input-ktp').addEventListener('blur', cekKTP);
+document.getElementById('input-atm').addEventListener('blur', cekATM);
 
 async function cekKK() {
 
@@ -449,6 +451,41 @@ async function cekKK() {
   } else {
     document.getElementById('error-kk').classList.add('hidden');
     document.getElementById('input-kk').classList.remove('input-error');
+  }
+}
+            
+            async function cekKTP() {
+
+  const ktp = document.getElementById('input-ktp').value;
+
+  if (ktp.length !== 16) return;
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKTP&ktp=${ktp}`);
+  const data = await res.json();
+
+  if (data.terdaftar) {
+    document.getElementById('error-ktp').classList.remove('hidden');
+    document.getElementById('input-ktp').classList.add('input-error');
+  } else {
+    document.getElementById('error-ktp').classList.add('hidden');
+    document.getElementById('input-ktp').classList.remove('input-error');
+  }
+}
+            async function cekATM() {
+
+  const atm = document.getElementById('input-atm').value;
+
+  if (atm.length < 10) return;
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekATM&atm=${atm}`);
+  const data = await res.json();
+
+  if (data.terdaftar) {
+    document.getElementById('error-atm').classList.remove('hidden');
+    document.getElementById('input-atm').classList.add('input-error');
+  } else {
+    document.getElementById('error-atm').classList.add('hidden');
+    document.getElementById('input-atm').classList.remove('input-error');
   }
 }
             

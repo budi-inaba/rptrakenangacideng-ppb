@@ -429,6 +429,28 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+    // =========================
+    // CEK KK OTOMATIS
+    // =========================
+        document.getElementById('input-kk').addEventListener('blur', cekKK);
+
+async function cekKK() {
+
+  const kk = document.getElementById('input-kk').value;
+
+  if (kk.length !== 16) return;
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKK&kk=${kk}`);
+  const data = await res.json();
+
+  if (data.terdaftar) {
+    document.getElementById('error-kk').classList.remove('hidden');
+    document.getElementById('input-kk').classList.add('input-error');
+  } else {
+    document.getElementById('error-kk').classList.add('hidden');
+    document.getElementById('input-kk').classList.remove('input-error');
+  }
+}
             
             const katSelect = document.getElementById('input-kategori');
             const containerSusu = document.getElementById('container-susu');

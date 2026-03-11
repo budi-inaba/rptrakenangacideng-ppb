@@ -429,63 +429,84 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+
+            function debounce(func, delay) {
+
+  let timer;
+
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+
+}
     // =========================
     // CEK KK OTOMATIS
     // =========================
-document.getElementById('input-kk').addEventListener('blur', cekKK);
-document.getElementById('input-ktp').addEventListener('blur', cekKTP);
-document.getElementById('input-atm').addEventListener('blur', cekATM);
-
+document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 600));
+document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
+document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
+            
 async function cekKK() {
 
-  const kk = document.getElementById('input-kk').value;
+  const kk = document.getElementById('input-kk').value.trim();
 
   if (kk.length !== 16) return;
 
   const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKK&kk=${kk}`);
   const data = await res.json();
 
+  const input = document.getElementById('input-kk');
+  const error = document.getElementById('error-kk');
+
   if (data.terdaftar) {
-    document.getElementById('error-kk').classList.remove('hidden');
-    document.getElementById('input-kk').classList.add('input-error');
+    error.classList.remove('hidden');
+    input.classList.add('input-error');
   } else {
-    document.getElementById('error-kk').classList.add('hidden');
-    document.getElementById('input-kk').classList.remove('input-error');
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
   }
 }
             
-            async function cekKTP() {
+async function cekKTP() {
 
-  const ktp = document.getElementById('input-ktp').value;
+  const ktp = document.getElementById('input-ktp').value.trim();
 
   if (ktp.length !== 16) return;
 
   const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKTP&ktp=${ktp}`);
   const data = await res.json();
 
+  const input = document.getElementById('input-ktp');
+  const error = document.getElementById('error-ktp');
+
   if (data.terdaftar) {
-    document.getElementById('error-ktp').classList.remove('hidden');
-    document.getElementById('input-ktp').classList.add('input-error');
+    error.classList.remove('hidden');
+    input.classList.add('input-error');
   } else {
-    document.getElementById('error-ktp').classList.add('hidden');
-    document.getElementById('input-ktp').classList.remove('input-error');
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
   }
 }
-            async function cekATM() {
+            
+           async function cekATM() {
 
-  const atm = document.getElementById('input-atm').value;
+  const atm = document.getElementById('input-atm').value.trim();
 
   if (atm.length < 10) return;
 
   const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekATM&atm=${atm}`);
   const data = await res.json();
 
+  const input = document.getElementById('input-atm');
+  const error = document.getElementById('error-atm');
+
   if (data.terdaftar) {
-    document.getElementById('error-atm').classList.remove('hidden');
-    document.getElementById('input-atm').classList.add('input-error');
+    error.classList.remove('hidden');
+    input.classList.add('input-error');
   } else {
-    document.getElementById('error-atm').classList.add('hidden');
-    document.getElementById('input-atm').classList.remove('input-error');
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
   }
 }
             

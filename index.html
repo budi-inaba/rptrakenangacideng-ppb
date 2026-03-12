@@ -450,6 +450,61 @@ document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 60
 document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
 document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
 
+             // jalankan cek stok saat halaman dibuka
+    loadStokKomoditas();
+
+    // jalankan lagi jika kelurahan berubah
+    document.getElementById('input-kelurahan')
+      .addEventListener('change', loadStokKomoditas);
+
+});
+
+
+/* =================================
+   CEK STOK KOMODITAS
+================================= */
+async function loadStokKomoditas() {
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
+  const data = await res.json();
+
+  if (!data.success) return;
+
+  const kelurahanInput = document.getElementById('input-kelurahan');
+  const kelurahan = kelurahanInput.value.toLowerCase().trim();
+
+  const kategori = kelurahan === "cideng" ? "cideng" : "lainnya";
+
+  const checkboxes = document.querySelectorAll('input[name="komoditas"]');
+
+  checkboxes.forEach(cb => {
+
+    const nama = cb.value;
+    const stok = data[nama] ? data[nama][kategori] : 0;
+
+    const label = cb.closest('label');
+
+    if (stok <= 0) {
+
+      cb.disabled = true;
+      label.classList.add('opacity-50','cursor-not-allowed');
+
+      if (!label.querySelector('.stok-habis')) {
+
+        const badge = document.createElement('span');
+        badge.className = "stok-habis text-xs text-red-600 ml-2 font-semibold";
+        badge.innerText = "(Stok Habis)";
+
+        label.querySelector('span').appendChild(badge);
+
+      }
+
+    }
+
+  });
+
+}
+        
     // FORMAT OTOMATIS KARTU ATM
 const inputATM = document.getElementById('input-atm');
 

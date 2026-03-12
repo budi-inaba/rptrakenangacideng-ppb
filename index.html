@@ -468,7 +468,7 @@ async function loadStokKomoditas() {
   const kelurahanInput = document.getElementById('input-kelurahan');
   const kelurahan = kelurahanInput.value.toLowerCase().trim();
 
-  if (!kelurahan) return;
+ if (!kelurahan) kelurahan = "lainnya";
 
   const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
   const data = await res.json();

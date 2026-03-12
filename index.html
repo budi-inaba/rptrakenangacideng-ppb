@@ -603,23 +603,28 @@ async function cekKTP() {
   }
 }
             
-            if (katSelect && containerSusu) {
-    checkSusuVisibility(katSelect.value);
-    katSelect.addEventListener('change', (e) => checkSusuVisibility(e.target.value));
-}
-            
-            const checkSusuVisibility = (val) => {
-                const susuCheckbox = containerSusu.querySelector('input');
-                if(val === 'KJP') {
-                    containerSusu.classList.remove('hidden');
-                } else {
-                    containerSusu.classList.add('hidden');
-                    susuCheckbox.checked = false;
-                }
-            };
+    const katSelect = document.getElementById('input-kategori');
+    const containerSusu = document.getElementById('container-susu');
 
-            checkSusuVisibility(katSelect.value);
-            katSelect.addEventListener('change', (e) => checkSusuVisibility(e.target.value));
+    function checkSusuVisibility(val) {
+
+    const susuCheckbox = containerSusu.querySelector('input');
+
+    if (val === "KJP") {
+        containerSusu.classList.remove('hidden');
+    } else {
+        containerSusu.classList.add('hidden');
+        susuCheckbox.checked = false;
+    }
+}
+
+// cek saat halaman pertama dibuka
+checkSusuVisibility(katSelect.value);
+
+// cek saat kategori berubah
+katSelect.addEventListener('change', function(e){
+    checkSusuVisibility(e.target.value);
+});
 
             // VALIDASI INPUT NAMA (HURUF SAJA)
             const restrictToLetters = (e) => {

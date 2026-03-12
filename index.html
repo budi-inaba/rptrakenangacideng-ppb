@@ -452,6 +452,8 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
 
     // jalankan cek stok saat halaman dibuka
     loadStokKomoditas();
+    // 🔄 update stok otomatis setiap 30 detik
+    setInterval(loadStokKomoditas, 30000);
 
     // jalankan lagi jika kelurahan berubah
     document.getElementById('input-kelurahan')

@@ -582,7 +582,7 @@ async function cekKTP() {
             
            async function cekATM() {
 
-  const atm = document.getElementById('input-atm').value.trim();
+  const atm = document.getElementById('input-atm'.value.replace(/\s/g,'');
 
   if (atm.length !== 16 && atm.length !== 18) return;
 
@@ -629,7 +629,7 @@ async function cekKTP() {
             document.getElementById('input-kk').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); });
             document.getElementById('input-kelurahan').addEventListener('input', e => e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''));
             document.getElementById('input-ktp').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
-            document.getElementById('input-atm').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
+            
         });
 
         function switchView(viewName) {

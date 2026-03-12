@@ -553,6 +553,10 @@ async function cekKTP() {
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();
 
+            if (document.querySelector('.input-error')) {
+    showToast('Periksa kembali data yang sudah terdaftar', 'error');
+    return;
+}
     const checkedKomoditas = [...document.querySelectorAll('input[name="komoditas"]:checked')]
         .map(c => c.value);
 

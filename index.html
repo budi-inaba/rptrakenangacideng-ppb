@@ -480,7 +480,7 @@ async function loadStokKomoditas() {
   checkboxes.forEach(cb => {
 
     const nama = cb.value;
-    const stok = data[nama] ? data[nama][kategori] : 0;
+    const stok = data.data[nama] ? data.data[nama][kategori] : 0;
 
     const label = cb.closest('label');
 

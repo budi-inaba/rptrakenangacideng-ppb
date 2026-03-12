@@ -650,7 +650,6 @@ katSelect.addEventListener('change', function(e){
     e.preventDefault();
 
             const btn = document.getElementById('btn-submit');
-    btn.disabled = true; // 🔒 tombol dikunci agar tidak bisa diklik lagi
 
             if (document.querySelector('.input-error')) {
     showToast('Periksa kembali data yang sudah terdaftar', 'error');
@@ -698,7 +697,6 @@ katSelect.addEventListener('change', function(e){
         const result = await res.json();
         showGlobalLoading(false);
         toggleLoading(false, 'btn-submit');
-        btn.disabled = false; // 🔓 aktifkan tombol lagi
 
         if (!result.success) {
             showToast(result.message, 'error');
@@ -714,7 +712,6 @@ katSelect.addEventListener('change', function(e){
     } catch (err) {
         showGlobalLoading(false);
         toggleLoading(false, 'btn-submit');
-        btn.disabled = false; // 🔓 aktifkan lagi jika error
         showToast('Gagal menghubungi server', 'error');
     }
 });

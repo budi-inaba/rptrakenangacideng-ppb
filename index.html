@@ -771,15 +771,35 @@ function getWaktuOperasionalText() {
         }
         }
 
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const el = document.createElement('div');
-            el.className = `${type === 'success' ? 'bg-green-600' : 'bg-red-600'} px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 fade-in`;
-            el.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i> ${msg}`;
-            container.appendChild(el);
-            lucide.createIcons();
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
-        }
+        let toastActive = false;
+
+function showToast(msg, type = 'success') {
+
+    if (toastActive) return; // cegah toast bertumpuk
+
+    toastActive = true;
+
+    const container = document.getElementById('toast-container');
+
+    const el = document.createElement('div');
+    el.className = `${type === 'success' ? 'bg-green-600' : 'bg-red-600'} px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 fade-in`;
+
+    el.innerHTML = `
+        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i>
+        ${msg}
+    `;
+
+    container.appendChild(el);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+            el.remove();
+            toastActive = false; // izinkan toast baru
+        }, 300);
+    }, 3000);
+}
     </script>
 
     <!-- FULLSCREEN LOADING OVERLAY -->

@@ -374,7 +374,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Status</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-white-800">Belum disetujui</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Belum disetujui</span>
                     </div>
                 </div>
 
@@ -466,7 +466,7 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
 async function loadStokKomoditas() {
 
   const kelurahanInput = document.getElementById('input-kelurahan');
-  const kelurahan = kelurahanInput.value.toLowerCase().trim();
+  let kelurahan = kelurahanInput.value.toLowerCase().trim();
 
  if (!kelurahan) kelurahan = "lainnya";
 
@@ -603,8 +603,10 @@ async function cekKTP() {
   }
 }
             
-            const katSelect = document.getElementById('input-kategori');
-            const containerSusu = document.getElementById('container-susu');
+            if (katSelect && containerSusu) {
+    checkSusuVisibility(katSelect.value);
+    katSelect.addEventListener('change', (e) => checkSusuVisibility(e.target.value));
+}
             
             const checkSusuVisibility = (val) => {
                 const susuCheckbox = containerSusu.querySelector('input');
@@ -679,9 +681,11 @@ async function cekKTP() {
 
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
+    method: 'POST',
+    headers: {
+        "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+});
 
         const result = await res.json();
         showGlobalLoading(false);

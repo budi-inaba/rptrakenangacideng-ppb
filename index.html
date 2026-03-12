@@ -517,22 +517,13 @@ const inputATM = document.getElementById('input-atm');
 
 inputATM.addEventListener('input', function(e) {
 
-  let value = e.target.value.replace(/\D/g, ''); // hanya angka
+  let value = e.target.value.replace(/\D/g, '');
 
-  if (value.length > 18) {
-    value = value.slice(0, 18);
-  }
+  // maksimal 18 digit
+  value = value.substring(0,18);
 
-  // Format 4-4-4-4-2
-  const parts = [];
-
-  parts.push(value.substring(0,4));
-  parts.push(value.substring(4,8));
-  parts.push(value.substring(8,12));
-  parts.push(value.substring(12,16));
-  parts.push(value.substring(16,18));
-
-  const formatted = parts.filter(Boolean).join(' ');
+  // format otomatis tiap 4 digit
+  const formatted = value.match(/.{1,4}/g)?.join(' ') || '';
 
   e.target.value = formatted;
 

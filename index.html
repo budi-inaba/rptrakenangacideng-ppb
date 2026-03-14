@@ -57,7 +57,7 @@
 
 <!-- COVER OPERASIONAL -->
 <div id="operasional-cover"
-     class="fixed inset-0 z-[999] hidden flex-col relative">
+     class="fixed inset-0 z-[999] hidden flex flex-col relative">
 
   <!-- Background Gradient -->
   <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-fuchsia-600 to-purple-700"></div>
@@ -898,7 +898,6 @@ function cekJamOperasional() {
   } else {
     // ❌ TUTUP → Cover muncul
     cover.classList.remove('hidden');
-    cover.classList.add('flex');
   }
 }
 

@@ -895,9 +895,11 @@ function cekJamOperasional() {
   if (tanggalSesuai && jamSesuai) {
     // ✅ BUKA → Cover hilang
     cover.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
   } else {
     // ❌ TUTUP → Cover muncul
     cover.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
   }
 }
 

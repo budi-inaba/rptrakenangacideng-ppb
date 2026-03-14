@@ -904,7 +904,10 @@ function cekJamOperasional() {
 }
 
 // Jalankan saat halaman load
-document.addEventListener('DOMContentLoaded', cekJamOperasional);
+document.addEventListener('DOMContentLoaded', () => {
+  cekJamOperasional();
+  setInterval(cekJamOperasional, 30000);
+});
 
     // ===============================
 // AUTO MODE VERIFIKASI

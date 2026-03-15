@@ -508,8 +508,11 @@ async function loadStokKomoditas() {
       if (oldBadge) oldBadge.remove();
 
       if (stok <= 0) {
-
+        // disable checkbox
         cb.disabled = true;
+
+        // jika sudah tercentang → otomatis dilepas
+        cb.checked = false;
 
         label.classList.add(
           'opacity-60',

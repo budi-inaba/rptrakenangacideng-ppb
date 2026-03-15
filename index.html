@@ -494,11 +494,15 @@ async function loadStokKomoditas() {
 
     checkboxes.forEach(cb => {
 
-      const nama = cb.value;
+    const nama = cb.value.toLowerCase();
 
-      const stok = data.data[nama]
-        ? data.data[nama][kategori]
-        : 0;
+    let stok = 0;
+
+    Object.keys(data.data).forEach(key => {
+    if (key.toLowerCase() === nama) {
+    stok = data.data[key][kategori] || 0;
+  }
+});
 
       const label = cb.closest('label');
       const textSpan = label.querySelector('span');

@@ -1128,6 +1128,7 @@ document.getElementById('preview-crop').classList.remove('hidden');
         const text = result.data.text;
         // ✅ DEBUG WAJIB DI SINI
         console.log("TEXT OCR:", text);
+        console.log("CHAR COUNT:", text.length);
 
         status.innerText = "✅ Scan selesai (auto crop aktif)";
 

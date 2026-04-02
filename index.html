@@ -1126,6 +1126,8 @@ document.getElementById('preview-crop').classList.remove('hidden');
     try {
         const result = await Tesseract.recognize(canvas, 'ind');
         const text = result.data.text;
+        // ✅ DEBUG WAJIB DI SINI
+        console.log("TEXT OCR:", text);
 
         console.log("HASIL OCR:", text);
 

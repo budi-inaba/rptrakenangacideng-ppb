@@ -1132,9 +1132,9 @@ async function captureImage() {
     try {
 
         const result = await Tesseract.recognize(canvas, 'ind', {
-            logger: m => console.log(m)
-        });
-
+    tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    logger: m => console.log(m)
+});
         const text = result.data.text;
 
         // ✅ DEBUG

@@ -1144,31 +1144,36 @@ document.getElementById('preview-crop').classList.remove('hidden');
 // =======================
 function prosesHasilOCR(text) {
 
-    // ambil angka 16 digit (KK / NIK)
-    const regex16 = /\b\d{16}\b/g;
-    const found = text.match(regex16);
+    console.log("TEXT OCR:", text); // debug
 
-    if (!found) {
-        showToast("Tidak menemukan NIK/KK", "error");
+    const nik = extractNIK(text);
+
+    if (!nik) {
+        showToast("NIK tidak terbaca, coba ulang scan", "error");
         return;
     }
 
-    // isi otomatis
-    if (found[0]) {
-        document.getElementById('input-ktp').value = found[0];
-        cekKTP();
+    // isi ke KTP
+    document.getElementById('input-ktp').value = nik;
+    cekKTP();
+
+    // coba ambil KK (kalau ada lebih dari 1 angka)
+    const semuaAngka = text.match(/\d{10,20}/g);
+
+    if (semuaAngka && semuaAngka.length > 1) {
+        const kk = semuaAngka.find(n => n.length === 16 && n !== nik);
+        if (kk) {
+            document.getElementById('input-kk').value = kk;
+            cekKK();
+        }
     }
 
-    if (found[1]) {
-        document.getElementById('input-kk').value = found[1];
-        cekKK();
-    }
-
-    // ambil nama (heuristik sederhana)
+    // ambil nama (lebih fleksibel)
     const namaMatch = text.match(/Nama\s*[:\-]?\s*([A-Z\s]+)/i);
 
     if (namaMatch) {
-        document.getElementById('input-nama_pengisi').value = namaMatch[1].trim();
+        document.getElementById('input-nama_pengisi').value =
+            namaMatch[1].trim();
     }
 
     showToast("Data berhasil diambil dari scan");

@@ -1179,6 +1179,27 @@ function prosesHasilOCR(text) {
     showToast("Data berhasil diambil dari scan");
 }
 
+    function extractNIK(text) {
+
+    // perbaiki kesalahan OCR umum
+    text = text
+        .replace(/O/g, '0')
+        .replace(/I/g, '1')
+        .replace(/l/g, '1')
+        .replace(/B/g, '8')
+        .replace(/\s/g, '');
+
+    const matches = text.match(/\d{10,20}/g);
+
+    if (!matches) return null;
+
+    for (let m of matches) {
+        if (m.length === 16) return m;
+    }
+
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
 </script>

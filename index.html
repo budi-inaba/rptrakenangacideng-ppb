@@ -254,7 +254,13 @@
         Scan KTP / KK (Opsional)
     </label>
 
-    <video id="camera" class="w-full rounded-lg border mb-3" autoplay playsinline></video>
+    <div class="relative">
+        <video id="camera" class="w-full rounded-lg border mb-3" autoplay playsinline></video>
+
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="border-2 border-white w-[85%] aspect-[1.6/1] rounded-lg shadow-lg"></div>
+        </div>
+    </div>
 
     <canvas id="canvas" class="hidden"></canvas>
 

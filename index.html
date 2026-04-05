@@ -482,37 +482,45 @@
     verifikasi: document.getElementById('view-verifikasi')
 };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+       document.addEventListener('DOMContentLoaded', () => {
 
-            function debounce(func, delay) {
+    // init icon
+    lucide.createIcons();
 
-  let timer;
+    // jalankan mode verifikasi (QR)
+    cekModeVerifikasi();
 
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
-  };
+    // debounce function
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
-}
     // =========================
-    // CEK KK OTOMATIS
+    // EVENT LISTENER INPUT
     // =========================
-document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 600));
-document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
-document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
+    document.getElementById('input-kk')
+        .addEventListener('input', debounce(cekKK, 600));
 
-    // jalankan cek stok saat halaman dibuka
+    document.getElementById('input-ktp')
+        .addEventListener('input', debounce(cekKTP, 600));
+
+    document.getElementById('input-atm')
+        .addEventListener('input', debounce(cekATM, 600));
+
+    // =========================
+    // LOAD STOK
+    // =========================
     loadStokKomoditas();
-    // 🔄 update stok otomatis setiap 30 detik
     setInterval(loadStokKomoditas, 30000);
 
-    // jalankan lagi jika kelurahan berubah
     document.getElementById('input-kelurahan')
-      .addEventListener('change', loadStokKomoditas);
+        .addEventListener('change', loadStokKomoditas);
 
 });
-
 
 /* =================================
    CEK STOK KOMODITAS

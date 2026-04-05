@@ -1189,6 +1189,35 @@ function detectKKFromBlocks(data) {
 
     return null;
 }
+    function detectKKFromBlocks(data) {
+
+    const words = data.words;
+
+    for (let i = 0; i < words.length; i++) {
+
+        const w = words[i].text.toUpperCase();
+
+        if (w.includes("NO") || w.includes("KK") || w.includes("KELUARGA")) {
+
+            for (let j = i; j < i + 10 && j < words.length; j++) {
+
+                const candidate = words[j].text.replace(/\D/g, '');
+
+                if (candidate.length === 16) {
+
+                    console.log("KK dari posisi:", candidate);
+
+                    // 🔥 HIGHLIGHT POSISI
+                    drawBox(words[j]);
+
+                    return candidate;
+                }
+            }
+        }
+    }
+
+    return null;
+}
     
 // =======================
 // EKSTRAK DATA DARI OCR

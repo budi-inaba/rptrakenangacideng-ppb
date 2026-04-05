@@ -1155,39 +1155,56 @@ async function captureImage() {
 // =======================
 function prosesHasilOCR(text) {
 
-    console.log("TEXT OCR:", text); // debug
+    console.log("TEXT OCR:", text);
 
-    const nik = extractNIK(text);
+    // =========================
+    // NORMALISASI TEXT OCR
+    // =========================
+    const cleanText = text
+        .replace(/\s+/g, ' ')
+        .replace(/O/g, '0')   // huruf O → angka 0
+        .replace(/I/g, '1')   // huruf I → angka 1
+        .replace(/l/g, '1');
 
-    if (!nik) {
-        showToast("NIK tidak terbaca, coba ulang scan", "error");
-        return;
+    // =========================
+    // 🎯 PRIORITAS: CARI "NO KK"
+    // =========================
+    let kk = null;
+
+    const kkMatch = cleanText.match(/(NO\.?\s*KK|KARTU\s*KELUARGA)[^\d]*(\d{16})/i);
+
+    if (kkMatch) {
+        kk = kkMatch[2];
+        console.log("KK ditemukan dari label:", kk);
     }
 
-    // isi ke KTP
-    document.getElementById('input-ktp').value = nik;
-    cekKTP();
+    // =========================
+    // 🔄 FALLBACK: AMBIL ANGKA 16 DIGIT
+    // =========================
+    if (!kk) {
+        const allNumbers = cleanText.match(/\d{16}/g);
 
-    // coba ambil KK (kalau ada lebih dari 1 angka)
-    const semuaAngka = text.match(/\d{10,20}/g);
-
-    if (semuaAngka && semuaAngka.length > 1) {
-        const kk = semuaAngka.find(n => n.length === 16 && n !== nik);
-        if (kk) {
-            document.getElementById('input-kk').value = kk;
-            cekKK();
+        if (allNumbers && allNumbers.length > 0) {
+            kk = allNumbers[0]; // ambil pertama
+            console.log("KK fallback:", kk);
         }
     }
 
-    // ambil nama (lebih fleksibel)
-    const namaMatch = text.match(/Nama\s*[:\-]?\s*([A-Z\s]+)/i);
-
-    if (namaMatch) {
-        document.getElementById('input-nama_pengisi').value =
-            namaMatch[1].trim();
+    // =========================
+    // ❌ JIKA TIDAK ADA
+    // =========================
+    if (!kk) {
+        showToast("No. KK tidak terbaca, coba ulang scan", "error");
+        return;
     }
 
-    showToast("Data berhasil diambil dari scan");
+    // =========================
+    // ✅ AUTO ISI FORM KK
+    // =========================
+    document.getElementById('input-kk').value = kk;
+    cekKK();
+
+    showToast("No. KK berhasil terbaca dari scan");
 }
 
     function extractNIK(text) {

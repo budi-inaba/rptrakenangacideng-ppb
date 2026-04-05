@@ -122,6 +122,14 @@
               </div>
               <span id="v-kk" class="font-mono text-slate-800"></span>
             </div>
+
+           <div class="data-row flex justify-between items-center py-1">
+            <div class="flex items-center gap-2.5">
+            <i data-lucide="map-pin" class="w-4.5 h-4.5 text-indigo-500"></i>
+            <span class="text-gray-600">Kelurahan</span>
+            </div>
+            <span id="v-kelurahan" class="font-medium text-slate-800"></span>
+          </div>
            
             <div class="data-row flex justify-between items-center py-1">
               <div class="flex items-center gap-2.5">
@@ -272,6 +280,7 @@
   document.getElementById('v-waktu').textContent = data.waktu || "—";
   document.getElementById('v-id').textContent = data.id || "—";
   document.getElementById('v-kk').textContent = data.kk || "—";
+  document.getElementById('v-kelurahan').textContent = data.kelurahan || "—";
   document.getElementById('v-nama').textContent = data.nama || "—";
   document.getElementById('v-kategori').textContent = data.kategori || "—";
   document.getElementById('v-produk').textContent = data.produk || "—";

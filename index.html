@@ -1157,37 +1157,7 @@ if (kk) {
     // =======================
 // 🔥 DETEKSI KK (AI STYLE)
 // =======================
-function detectKKFromBlocks(data) {
 
-    const words = data.words;
-
-    let kandidatKK = null;
-
-    for (let i = 0; i < words.length; i++) {
-
-        const w = words[i].text.toUpperCase();
-
-        // =========================
-        // 🎯 DETEKSI KATA KUNCI
-        // =========================
-        if (w.includes("NO") || w.includes("KK") || w.includes("KELUARGA")) {
-
-            // ambil kata di sekitar (kanan / bawah)
-            for (let j = i; j < i + 10 && j < words.length; j++) {
-
-                const candidate = words[j].text.replace(/\D/g, '');
-
-                if (candidate.length === 16) {
-                    kandidatKK = candidate;
-                    console.log("KK dari posisi:", kandidatKK);
-                    return kandidatKK;
-                }
-            }
-        }
-    }
-
-    return null;
-}
     function detectKKFromBlocks(data) {
 
     const words = data.words;

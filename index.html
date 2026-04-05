@@ -1135,7 +1135,8 @@ async function captureImage() {
     tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     logger: m => console.log(m)
 });
-        const text = result.data.text;
+
+const data = result.data;
 
         // ✅ DEBUG
         console.log("TEXT OCR:", text);

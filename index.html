@@ -1138,15 +1138,19 @@ async function captureImage() {
 
 const data = result.data;
 
-        // ✅ DEBUG
-        console.log("TEXT OCR:", text);
-        console.log("CHAR COUNT:", text.length);
+// 🎯 DETEKSI POSISI KK
+const kk = detectKKFromBlocks(data);
 
-        status.innerText = "✅ Scan selesai";
+if (kk) {
+    document.getElementById('input-kk').value = kk;
+    cekKK();
+    showToast("KK terdeteksi otomatis (AI)");
+} else {
+    // fallback ke cara lama
+    prosesHasilOCR(data.text);
+}
 
-        prosesHasilOCR(text);
-
-    } catch (err) {
+     catch (err) {
         status.innerText = "❌ Gagal OCR";
     }
 }

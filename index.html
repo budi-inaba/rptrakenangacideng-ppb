@@ -11,9 +11,6 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- LIBRARY TESSERACT -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
     <style>
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
@@ -150,7 +147,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNNfqbdFQOANEiqTJDDkmlYXSUUrJmosSCeprorzIYUa07L5Rji5DRCKgg9bXmYeZw/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWSwv2RYhoyy7o9ODC7pp8qR_Wg_7EGRTAS2opX7pW_cw3CtE8XxNnJXOZqLQQzbN-/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -247,40 +244,6 @@
                             <p id="error-ktp" class="hidden text-red-600 text-xs mt-1 font-medium">No. KTP sudah ada</p>
                         </div>
                     </div>
-
-                    <!-- SCAN KTP / KK -->
-<div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-    <label class="block text-sm font-medium text-gray-700 mb-2">
-        Scan KTP / KK (Opsional)
-    </label>
-
-    <div class="relative">
-        <video id="camera" class="w-full rounded-lg border mb-3" autoplay playsinline></video>
-
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="border-2 border-white w-[85%] aspect-[1.6/1] rounded-lg shadow-lg"></div>
-        </div>
-    </div>
-
-    <canvas id="canvas" class="hidden"></canvas>
-
-    <!-- DEBUG HASIL CROP -->
-<img id="preview-crop" class="mt-3 rounded-lg border hidden"/>
-
-    <div class="flex gap-2">
-        <button type="button" onclick="startCamera()" 
-            class="flex-1 bg-green-600 text-white py-2 rounded-lg">
-            Buka Kamera
-        </button>
-
-        <button type="button" onclick="captureImage()" 
-            class="flex-1 bg-blue-600 text-white py-2 rounded-lg">
-            Scan OCR
-        </button>
-    </div>
-
-    <p id="ocr-status" class="text-xs text-gray-500 mt-2"></p>
-</div>
 
                     <!-- Nama Kartu & ATM -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -470,57 +433,43 @@
         let currentView = 'form';
         let registeredData = null;
 
-        function stopCamera() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-    }
-}
-
         const views = {
     form: document.getElementById('view-form'),
     review: document.getElementById('view-review'),
     verifikasi: document.getElementById('view-verifikasi')
 };
 
-       document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
 
-    // init icon
-    lucide.createIcons();
+            function debounce(func, delay) {
 
-    // jalankan mode verifikasi (QR)
-    cekModeVerifikasi();
+  let timer;
 
-    // debounce function
-    function debounce(func, delay) {
-        let timer;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
 
+}
     // =========================
-    // EVENT LISTENER INPUT
+    // CEK KK OTOMATIS
     // =========================
-    document.getElementById('input-kk')
-        .addEventListener('input', debounce(cekKK, 600));
+document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 600));
+document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
+document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
 
-    document.getElementById('input-ktp')
-        .addEventListener('input', debounce(cekKTP, 600));
-
-    document.getElementById('input-atm')
-        .addEventListener('input', debounce(cekATM, 600));
-
-    // =========================
-    // LOAD STOK
-    // =========================
+    // jalankan cek stok saat halaman dibuka
     loadStokKomoditas();
+    // 🔄 update stok otomatis setiap 30 detik
     setInterval(loadStokKomoditas, 30000);
 
+    // jalankan lagi jika kelurahan berubah
     document.getElementById('input-kelurahan')
-        .addEventListener('change', loadStokKomoditas);
+      .addEventListener('change', loadStokKomoditas);
 
 });
+
 
 /* =================================
    CEK STOK KOMODITAS
@@ -722,7 +671,6 @@ katSelect.addEventListener('change', function(e){
             document.getElementById('input-ktp').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
 
         function switchView(viewName) {
-            stopCamera();
             currentView = viewName;
             Object.values(views).forEach(el => el.classList.add('hidden-view'));
             views[viewName].classList.remove('hidden-view');
@@ -910,11 +858,11 @@ function showToast(msg, type = 'success') {
 // KONFIGURASI JADWAL (SAMA DENGAN APPS SCRIPT)
 // ================================
 const OPERASIONAL_TAHUN  = 2026;
-const OPERASIONAL_BULAN  = 4;  // April
-const OPERASIONAL_TANGGAL = 5;
+const OPERASIONAL_BULAN  = 3;  // Maret
+const OPERASIONAL_TANGGAL = 15;
 
 const JAM_BUKA  = 8;   // 08.00 WIB
-const JAM_TUTUP = 23;  // 23.00 WIB
+const JAM_TUTUP = 11;  // 11.00 WIB
 
 
 function cekJamOperasional() {
@@ -1058,237 +1006,7 @@ function tampilkanTidakValid(pesan) {
   lucide.createIcons();
 }
 
-let stream = null;
-
-// =======================
-// START CAMERA
-// =======================
-async function startCamera() {
-    const video = document.getElementById('camera');
-
-    try {
-        stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
-        });
-
-        video.srcObject = stream;
-
-    } catch (err) {
-        alert("Kamera tidak bisa diakses");
-    }
-}
-
-// =======================
-// CAPTURE + OCR
-// =======================
-async function captureImage() {
-
-    const video = document.getElementById('camera');
-    const canvas = document.getElementById('canvas');
-    const preview = document.getElementById('preview-crop');
-    const status = document.getElementById('ocr-status');
-
-    const ctx = canvas.getContext('2d');
-
-    const vw = video.videoWidth;
-    const vh = video.videoHeight;
-
-    // =========================
-    // 🎯 AUTO CROP AREA KTP
-    // =========================
-    const cropWidth = vw * 0.85;
-    const cropHeight = cropWidth / 1.6;
-
-    const startX = (vw - cropWidth) / 2;
-    const startY = (vh - cropHeight) / 2;
-
-    canvas.width = cropWidth;
-    canvas.height = cropHeight;
-
-    ctx.drawImage(
-        video,
-        startX, startY, cropWidth, cropHeight,
-        0, 0, cropWidth, cropHeight
-    );
-
-    // =========================
-    // 🌈 ENHANCE RINGAN (WARNA TETAP)
-    // =========================
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-
-        // boost kontras ringan (tanpa grayscale)
-        data[i]     = Math.min(255, data[i] * 1.15); // R
-        data[i + 1] = Math.min(255, data[i + 1] * 1.15); // G
-        data[i + 2] = Math.min(255, data[i + 2] * 1.15); // B
-
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-
-    // =========================
-    // 🖼️ PREVIEW WARNA ASLI
-    // =========================
-    preview.src = canvas.toDataURL();
-    preview.classList.remove('hidden');
-
-    status.innerText = "🔍 OCR sedang diproses...";
-
-    try {
-
-        const result = await Tesseract.recognize(canvas, 'ind', {
-    tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    logger: m => console.log(m)
-});
-
-const data = result.data;
-
-// 🎯 DETEKSI POSISI KK
-const kk = detectKKFromBlocks(data);
-
-if (kk) {
-    document.getElementById('input-kk').value = kk;
-    cekKK();
-    showToast("KK terdeteksi otomatis (AI)");
-} else {
-    // fallback ke cara lama
-    prosesHasilOCR(data.text);
-}
-
-    } catch (err) {
-        status.innerText = "❌ Gagal OCR";
-    }
-}
-
-    function drawBox(word) {
-
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-
-    ctx.strokeRect(
-        word.bbox.x0,
-        word.bbox.y0,
-        word.bbox.x1 - word.bbox.x0,
-        word.bbox.y1 - word.bbox.y0
-    );
-}
-    
-    // =======================
-// 🔥 DETEKSI KK (AI STYLE)
-// =======================
-
-    function detectKKFromBlocks(data) {
-
-    const words = data.words;
-
-    for (let i = 0; i < words.length; i++) {
-
-        const w = words[i].text.toUpperCase();
-
-        if (w.includes("NO") || w.includes("KK") || w.includes("KELUARGA")) {
-
-            for (let j = i; j < i + 10 && j < words.length; j++) {
-
-                const candidate = words[j].text.replace(/\D/g, '');
-
-                if (candidate.length === 16) {
-
-                    console.log("KK dari posisi:", candidate);
-
-                    // 🔥 HIGHLIGHT POSISI
-                    drawBox(words[j]);
-
-                    return candidate;
-                }
-            }
-        }
-    }
-
-    return null;
-}
-    
-// =======================
-// EKSTRAK DATA DARI OCR
-// =======================
-function prosesHasilOCR(text) {
-
-    console.log("TEXT OCR:", text);
-
-    // =========================
-    // NORMALISASI TEXT OCR
-    // =========================
-    const cleanText = text
-        .replace(/\s+/g, ' ')
-        .replace(/O/g, '0')   // huruf O → angka 0
-        .replace(/I/g, '1')   // huruf I → angka 1
-        .replace(/l/g, '1');
-
-    // =========================
-    // 🎯 PRIORITAS: CARI "NO KK"
-    // =========================
-    let kk = null;
-
-    const kkMatch = cleanText.match(/(NO\.?\s*KK|KARTU\s*KELUARGA)[^\d]*(\d{16})/i);
-
-    if (kkMatch) {
-        kk = kkMatch[2];
-        console.log("KK ditemukan dari label:", kk);
-    }
-
-    // =========================
-    // 🔄 FALLBACK: AMBIL ANGKA 16 DIGIT
-    // =========================
-    if (!kk) {
-        const allNumbers = cleanText.match(/\d{16}/g);
-
-        if (allNumbers && allNumbers.length > 0) {
-            kk = allNumbers[0]; // ambil pertama
-            console.log("KK fallback:", kk);
-        }
-    }
-
-    // =========================
-    // ❌ JIKA TIDAK ADA
-    // =========================
-    if (!kk) {
-        showToast("No. KK tidak terbaca, coba ulang scan", "error");
-        return;
-    }
-
-    // =========================
-    // ✅ AUTO ISI FORM KK
-    // =========================
-    document.getElementById('input-kk').value = kk;
-    cekKK();
-
-    showToast("No. KK berhasil terbaca dari scan");
-}
-
-    function extractNIK(text) {
-
-    // perbaiki kesalahan OCR umum
-    text = text
-        .replace(/O/g, '0')
-        .replace(/I/g, '1')
-        .replace(/l/g, '1')
-        .replace(/B/g, '8')
-        .replace(/\s/g, '');
-
-    const matches = text.match(/\d{10,20}/g);
-
-    if (!matches) return null;
-
-    for (let m of matches) {
-        if (m.length === 16) return m;
-    }
-
-    return null;
-}
+document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
 </script>
     

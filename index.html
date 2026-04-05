@@ -418,6 +418,7 @@
         <div><strong>ID:</strong> <span id="v-id"></span></div>
         <div><strong>Nama:</strong> <span id="v-nama"></span></div>
         <div><strong>KK:</strong> <span id="v-kk"></span></div>
+        <div><strong>Kelurahan:</strong> <span id="v-kelurahan"></span></div>
         <div><strong>Produk:</strong> <span id="v-produk"></span></div>
         <div><strong>Status:</strong> <span id="v-status"></span></div>
       </div>
@@ -986,6 +987,7 @@ function isiDataVerifikasi(data) {
   document.getElementById('v-id').textContent = data.id;
   document.getElementById('v-nama').textContent = data.nama_pemilik;
   document.getElementById('v-kk').textContent = data.kk;
+  document.getElementById('v-kelurahan').textContent = data.kelurahan;
   document.getElementById('v-produk').textContent = data.produk;
   document.getElementById('v-status').textContent = data.status;
 

@@ -575,19 +575,30 @@ async function cekKK() {
 
   if (kk.length !== 16) return;
 
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKK&kk=${kk}`);
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKDetail&kk=${kk}`);
   const data = await res.json();
 
-  const input = document.getElementById('input-kk');
+  const inputKK = document.getElementById('input-kk');
+  const inputKelurahan = document.getElementById('input-kelurahan');
   const error = document.getElementById('error-kk');
 
-  if (data.terdaftar) {
+  if (!data.ditemukan) {
+    error.textContent = "KK tidak terdaftar di database";
     error.classList.remove('hidden');
-    input.classList.add('input-error');
-  } else {
-    error.classList.add('hidden');
-    input.classList.remove('input-error');
+    inputKK.classList.add('input-error');
+
+    inputKelurahan.value = "";
+    return;
   }
+
+  // ✅ AUTO ISI KELURAHAN DARI DATABASE
+  inputKelurahan.value = data.kelurahan;
+
+  // 🔒 OPTIONAL: LOCK AGAR TIDAK BISA DIUBAH
+  inputKelurahan.setAttribute("readonly", true);
+
+  error.classList.add('hidden');
+  inputKK.classList.remove('input-error');
 }
             
 async function cekKTP() {

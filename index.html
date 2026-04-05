@@ -1164,8 +1164,12 @@ function detectKKFromBlocks(data) {
 
         const w = words[i].text.toUpperCase();
 
+        // =========================
+        // 🎯 DETEKSI KATA KUNCI
+        // =========================
         if (w.includes("NO") || w.includes("KK") || w.includes("KELUARGA")) {
 
+            // ambil kata di sekitar (kanan / bawah)
             for (let j = i; j < i + 10 && j < words.length; j++) {
 
                 const candidate = words[j].text.replace(/\D/g, '');

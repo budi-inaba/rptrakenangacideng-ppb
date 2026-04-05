@@ -1154,6 +1154,22 @@ if (kk) {
     }
 }
 
+    function drawBox(word) {
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+
+    ctx.strokeRect(
+        word.bbox.x0,
+        word.bbox.y0,
+        word.bbox.x1 - word.bbox.x0,
+        word.bbox.y1 - word.bbox.y0
+    );
+}
+    
     // =======================
 // 🔥 DETEKSI KK (AI STYLE)
 // =======================

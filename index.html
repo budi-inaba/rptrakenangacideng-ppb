@@ -763,6 +763,24 @@ katSelect.addEventListener('change', function(e){
         renderReview();
         switchView('review');
         showToast('Pendaftaran berhasil !');
+        
+        const qrImg = document.getElementById("qr-image");
+
+qrImg.onload = async () => {
+
+  const imageBase64 = await generateImageReview();
+
+  await fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: "kirimWAImage",
+      wa: payload.wa,
+      image: imageBase64,
+      id: result.id
+    })
+  });
+
+};
         e.target.reset();
 
     } catch (err) {

@@ -590,13 +590,15 @@ async function cekKK() {
   const error = document.getElementById('error-kk');
 
   if (!data.ditemukan) {
-    error.textContent = "KK tidak terdaftar di database";
-    error.classList.remove('hidden');
-    inputKK.classList.add('input-error');
+  error.textContent = "KK tidak terdaftar, silahkan isi kelurahan manual";
+  error.classList.remove('hidden');
+  inputKK.classList.add('input-error');
 
-    inputKelurahan.value = "";
-    return;
-  }
+  // ✅ IZINKAN INPUT MANUAL
+  inputKelurahan.removeAttribute("readonly");
+
+  return;
+}
 
   // ✅ AUTO ISI KELURAHAN DARI DATABASE
   inputKelurahan.value = data.kelurahan;

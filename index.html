@@ -147,7 +147,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgfYkpdnnxmkVqC5NKUDYk9T8h5Ss9us_mtRndb_mYy2jcoXB49zj4MfIQCCg4fTEN/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZQw9jxKt6Woy3RTFQ2cXt4zNoPP4C2RZefi_pNEC8GjxMR5sjFToGDcL-CeihnakS/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -236,7 +236,6 @@
                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition capitalize"
                                 placeholder="Masukkan Nama Anda">
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">No. KTP (16 digit)</label>
                             <input type="text" name="ktp" id="input-ktp" maxlength="16" required
@@ -244,14 +243,6 @@
                                 placeholder="Masukkan No. KTP Anda">
                             <p id="error-ktp" class="hidden text-red-600 text-xs mt-1 font-medium">No. KTP sudah ada</p>
                         </div>
-                    </div>
-                    
-                    <!-- input nomor WhatsApp -->
-                        <div>
-                          <label class="block text-sm font-medium text-gray-700 mb-1">No WhatsApp</label>
-                          <input type="text" id="input-wa" required
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300"
-                            placeholder="Contoh: 08123456789">
                     </div>
 
                     <!-- Nama Kartu & ATM -->
@@ -262,7 +253,6 @@
                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition capitalize"
                                 placeholder="Nama sesuai kartu ATM">
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">No. Kartu ATM (16 atau 18 digit)</label>
                             <input type="text" name="atm" id="input-atm" maxlength="23" required 
@@ -332,7 +322,7 @@
 
         <!-- VIEW: REVIEW & QR -->
         <div id="view-review" class="max-w-md mx-auto py-10 px-4 hidden-view fade-in">
-            <div id="area-review" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden text-center p-8">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden text-center p-8">
                 <div class="logo-container mb-4 opacity-50">
                     <!-- Updated Logo Path -->
                     <img src="logo-rptra.png" 
@@ -592,39 +582,17 @@ async function cekKK() {
 
   if (kk.length !== 16) return;
 
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKDetail&kk=${kk}`);
+  const data = await res.json();
+
   const inputKK = document.getElementById('input-kk');
   const inputKelurahan = document.getElementById('input-kelurahan');
   const error = document.getElementById('error-kk');
 
-  // 1️⃣ CEK MASTER (VALIDASI KK)
-  const res1 = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKDetail&kk=${kk}`);
-  const data1 = await res1.json();
-
-  if (!data1.ditemukan) {
+  if (!data.ditemukan) {
     error.textContent = "KK tidak terdaftar di database";
     error.classList.remove('hidden');
     inputKK.classList.add('input-error');
-    inputKelurahan.value = "";
-    return;
-  }
-
-  // auto isi kelurahan
-  inputKelurahan.value = data1.kelurahan;
-  inputKelurahan.setAttribute("readonly", true);
-
-  // 2️⃣ CEK DUPLIKAT
-  const res2 = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKTerdaftar&kk=${kk}`);
-  const data2 = await res2.json();
-
-  if (data2.terdaftar) {
-    error.textContent = "No. Kartu Keluarga sudah ada";
-    error.classList.remove('hidden');
-    inputKK.classList.add('input-error');
-  } else {
-    error.classList.add('hidden');
-    inputKK.classList.remove('input-error');
-  }
-}
 
     inputKelurahan.value = "";
     return;
@@ -729,11 +697,6 @@ katSelect.addEventListener('change', function(e){
 
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();
-            
-            if (document.getElementById('error-kk').classList.contains('hidden') === false) {
-    showToast('KK sudah terdaftar', 'error');
-    return;
-  }
 
             const btn = document.getElementById('btn-submit');
 
@@ -757,8 +720,7 @@ katSelect.addEventListener('change', function(e){
         nama_pemilik: document.getElementById('input-nama_pemilik').value.trim(),
         atm: document.getElementById('input-atm').value.replace(/\s/g,''),
         kategori: document.getElementById('input-kategori').value,
-        produk: checkedKomoditas.join(', '),
-        wa: document.getElementById('input-wa').value
+        produk: checkedKomoditas.join(', ')
     };
 
     if (
@@ -792,24 +754,6 @@ katSelect.addEventListener('change', function(e){
         renderReview();
         switchView('review');
         showToast('Pendaftaran berhasil !');
-        
-        const qrImg = document.getElementById("qr-image");
-
-qrImg.onload = async () => {
-
-  const imageBase64 = await generateImageReview();
-
-  await fetch(GOOGLE_SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: "kirimWAImage",
-      wa: payload.wa,
-      image: imageBase64,
-      id: result.id
-    })
-  });
-
-};
         e.target.reset();
 
     } catch (err) {
@@ -858,20 +802,7 @@ function getWaktuOperasionalText() {
             document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;
 }
-        
-// =========================//Fungsi Screenshoot// =========================
-        async function generateImageReview() {
 
-  const element = document.getElementById("area-review");
-
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true
-  });
-
-  return canvas.toDataURL("image/png");
-}
-        
         function toggleLoading(isLoading, btnId) {
             const btn = document.getElementById(btnId);
             const loader = document.getElementById('loading-indicator');
@@ -1098,6 +1029,6 @@ function tampilkanTidakValid(pesan) {
 document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
 </script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>   
+    
 </body>
 </html>

@@ -729,6 +729,11 @@ katSelect.addEventListener('change', function(e){
 
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();
+            
+            if (document.getElementById('error-kk').classList.contains('hidden') === false) {
+    showToast('KK sudah terdaftar', 'error');
+    return;
+  }
 
             const btn = document.getElementById('btn-submit');
 

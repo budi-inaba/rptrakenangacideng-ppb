@@ -728,7 +728,8 @@ katSelect.addEventListener('change', function(e){
         nama_pemilik: document.getElementById('input-nama_pemilik').value.trim(),
         atm: document.getElementById('input-atm').value.replace(/\s/g,''),
         kategori: document.getElementById('input-kategori').value,
-        produk: checkedKomoditas.join(', ')
+        produk: checkedKomoditas.join(', '),
+        wa: document.getElementById('input-wa').value
     };
 
     if (

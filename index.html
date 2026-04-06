@@ -710,11 +710,12 @@ katSelect.addEventListener('change', function(e){
 
             const btn = document.getElementById('btn-submit');
 
-            if (
+if (
+  document.getElementById('error-kk').classList.contains('hidden') === false ||
   document.getElementById('error-ktp').classList.contains('hidden') === false ||
   document.getElementById('error-atm').classList.contains('hidden') === false
 ) {
-  showToast('Periksa kembali data yang sudah terdaftar', 'error');
+  showToast('Data sudah terdaftar (KK / KTP / ATM)', 'error');
   return;
 }
     const checkedKomoditas = [...document.querySelectorAll('input[name="komoditas"]:checked')]

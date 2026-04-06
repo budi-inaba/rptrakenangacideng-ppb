@@ -608,6 +608,8 @@ async function cekKK() {
 
   // 🔒 OPTIONAL: LOCK AGAR TIDAK BISA DIUBAH
   inputKelurahan.setAttribute("readonly", true);
+  // ✅ placeholder dari sistem
+  inputKelurahan.placeholder = "Kelurahan sesuai database";
 
   error.classList.add('hidden');
   inputKK.classList.remove('input-error');

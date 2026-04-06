@@ -602,16 +602,20 @@ async function cekKK() {
   }
 
   // ❌ TIDAK ADA DI MASTER
-  if (!data.ditemukan) {
-    error.textContent = "KK tidak terdaftar, silahkan isi kelurahan manual";
-    error.classList.remove('hidden');
-    inputKK.classList.add('input-error');
+if (!data.ditemukan) {
 
-    inputKelurahan.removeAttribute("readonly");
-    inputKelurahan.placeholder = "Silahkan isi kelurahan manual";
+  // buka input manual
+  inputKelurahan.removeAttribute("readonly");
 
-    return;
-  }
+  // optional placeholder
+  inputKelurahan.placeholder = "Isi kelurahan sesuai KK";
+
+  // 🔥 PENTING: HILANGKAN ERROR
+  error.classList.add('hidden');
+  inputKK.classList.remove('input-error');
+
+  return;
+}
 
   // ✅ DITEMUKAN DI MASTER
   inputKelurahan.value = data.kelurahan;

@@ -462,10 +462,7 @@
     // =========================
     // CEK KK OTOMATIS
     // =========================
-document.getElementById('input-kk').addEventListener('input', debounce(() => {
-  cekKK();          // cek ke MASTER_KK
-  cekKKDuplikat();  // cek duplikat di DATA
-}, 600));
+document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 600));
 document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
 document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
 

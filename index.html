@@ -583,35 +583,42 @@ async function cekKK() {
 
   const kk = document.getElementById('input-kk').value.trim();
 
-  if (kk.length !== 16) return;
-
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKDetail&kk=${kk}`);
-  const data = await res.json();
-
   const inputKK = document.getElementById('input-kk');
   const inputKelurahan = document.getElementById('input-kelurahan');
   const error = document.getElementById('error-kk');
 
-  // ❌ KK TIDAK DITEMUKAN
+  if (kk.length !== 16) {
+    inputKelurahan.removeAttribute("readonly");
+    inputKelurahan.placeholder = "Contoh : Petojo Utara";
+    return;
+  }
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKLengkap&kk=${kk}`);
+  const data = await res.json();
+
+  // ❌ CEK DUPLIKAT DULU (PRIORITAS)
+  if (data.duplikat) {
+    error.textContent = "KK sudah pernah digunakan untuk pendaftaran";
+    error.classList.remove('hidden');
+    inputKK.classList.add('input-error');
+    return;
+  }
+
+  // ❌ TIDAK ADA DI MASTER
   if (!data.ditemukan) {
-  error.textContent = "KK tidak terdaftar, silahkan lanjut isi manual";
-  error.classList.remove('hidden');
-  inputKK.classList.add('input-error');
+    error.textContent = "KK tidak terdaftar, silahkan isi kelurahan manual";
+    error.classList.remove('hidden');
+    inputKK.classList.add('input-error');
 
-  // ✅ IZINKAN INPUT MANUAL
-  inputKelurahan.removeAttribute("readonly");
-  // ✅ placeholder manual
-  inputKelurahan.placeholder = "Silahkan isi kelurahan manual";
+    inputKelurahan.removeAttribute("readonly");
+    inputKelurahan.placeholder = "Silahkan isi kelurahan manual";
 
-  return;
-}
+    return;
+  }
 
-  // ✅ AUTO ISI KELURAHAN DARI DATABASE
+  // ✅ DITEMUKAN DI MASTER
   inputKelurahan.value = data.kelurahan;
-
-  // 🔒 OPTIONAL: LOCK AGAR TIDAK BISA DIUBAH
   inputKelurahan.setAttribute("readonly", true);
-  // ✅ placeholder dari sistem
   inputKelurahan.placeholder = "Kelurahan sesuai database";
 
   error.classList.add('hidden');
@@ -661,29 +668,7 @@ async function cekKTP() {
     input.classList.remove('input-error');
   }
 }
-
-        async function cekKKDuplikat() {
-
-  const kk = document.getElementById('input-kk').value.trim();
-
-  if (kk.length !== 16) return;
-
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKTerdaftar&kk=${kk}`);
-  const data = await res.json();
-
-  const input = document.getElementById('input-kk');
-  const error = document.getElementById('error-kk');
-
-  if (data.terdaftar) {
-    error.textContent = "No. Kartu Keluarga sudah terdaftar";
-    error.classList.remove('hidden');
-    input.classList.add('input-error');
-  } else {
-    error.classList.add('hidden');
-    input.classList.remove('input-error');
-  }
-}
-            
+  
     const katSelect = document.getElementById('input-kategori');
     const containerSusu = document.getElementById('container-susu');
 

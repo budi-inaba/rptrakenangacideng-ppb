@@ -707,9 +707,12 @@ katSelect.addEventListener('change', function(e){
 
             const btn = document.getElementById('btn-submit');
 
-            if (document.querySelector('.input-error')) {
-    showToast('Periksa kembali data yang sudah terdaftar', 'error');
-    return;
+            if (
+  document.getElementById('error-ktp').classList.contains('hidden') === false ||
+  document.getElementById('error-atm').classList.contains('hidden') === false
+) {
+  showToast('Periksa kembali data yang sudah terdaftar', 'error');
+  return;
 }
     const checkedKomoditas = [...document.querySelectorAll('input[name="komoditas"]:checked')]
         .map(c => c.value);

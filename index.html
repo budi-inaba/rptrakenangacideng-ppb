@@ -661,6 +661,28 @@ async function cekKTP() {
     input.classList.remove('input-error');
   }
 }
+
+        async function cekKKDuplikat() {
+
+  const kk = document.getElementById('input-kk').value.trim();
+
+  if (kk.length !== 16) return;
+
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKTerdaftar&kk=${kk}`);
+  const data = await res.json();
+
+  const input = document.getElementById('input-kk');
+  const error = document.getElementById('error-kk');
+
+  if (data.terdaftar) {
+    error.textContent = "No. Kartu Keluarga sudah terdaftar";
+    error.classList.remove('hidden');
+    input.classList.add('input-error');
+  } else {
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
+  }
+}
             
     const katSelect = document.getElementById('input-kategori');
     const containerSusu = document.getElementById('container-susu');

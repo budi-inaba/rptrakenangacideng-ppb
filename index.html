@@ -811,7 +811,20 @@ function getWaktuOperasionalText() {
             document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;
 }
+        
+// =========================//Fungsi Screenshoot// =========================
+        async function generateImageReview() {
 
+  const element = document.getElementById("area-review");
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true
+  });
+
+  return canvas.toDataURL("image/png");
+}
+        
         function toggleLoading(isLoading, btnId) {
             const btn = document.getElementById(btnId);
             const loader = document.getElementById('loading-indicator');

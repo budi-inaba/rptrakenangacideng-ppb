@@ -589,6 +589,7 @@ async function cekKK() {
   const inputKelurahan = document.getElementById('input-kelurahan');
   const error = document.getElementById('error-kk');
 
+  // ❌ KK TIDAK DITEMUKAN
   if (!data.ditemukan) {
   error.textContent = "KK tidak terdaftar, silahkan isi kelurahan manual";
   error.classList.remove('hidden');

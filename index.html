@@ -476,7 +476,7 @@
     form: document.getElementById('view-form'),
     review: document.getElementById('view-review'),
     verifikasi: document.getElementById('view-verifikasi'),
-    admin: document.getElementById('view-admin') // 🔥 TAMBAHAN
+    admin: document.getElementById('view-admin')
 };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -904,6 +904,52 @@ function showToast(msg, type = 'success') {
             toastActive = false; // izinkan toast baru
         }, 300);
     }, 3000);
+}
+
+        // ==========================
+// ADMIN: LOAD DATA
+// ==========================
+async function loadDataAdmin() {
+
+  const tbody = document.getElementById('admin-table');
+  tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
+
+  try {
+
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
+    const data = await res.json();
+
+    if (!data.success) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Gagal load data</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+
+    data.data.forEach(row => {
+
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td class="border p-2 font-mono">${row.id}</td>
+        <td class="border p-2">${row.nama}</td>
+        <td class="border p-2">${row.kk}</td>
+        <td class="border p-2">${row.kelurahan}</td>
+        <td class="border p-2 text-blue-600">${row.produk}</td>
+        <td class="border p-2 text-center">
+          <button onclick="hapusData('${row.id}')"
+            class="bg-red-600 text-white px-3 py-1 rounded text-xs">
+            Hapus
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error</td></tr>`;
+  }
 }
     </script>
 

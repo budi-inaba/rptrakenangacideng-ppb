@@ -967,6 +967,33 @@ async function loadDataAdmin() {
     tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error</td></tr>`;
   }
 }
+
+        async function updateProduk(id, produkBaru) {
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "updateProduk",
+        id: id,
+        produk: produkBaru
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast("Gagal update", 'error');
+      return;
+    }
+
+    showToast("Berhasil update");
+
+  } catch (err) {
+    showToast("Error update", 'error');
+  }
+}
         
         async function hapusData(id) {
 

@@ -500,6 +500,14 @@
   };
 
 }
+
+// AUTO REFRESH DASHBOARD ADMIN
+setInterval(() => {
+  if (currentView === 'admin') {
+    loadDataAdmin();
+  }
+}, 2000); // tiap 2 detik
+            
     // =========================
     // CEK KK OTOMATIS
     // =========================
@@ -989,6 +997,7 @@ async function loadDataAdmin() {
     }
 
     showToast("Berhasil update");
+      loadDataAdmin();
 
   } catch (err) {
     showToast("Error update", 'error');

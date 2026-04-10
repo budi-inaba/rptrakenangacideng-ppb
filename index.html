@@ -147,7 +147,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4fFzBZ44-CxON3pNwLzjb0DkDy7MqhjKTimkEslFks8JtQw8pH8Y2X2rffoQundIB/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1NIloaqqJ9pY2LOajkOy_xfmkPhqq4ySvM22hexcgMOnxThmp7vaQq8HTV35VBSE-/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -1019,9 +1019,12 @@ async function loadDataAdmin() {
   <td class="border p-2">
     <select onchange="updateProdukDropdown('${row.id}', this)">
       <option value="">-- Pilih --</option>
+      <option ${row.produk === 'Ayam' ? 'selected' : ''}>Ayam</option>
+      <option ${row.produk === 'Daging Sapi' ? 'selected' : ''}>Daging Sapi</option>
+      <option ${row.produk === 'Telur' ? 'selected' : ''}>Telur</option>
       <option ${row.produk === 'Beras' ? 'selected' : ''}>Beras</option>
-      <option ${row.produk === 'Minyak' ? 'selected' : ''}>Minyak</option>
-      <option ${row.produk === 'Gula' ? 'selected' : ''}>Gula</option>
+      <option ${row.produk === 'Ikan Kembung' ? 'selected' : ''}>Ikan Kembung</option>
+      <option ${row.produk === 'Susu UHT' ? 'selected' : ''}>Susu UHT</option>
     </select>
   </td>
 

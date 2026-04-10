@@ -775,6 +775,43 @@ katSelect.addEventListener('change', function(e){
             views[viewName].classList.remove('hidden-view');
             window.scrollTo(0,0);
         }
+// ==========================
+// LOGIN ADMIN
+// ==========================
+async function loginAdmin() {
+
+  const username = document.getElementById('admin-username').value;
+  const password = document.getElementById('admin-password').value;
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "loginAdmin",
+        username: username,
+        password: password
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast("Login gagal", 'error');
+      return;
+    }
+
+    localStorage.setItem('isAdmin', 'true');
+
+    showToast("Login berhasil");
+
+    switchView('admin');
+    loadDataAdmin();
+
+  } catch (err) {
+    showToast("Error login", 'error');
+  }
+}
 
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();

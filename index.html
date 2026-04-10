@@ -980,6 +980,9 @@ function showToast(msg, type = 'success') {
         
 function logoutAdmin() {
   localStorage.removeItem('isAdmin');
+
+  showToast("Logout berhasil");
+
   switchView('login');
 }
         // ==========================

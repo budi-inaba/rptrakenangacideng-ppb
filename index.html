@@ -940,27 +940,28 @@ async function loadDataAdmin() {
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
-        <td class="border p-2 font-mono">${row.id}</td>
-        <td class="border p-2">${row.nama}</td>
-        <td class="border p-2">${row.kk}</td>
-        <td class="border p-2">${row.kelurahan}</td>
+  <td class="border p-2 font-mono">${row.id}</td>
+  <td class="border p-2">${row.nama}</td>
+  <td class="border p-2">${row.kk}</td>
+  <td class="border p-2">${row.kelurahan}</td>
 
-        <!-- EDITABLE KOMODITAS -->
-        <td class="border p-2">
-          <input type="text"
-            value="${row.produk}"
-            onchange="updateProduk('${row.id}', this.value)"
-            class="border px-2 py-1 rounded w-full text-sm">
-        </td>
+  <!-- 🔽 DROPDOWN PRODUK -->
+  <td class="border p-2">
+    <select onchange="updateProdukDropdown('${row.id}', this)">
+      <option value="">-- Pilih --</option>
+      <option ${row.produk === 'Beras' ? 'selected' : ''}>Beras</option>
+      <option ${row.produk === 'Minyak' ? 'selected' : ''}>Minyak</option>
+      <option ${row.produk === 'Gula' ? 'selected' : ''}>Gula</option>
+    </select>
+  </td>
 
-        <td class="border p-2 text-center">
-          <button onclick="hapusData('${row.id}')"
-            class="bg-red-600 text-white px-3 py-1 rounded text-xs">
-            Hapus
-          </button>
-        </td>
-      `;
-
+  <td class="border p-2 text-center">
+    <button onclick="hapusData('${row.id}')"
+      class="bg-red-600 text-white px-3 py-1 rounded text-xs">
+      Hapus
+    </button>
+  </td>
+`;
       tbody.appendChild(tr);
     });
 
@@ -969,7 +970,10 @@ async function loadDataAdmin() {
   }
 }
 
-        async function updateProduk(id, produkBaru) {
+async function updateProdukDropdown(id, selectEl) {
+
+  const produkBaru = selectEl.value;
+  const produkLama = selectEl.getAttribute('data-old') || '';
 
   try {
 
@@ -978,7 +982,8 @@ async function loadDataAdmin() {
       body: JSON.stringify({
         action: "updateProduk",
         id: id,
-        produk: produkBaru
+        produkBaru: produkBaru,
+        produkLama: produkLama
       })
     });
 
@@ -989,8 +994,12 @@ async function loadDataAdmin() {
       return;
     }
 
-    showToast("Berhasil update");
-      loadDataAdmin();
+    // update data lama
+    selectEl.setAttribute('data-old', produkBaru);
+
+    showToast("Produk diupdate");
+
+    loadDataAdmin();
 
   } catch (err) {
     showToast("Error update", 'error');

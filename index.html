@@ -1015,18 +1015,23 @@ async function loadDataAdmin() {
   <td class="border p-2">${row.kk}</td>
   <td class="border p-2">${row.kelurahan}</td>
 
-  <!-- 🔽 DROPDOWN PRODUK -->
-  <td class="border p-2">
-    <select onchange="updateProdukDropdown('${row.id}', this)">
-      <option value="">-- Pilih --</option>
-      <option ${row.produk === 'Ayam' ? 'selected' : ''}>Ayam</option>
-      <option ${row.produk === 'Daging Sapi' ? 'selected' : ''}>Daging Sapi</option>
-      <option ${row.produk === 'Telur' ? 'selected' : ''}>Telur</option>
-      <option ${row.produk === 'Beras' ? 'selected' : ''}>Beras</option>
-      <option ${row.produk === 'Ikan Kembung' ? 'selected' : ''}>Ikan Kembung</option>
-      <option ${row.produk === 'Susu UHT' ? 'selected' : ''}>Susu UHT</option>
-    </select>
-  </td>
+  <!-- 🔽 DROPDOWN PRODUK (VERSI LEBIH AMAN) -->
+<td class="border p-2">
+  <select 
+    onchange="updateProdukDropdown('${row.id}', this)"
+    data-old="${row.produk}"   <!-- ← PENTING! -->
+    class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+    
+    <option value="">-- Pilih Komoditas --</option>
+    
+    <option value="Ayam"        ${row.produk === 'Ayam' ? 'selected' : ''}>Ayam - 1 ekor</option>
+    <option value="Daging Sapi" ${row.produk === 'Daging Sapi' ? 'selected' : ''}>Daging Sapi - 1 kg</option>
+    <option value="Telur"       ${row.produk === 'Telur' ? 'selected' : ''}>Telur - 1 tray</option>
+    <option value="Beras"       ${row.produk === 'Beras' ? 'selected' : ''}>Beras - 5 kg</option>
+    <option value="Ikan Kembung" ${row.produk === 'Ikan Kembung' ? 'selected' : ''}>Ikan Kembung - 1 kg</option>
+    <option value="Susu UHT"    ${row.produk === 'Susu UHT' ? 'selected' : ''}>Susu UHT (Khusus KJP)</option>
+  </select>
+</td>
 
   <td class="border p-2 text-center">
     <button onclick="hapusData('${row.id}')"

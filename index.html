@@ -468,6 +468,11 @@
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold">Dashboard Admin</h2>
 
+        <button onclick="logoutAdmin()"
+  class="bg-red-600 text-white px-3 py-1 rounded text-sm">
+  Logout
+</button>
+
       <button onclick="loadDataAdmin()"
         class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
         Refresh
@@ -972,7 +977,11 @@ function showToast(msg, type = 'success') {
         }, 300);
     }, 3000);
 }
-
+        
+function logoutAdmin() {
+  localStorage.removeItem('isAdmin');
+  switchView('login');
+}
         // ==========================
 // ADMIN: LOAD DATA
 // ==========================

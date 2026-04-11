@@ -988,13 +988,13 @@ function logoutAdmin() {
         // ==========================
 // ADMIN: LOAD DATA
 // ==========================
+// ==========================
+// ADMIN: LOAD DATA (sudah diperbaiki)
 async function loadDataAdmin() {
-
   const tbody = document.getElementById('admin-table');
   tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
 
   try {
-
     const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
     const data = await res.json();
 
@@ -1006,48 +1006,44 @@ async function loadDataAdmin() {
     tbody.innerHTML = '';
 
     data.data.forEach(row => {
-
       const tr = document.createElement('tr');
-
       tr.innerHTML = `
-  <td class="border p-2 font-mono">${row.id}</td>
-  <td class="border p-2">${row.nama}</td>
-  <td class="border p-2">${row.kk}</td>
-  <td class="border p-2">${row.kelurahan}</td>
-
-  <!-- 🔽 DROPDOWN PRODUK (VERSI LEBIH AMAN) -->
-<td class="border p-2">
-  <select 
-    onchange="updateProdukDropdown('${row.id}', this)"
-    data-old="${row.produk}"
-    class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
-    
-    <option value="">-- Pilih Komoditas --</option>
-    
-    <option value="Ayam"        ${row.produk === 'Ayam' ? 'selected' : ''}>Ayam - 1 ekor</option>
+        <td class="border p-2 font-mono text-center">${row.id}</td>
+        <td class="border p-2">${row.nama}</td>
+        <td class="border p-2 font-mono">${row.kk}</td>
+        <td class="border p-2">${row.kelurahan}</td>
+        
+        <!-- DROPDOWN KOMODITAS -->
+        <td class="border p-2">
+          <select onchange="updateProdukDropdown('${row.id}', this)" 
+                  data-old="${row.produk}"
+                  class="w-full px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+            <option value="">-- Pilih Komoditas --</option>
+            <option value="Ayam"        ${row.produk === 'Ayam' ? 'selected' : ''}>Ayam - 1 ekor</option>
             <option value="Daging Sapi" ${row.produk === 'Daging Sapi' ? 'selected' : ''}>Daging Sapi - 1 kg</option>
             <option value="Telur"       ${row.produk === 'Telur' ? 'selected' : ''}>Telur - 1 tray</option>
             <option value="Beras"       ${row.produk === 'Beras' ? 'selected' : ''}>Beras - 5 kg</option>
             <option value="Ikan Kembung" ${row.produk === 'Ikan Kembung' ? 'selected' : ''}>Ikan Kembung - 1 kg</option>
             <option value="Susu UHT"    ${row.produk === 'Susu UHT' ? 'selected' : ''}>Susu UHT (Khusus KJP)</option>
-  </select>
-</td>
-
-  <td class="border p-2 text-center">
-    <button onclick="hapusData('${row.id}')"
-     class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg text-xs font-medium transition">
-      Hapus
-    </button>
-  </td>
-`;
+          </select>
+        </td>
+        
+        <td class="border p-2 text-center">
+          <button onclick="hapusData('${row.id}')"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg text-xs font-medium transition">
+            Hapus
+          </button>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
-
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;
   }
 }
 
+// ==========================
+// UPDATE KOMODITAS + REFRESH OTOMATIS
 async function updateProdukDropdown(id, selectEl) {
   const produkBaru = selectEl.value;
   const produkLama = selectEl.getAttribute('data-old') || '';
@@ -1068,17 +1064,19 @@ async function updateProdukDropdown(id, selectEl) {
     const result = await res.json();
 
     if (!result.success) {
-      showToast(result.message || "Gagal update", 'error');
-      selectEl.value = produkLama;        // kembalikan ke nilai lama
+      showToast(result.message || "Gagal mengupdate komoditas", 'error');
+      selectEl.value = produkLama;
       return;
     }
 
-    // Update data-old dengan nilai baru
     selectEl.setAttribute('data-old', produkBaru);
     showToast("Komoditas berhasil diupdate", 'success');
 
+    // 🔥 PERBAIKAN UTAMA: refresh tabel otomatis
+    loadDataAdmin();
+
   } catch (err) {
-    showToast("Error koneksi", 'error');
+    showToast("Error koneksi server", 'error');
     selectEl.value = produkLama;
   }
 }

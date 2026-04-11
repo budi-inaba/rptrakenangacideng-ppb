@@ -1072,7 +1072,27 @@ async function loadDataAdmin() {
     tbody.appendChild(tr);
   });
 }
-        
+
+// ==========================
+// BUKA MODAL EDIT DATA
+// ==========================
+function editData(id) {
+
+  const row = adminDataCache.find(r => r.id === id);
+
+  document.getElementById('edit-id').value = row.id;
+  document.getElementById('edit-nama').value = row.nama;
+  document.getElementById('edit-kk').value = row.kk;
+  document.getElementById('edit-kelurahan').value = row.kelurahan;
+  document.getElementById('edit-produk').value = row.produk;
+
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEdit() {
+  document.getElementById('edit-modal').classList.add('hidden');
+}        
+       
 // ==========================
 // UPDATE KOMODITAS + REFRESH OTOMATIS
 async function updateProdukDropdown(id, selectEl) {

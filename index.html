@@ -937,9 +937,12 @@ function getWaktuOperasionalText() {
             document.getElementById('review-kategori').textContent = registeredData.kategori;
             document.getElementById('review-produk').textContent = registeredData.produk;
             // =========================// URL REAL VERIFIKASI// =========================
-            const baseUrl = window.location.origin;
-            const path = window.location.pathname.replace('index.html','');
-            const verifikasiUrl = `${baseUrl}${path}verifikasi.html?id=${registeredData.id}`;
+            // Ambil path folder saat ini (lebih aman walau nama file bukan index.html)
+const basePath =
+  window.location.origin +
+  window.location.pathname.split('/').slice(0, -1).join('/');
+
+const verifikasiUrl = `${basePath}/verifikasi.html?id=${registeredData.id}`;
 
             document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;

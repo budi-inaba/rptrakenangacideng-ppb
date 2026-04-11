@@ -1008,6 +1008,11 @@ function logoutAdmin() {
 // ==========================
 // ADMIN: LOAD DATA (sudah diperbaiki)
 async function loadDataAdmin() {
+    // 🔒 CEK LOGIN ADMIN
+  if (!localStorage.getItem('isAdmin')) {
+    switchView('login');
+    return;
+  }
   const tbody = document.getElementById('admin-table');
   tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
 

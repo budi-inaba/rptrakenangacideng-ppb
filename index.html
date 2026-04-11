@@ -1111,6 +1111,40 @@ async function resetKomoditas(id) {
     showToast("Gagal menghubungi server", 'error');
   }
 }
+
+        async function hapusKomoditasTerpilih(id, btn) {
+  const row = btn.closest('tr');
+  const select = row.querySelector('select');
+  const produkHapus = select.value;
+
+  if (!produkHapus) {
+    showToast('Pilih komoditas yang ingin dihapus', 'error');
+    return;
+  }
+
+  if (!confirm(`Hapus komoditas "${produkHapus}" ?`)) return;
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "resetProdukSebagian",   // gunakan fungsi partial
+        id: id,
+        produkHapus: produkHapus
+      })
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      showToast(`"${produkHapus}" berhasil dihapus`, 'success');
+      loadDataAdmin(); // refresh
+    } else {
+      showToast(result.message, 'error');
+    }
+  } catch (err) {
+    showToast('Gagal menghubungi server', 'error');
+  }
+}
         
         async function hapusData(id) {
 

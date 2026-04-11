@@ -515,6 +515,17 @@
     </main>
 
     <script>
+
+// ===============================
+// UTILITAS GLOBAL
+// ===============================
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
         // --- STATE & UTILS ---
         let currentView = 'form';
         let registeredData = null;
@@ -530,17 +541,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-
-            function debounce(func, delay) {
-
-  let timer;
-
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
-  };
-
-}
             
     // =========================
     // CEK KK OTOMATIS

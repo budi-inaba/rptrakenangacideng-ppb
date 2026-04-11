@@ -1055,21 +1055,6 @@ async function loadDataAdmin() {
   });
 }
         
-        <td class="border p-2 text-center">
-          
-          <button onclick="hapusSemuaKomoditas('${row.id}')" 
-    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium ml-2">
-    Hapus Semua
-  </button>
-</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;
-  }
-}
-
 // ==========================
 // UPDATE KOMODITAS + REFRESH OTOMATIS
 async function updateProdukDropdown(id, selectEl) {
@@ -1318,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(cekJamOperasional, 30000);
 });
 
-    // ===============================
+// ===============================
 // AUTO MODE VERIFIKASI
 // ===============================
 async function cekModeVerifikasi() {

@@ -1017,7 +1017,6 @@ async function loadDataAdmin() {
     }
 
        adminDataCache = data.data; // SIMPAN DATA
-
     renderAdminTable(adminDataCache);      
       
 } catch (err) {
@@ -1056,7 +1055,6 @@ async function loadDataAdmin() {
   });
 }
         
-    tbody.innerHTML = '';
     data.data.forEach(row => {
       const tr = document.createElement('tr');
       tr.innerHTML = `

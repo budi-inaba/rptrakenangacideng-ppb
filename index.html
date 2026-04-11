@@ -1091,8 +1091,44 @@ function editData(id) {
 
 function closeEdit() {
   document.getElementById('edit-modal').classList.add('hidden');
-}        
-       
+}    
+        
+// ==========================
+// UPDATE DATA KE SERVER
+// ==========================
+async function updateData() {
+
+  const payload = {
+    action: "updateData",
+    id: document.getElementById('edit-id').value,
+    nama: document.getElementById('edit-nama').value,
+    kk: document.getElementById('edit-kk').value,
+    kelurahan: document.getElementById('edit-kelurahan').value,
+    produk: document.getElementById('edit-produk').value
+  };
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast("Gagal update data", 'error');
+      return;
+    }
+
+    showToast("Data berhasil diperbarui");
+    closeEdit();
+    loadDataAdmin();
+
+  } catch(err) {
+    showToast("Gagal koneksi server", 'error');
+  }
+}
+        
 // ==========================
 // UPDATE KOMODITAS + REFRESH OTOMATIS
 async function updateProdukDropdown(id, selectEl) {

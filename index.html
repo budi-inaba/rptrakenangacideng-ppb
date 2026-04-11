@@ -1018,11 +1018,44 @@ async function loadDataAdmin() {
 
        adminDataCache = data.data; // SIMPAN DATA
 
-    renderAdminTable(adminDataCache);
+    renderAdminTable(adminDataCache);      
+      
 } catch (err) {
     tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;
   }
 }
+
+        function renderAdminTable(list) {
+
+  const tbody = document.getElementById('admin-table');
+  tbody.innerHTML = '';
+
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-gray-400">Data tidak ditemukan</td></tr>`;
+    return;
+  }
+
+  list.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="border p-2 font-mono text-center">${row.id}</td>
+      <td class="border p-2">${row.nama}</td>
+      <td class="border p-2 font-mono">${row.kk}</td>
+      <td class="border p-2">${row.kelurahan}</td>
+      <td class="border p-2">
+        ${row.produk || '<span class="text-gray-400">Kosong</span>'}
+      </td>
+      <td class="border p-2 text-center">
+        <button onclick="hapusSemuaKomoditas('${row.id}')" 
+          class="bg-red-600 text-white px-3 py-1 rounded-lg text-xs">
+          Hapus
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+        
     tbody.innerHTML = '';
     data.data.forEach(row => {
       const tr = document.createElement('tr');

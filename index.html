@@ -569,7 +569,7 @@ async function loadStokKomoditas() {
   try {
 
     const kelurahanInput = document.getElementById('input-kelurahan');
-    let kelurahan = kelurahanInput.value.toLowerCase().trim();
+    let kelurahan = (kelurahanInput?.value || '').toLowerCase().trim();
 
     if (!kelurahan) kelurahan = "lainnya";
 

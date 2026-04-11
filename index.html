@@ -1056,12 +1056,18 @@ async function loadDataAdmin() {
       <td class="border p-2">
         ${row.produk || '<span class="text-gray-400">Kosong</span>'}
       </td>
-      <td class="border p-2 text-center">
-        <button onclick="hapusSemuaKomoditas('${row.id}')" 
-          class="bg-red-600 text-white px-3 py-1 rounded-lg text-xs">
-          Hapus
-        </button>
-      </td>
+      
+      <td class="border p-2 text-center space-x-1">
+  <button onclick="editData('${row.id}')" 
+    class="bg-yellow-500 text-white px-2 py-1 rounded text-xs">
+    Edit
+  </button>
+
+  <button onclick="hapusData('${row.id}')"
+    class="bg-red-600 text-white px-2 py-1 rounded text-xs">
+    Hapus
+  </button>
+</td>
     `;
     tbody.appendChild(tr);
   });

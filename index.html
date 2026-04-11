@@ -985,9 +985,7 @@ function logoutAdmin() {
 
   switchView('login');
 }
-        // ==========================
-// ADMIN: LOAD DATA
-// ==========================
+    
 // ==========================
 // ADMIN: LOAD DATA (sudah diperbaiki)
 async function loadDataAdmin() {
@@ -1004,7 +1002,6 @@ async function loadDataAdmin() {
     }
 
     tbody.innerHTML = '';
-
     data.data.forEach(row => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -1029,8 +1026,15 @@ async function loadDataAdmin() {
         </td>
         
         <td class="border p-2 text-center">
+          <!-- Tombol Hapus Komoditas (baru) -->
+          <button onclick="resetKomoditas('${row.id}')"
+            class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition mr-2">
+            Hapus Komoditas
+          </button>
+          
+          <!-- Tombol Hapus Data (lama) -->
           <button onclick="hapusData('${row.id}')"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg text-xs font-medium transition">
+            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition">
             Hapus
           </button>
         </td>
@@ -1078,6 +1082,35 @@ async function updateProdukDropdown(id, selectEl) {
   } catch (err) {
     showToast("Error koneksi server", 'error');
     selectEl.value = produkLama;
+  }
+}
+
+// ==========================
+// HAPUS KOMODITAS SAJA (Reset)
+async function resetKomoditas(id) {
+  const konfirmasi = confirm("Yakin ingin menghapus komoditas ini dan mengembalikan stok?");
+  if (!konfirmasi) return;
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "resetProduk",
+        id: id
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message || "Gagal menghapus komoditas", 'error');
+      return;
+    }
+
+    showToast("Komoditas berhasil dihapus & stok dikembalikan", 'success');
+    loadDataAdmin();   // refresh tabel
+  } catch (err) {
+    showToast("Gagal menghubungi server", 'error');
   }
 }
         

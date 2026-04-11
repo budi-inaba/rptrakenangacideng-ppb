@@ -1114,6 +1114,36 @@ async function resetKomoditas(id) {
     showToast("Gagal menghubungi server", 'error');
   }
 }
+        async function hapusSatuProduk(id, produk) {
+
+  const konfirmasi = confirm(`Hapus ${produk}?`);
+  if (!konfirmasi) return;
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "hapusProdukSatuan",
+        id: id,
+        produk: produk
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message, 'error');
+      return;
+    }
+
+    showToast("Produk berhasil dihapus");
+    loadDataAdmin();
+
+  } catch(err) {
+    showToast("Error server", 'error');
+  }
+}
 
         async function hapusKomoditasTerpilih(id, btn) {
   const row = btn.closest('tr');

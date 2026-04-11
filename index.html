@@ -1016,6 +1016,13 @@ async function loadDataAdmin() {
       return;
     }
 
+       adminDataCache = data.data; // SIMPAN DATA
+
+    renderAdminTable(adminDataCache);
+} catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;
+  }
+}
     tbody.innerHTML = '';
     data.data.forEach(row => {
       const tr = document.createElement('tr');

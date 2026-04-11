@@ -1409,5 +1409,37 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
 </script>
     
+    <!-- MODAL EDIT DATA -->
+<div id="edit-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
+  <div class="bg-white w-[90%] max-w-md rounded-xl p-5">
+
+    <h3 class="font-bold text-lg mb-3">Edit Data</h3>
+
+    <input type="hidden" id="edit-id">
+
+    <label>Nama</label>
+    <input id="edit-nama" class="w-full border p-2 mb-2 rounded">
+
+    <label>No KK</label>
+    <input id="edit-kk" class="w-full border p-2 mb-2 rounded">
+
+    <label>Kelurahan</label>
+    <input id="edit-kelurahan" class="w-full border p-2 mb-2 rounded">
+
+    <label>Produk</label>
+    <input id="edit-produk" class="w-full border p-2 mb-2 rounded">
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closeEdit()" class="px-3 py-1 bg-gray-400 text-white rounded">
+        Batal
+      </button>
+      <button onclick="updateData()" class="px-3 py-1 bg-blue-600 text-white rounded">
+        Simpan
+      </button>
+    </div>
+
+  </div>
+</div>
+    
 </body>
 </html>

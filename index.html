@@ -1347,6 +1347,35 @@ function closeProdukModal() {
   }
 }
         
+ // ==========================
+// DATATABLE INIT
+// ==========================
+let dataTableInstance = null;
+
+function initDataTable() {
+
+  if (dataTableInstance) {
+    dataTableInstance.destroy();
+  }
+
+  dataTableInstance = $('#admin-table-main').DataTable({
+    pageLength: 10,
+    lengthMenu: [5, 10, 25, 50],
+    ordering: true,
+    searching: true,
+    responsive: true,
+    language: {
+      search: "Cari:",
+      lengthMenu: "Tampilkan _MENU_ data",
+      info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+      paginate: {
+        next: "→",
+        previous: "←"
+      }
+    }
+  });
+}
+        
     </script>
 
     <!-- FULLSCREEN LOADING OVERLAY -->

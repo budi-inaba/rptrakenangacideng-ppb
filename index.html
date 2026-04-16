@@ -1378,6 +1378,23 @@ function initDataTable() {
       }
     }
   });
+    setTimeout(() => {
+  // Styling search input
+  document.querySelector('.dataTables_filter input')
+    .classList.add(
+      'border','rounded-lg','px-3','py-2',
+      'focus:ring-2','focus:ring-blue-500',
+      'w-full','md:w-64'
+    );
+
+  // Styling dropdown length
+  document.querySelector('.dataTables_length select')
+    .classList.add(
+      'border','rounded-lg','px-2','py-1',
+      'focus:ring-2','focus:ring-blue-500'
+    );
+
+}, 100);
 }
         
     </script>

@@ -1346,6 +1346,7 @@ function initDataTable() {
   }
 
   dataTableInstance = $('#admin-table-main').DataTable({
+    dom: '<"flex justify-between items-center mb-3"lf>rtip',
     pageLength: 10,
     lengthMenu: [5, 10, 25, 50],
     ordering: true,

@@ -1264,6 +1264,45 @@ async function resetKomoditas(id) {
     showToast("Gagal hapus data", 'error');
   }
 }
+        
+        let currentProdukId = null;
+
+function showProdukManager(id, produkString) {
+
+  currentProdukId = id;
+
+  const list = document.getElementById('produk-list');
+  list.innerHTML = '';
+
+  if (!produkString) {
+    list.innerHTML = '<p class="text-gray-400 text-sm">Tidak ada komoditas</p>';
+  } else {
+
+    const produkArr = produkString.split(',');
+
+    produkArr.forEach(p => {
+
+      const item = document.createElement('div');
+      item.className = "flex justify-between items-center border p-2 rounded";
+
+      item.innerHTML = `
+        <span>${p}</span>
+        <button onclick="hapusSatuProduk('${id}', '${p.trim()}')"
+          class="bg-red-500 text-white px-2 py-1 rounded text-xs">
+          Hapus
+        </button>
+      `;
+
+      list.appendChild(item);
+    });
+  }
+
+  document.getElementById('produk-modal').classList.remove('hidden');
+}
+
+function closeProdukModal() {
+  document.getElementById('produk-modal').classList.add('hidden');
+}
 
         async function hapusSemuaKomoditas(id) {
   const konfirmasi = confirm("Yakin ingin menghapus semua komoditas dan mengembalikan stok?");

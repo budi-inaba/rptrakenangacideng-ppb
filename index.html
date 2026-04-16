@@ -1203,6 +1203,7 @@ async function resetKomoditas(id) {
     showToast("Gagal menghubungi server", 'error');
   }
 }
+        
         async function hapusSatuProduk(id, produk) {
 
   const konfirmasi = confirm(`Hapus ${produk}?`);
@@ -1226,8 +1227,10 @@ async function resetKomoditas(id) {
       return;
     }
 
-    showToast("Produk berhasil dihapus");
-    loadDataAdmin();
+    showToast("Produk dihapus & stok kembali");
+
+    closeProdukModal();   // tutup modal
+    loadDataAdmin();      // refresh tabel
 
   } catch(err) {
     showToast("Error server", 'error');

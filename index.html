@@ -1503,6 +1503,27 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
 
   </div>
 </div>
+
+    <div id="produk-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
+  <div class="bg-white w-[90%] max-w-md rounded-xl p-5">
+
+    <h3 class="font-bold text-lg mb-3">Kelola Komoditas</h3>
+
+    <div id="produk-list" class="space-y-2 mb-4"></div>
+
+    <div class="flex justify-between">
+      <button onclick="resetKomoditas(currentProdukId)"
+        class="bg-gray-600 text-white px-3 py-1 rounded">
+        Reset Semua
+      </button>
+
+      <button onclick="closeProdukModal()"
+        class="bg-red-500 text-white px-3 py-1 rounded">
+        Tutup
+      </button>
+    </div>
+  </div>
+</div>
     
 </body>
 </html>

@@ -533,16 +533,19 @@ function debounce(func, delay) {
         let registeredData = null;
         let adminDataCache = []; // simpan data agar bisa difilter tanpa request ulang
 
-       const views = {
+      let views = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  views = {
     form: document.getElementById('view-form'),
     login: document.getElementById('login-view'),
     review: document.getElementById('view-review'),
     verifikasi: document.getElementById('view-verifikasi'),
     admin: document.getElementById('view-admin')
-};
+  };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+  lucide.createIcons();
             
     // =========================
     // CEK KK OTOMATIS

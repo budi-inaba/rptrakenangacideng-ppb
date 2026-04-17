@@ -843,6 +843,17 @@ katSelect.addEventListener('change', function(e){
 // ==========================
 async function loginAdmin() {
 
+  const btn = document.getElementById('btn-login');
+
+  // 🔒 DISABLE TOMBOL
+  btn.disabled = true;
+
+  btn.innerHTML = `
+    <i data-lucide="loader-2" class="animate-spin w-5 h-5"></i>
+    Memproses...
+  `;
+  lucide.createIcons();
+
   const username = document.getElementById('admin-username').value;
   const password = document.getElementById('admin-password').value;
 
@@ -874,6 +885,8 @@ async function loginAdmin() {
   } catch (err) {
     showToast("Error login", 'error');
   }
+    // 🔓 AKTIFKAN LAGI
+  resetBtnLogin();
 }
 
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {

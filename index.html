@@ -889,6 +889,22 @@ async function loginAdmin() {
   resetBtnLogin();
 }
 
+// ==========================
+// RESET BUTTON LOGIN
+// ==========================
+function resetBtnLogin() {
+  const btn = document.getElementById('btn-login');
+
+  btn.disabled = false;
+
+  btn.innerHTML = `
+    <i data-lucide="log-in" class="w-5 h-5"></i>
+    Masuk ke Dashboard
+  `;
+
+  lucide.createIcons();
+}
+
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();
 

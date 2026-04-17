@@ -450,34 +450,51 @@
   </div>
 </div>
 
-        <!-- ========================= -->
+<!-- ========================= -->
 <!-- LOGIN ADMIN -->
 <!-- ========================= -->
-<div id="login-view" class="hidden-view max-w-md mx-auto mt-10 p-6 bg-white rounded shadow fade-in">
+<div id="login-view" class="hidden-view max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl border border-gray-100 fade-in">
 
-  <h2 class="text-xl font-bold mb-4 text-center">Login Admin</h2>
-    <p class="text-center text-gray-500 text-sm mb-4">
+  <h2 class="text-xl font-bold mb-2 text-center">Login Admin</h2>
+
+  <p class="text-center text-gray-500 text-sm mb-6">
     Silakan login untuk mengakses dashboard admin
   </p>
 
-  <input id="admin-username" type="text" placeholder="Username"
-    class="w-full border p-2 mb-3 rounded">
+  <!-- USERNAME -->
+  <div class="relative mb-4">
+    <i data-lucide="user" class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"></i>
+    <input id="admin-username" type="text" placeholder="Username"
+      class="w-full pl-10 pr-3 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+  </div>
 
-  <input id="admin-password" type="password" placeholder="Password"
-    class="w-full border p-2 mb-3 rounded">
+  <!-- PASSWORD -->
+  <div class="relative mb-4">
+    <i data-lucide="lock" class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"></i>
+    
+    <input id="admin-password" type="password" placeholder="Password"
+      class="w-full pl-10 pr-10 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
 
-  <button onclick="loginAdmin()"
-  class="w-full flex items-center justify-center gap-2 
-         bg-gradient-to-r from-blue-600 to-indigo-600 
-         hover:from-blue-700 hover:to-indigo-700
-         text-white font-semibold py-3 rounded-xl 
-         shadow-md hover:shadow-lg 
-         transition-all duration-200 active:scale-95">
+    <!-- TOGGLE PASSWORD -->
+    <button type="button" onclick="togglePassword()"
+      class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+      <i id="icon-eye" data-lucide="eye" class="w-5 h-5"></i>
+    </button>
+  </div>
 
-  <i data-lucide="log-in" class="w-5 h-5"></i>
-  <span>Masuk ke Dashboard</span>
+  <!-- BUTTON LOGIN -->
+  <button id="btn-login" onclick="loginAdmin()"
+    class="w-full flex items-center justify-center gap-2 
+           bg-gradient-to-r from-blue-600 to-indigo-600 
+           hover:from-blue-700 hover:to-indigo-700
+           text-white font-semibold py-3 rounded-xl 
+           shadow-md hover:shadow-lg 
+           transition-all duration-200 active:scale-95">
 
-</button>
+    <i data-lucide="log-in" class="w-5 h-5"></i>
+    <span>Masuk ke Dashboard</span>
+
+  </button>
 
 </div>
         

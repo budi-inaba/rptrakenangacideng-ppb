@@ -551,6 +551,14 @@
   </div>
 </div>
       
+      <!-- SUMMARY STOK -->
+<div id="stok-summary" 
+     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+
+  <!-- Card akan diisi otomatis -->
+  
+</div>
+      
     <div class="overflow-x-auto">
       <table id="admin-table-main" class="w-full text-sm border">
         <thead class="bg-gray-100">
@@ -1122,7 +1130,83 @@ function togglePassword() {
 
   lucide.createIcons();
 }
-    
+
+// ==========================
+// LOAD STOK UNTUK DASHBOARD ADMIN
+// ==========================
+async function loadStokAdmin() {
+
+  const container = document.getElementById('stok-summary');
+
+  // loading skeleton
+  container.innerHTML = `
+    <div class="col-span-full text-center text-gray-400 text-sm">
+      Loading stok...
+    </div>
+  `;
+
+  try {
+
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
+    const data = await res.json();
+
+    if (!data.success) {
+      container.innerHTML = `<p class="text-red-500">Gagal load stok</p>`;
+      return;
+    }
+
+    const stokData = data.data;
+
+    // mapping icon lucide
+    const iconMap = {
+      "ayam": "drumstick",
+      "daging sapi": "beef",
+      "telur": "egg",
+      "beras": "package",
+      "ikan kembung": "fish",
+      "susu uht": "milk"
+    };
+
+    container.innerHTML = '';
+
+    Object.keys(stokData).forEach(nama => {
+
+      const total =
+        (stokData[nama].cideng || 0) +
+        (stokData[nama].lainnya || 0);
+
+      const icon = iconMap[nama.toLowerCase()] || "box";
+
+      const card = document.createElement('div');
+
+      card.className = `
+        bg-white border border-gray-100 
+        rounded-xl p-4 shadow-sm
+        flex items-center gap-3
+      `;
+
+      card.innerHTML = `
+        <div class="bg-blue-100 p-3 rounded-lg">
+          <i data-lucide="${icon}" class="w-5 h-5 text-blue-600"></i>
+        </div>
+
+        <div>
+          <p class="text-xs text-gray-500 capitalize">${nama}</p>
+          <p class="text-lg font-bold text-gray-800">${total}</p>
+        </div>
+      `;
+
+      container.appendChild(card);
+
+    });
+
+    lucide.createIcons();
+
+  } catch (err) {
+    container.innerHTML = `<p class="text-red-500">Error koneksi</p>`;
+  }
+}
+        
 // ==========================
 // ADMIN: LOAD DATA (sudah diperbaiki)
 async function loadDataAdmin() {

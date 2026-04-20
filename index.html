@@ -1215,6 +1215,7 @@ async function loadDataAdmin() {
     switchView('login');
     return;
   }
+    loadStokAdmin();
   const tbody = document.getElementById('admin-table');
   tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
 

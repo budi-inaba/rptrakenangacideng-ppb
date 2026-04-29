@@ -1197,10 +1197,14 @@ async function loadStokAdmin() {
   <div>
     <p class="text-xs text-gray-500 capitalize">${nama}</p>
 
-    <div class="text-sm text-gray-700 mt-1">
-      <p>Cideng : <span class="font-semibold text-blue-600">${cideng}</span></p>
-      <p>Lainnya : <span class="font-semibold text-purple-600">${lainnya}</span></p>
-    </div>
+    <p class="flex gap-2 mt-1 text-xs">
+      <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">
+        Cideng: ${cideng}
+      </span>
+      <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">
+        Lainnya: ${lainnya}
+      </span>
+    </p>
 
     <p class="text-lg font-bold text-gray-800 mt-1">
       Total : ${cideng + lainnya}

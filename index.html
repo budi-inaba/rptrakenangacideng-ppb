@@ -1729,53 +1729,39 @@ const JAM_TUTUP = 23;  // 23.00 WIB
 
 function cekJamOperasional() {
 
+  const setting = JSON.parse(localStorage.getItem("settingOperasional"));
+
+  if (!setting) return; // belum diset
+
   const now = new Date();
   const wib = new Date(
     now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
   );
 
-  const tahun = wib.getFullYear();
-  const bulan = wib.getMonth() + 1;
-  const tanggal = wib.getDate();
-  const jam = wib.getHours();
-  const menit = wib.getMinutes();
-  const totalMenit = jam * 60 + menit;
+  const selectedDate = new Date(setting.tanggal);
 
   const tanggalSesuai =
-    tahun === OPERASIONAL_TAHUN &&
-    bulan === OPERASIONAL_BULAN &&
-    tanggal === OPERASIONAL_TANGGAL;
+    wib.getFullYear() === selectedDate.getFullYear() &&
+    wib.getMonth() === selectedDate.getMonth() &&
+    wib.getDate() === selectedDate.getDate();
 
-  const jamSesuai =
-    totalMenit >= JAM_BUKA * 60 &&
-    totalMenit <= JAM_TUTUP * 60;
+  const [bukaJam, bukaMenit] = setting.jamBuka.split(':');
+  const [tutupJam, tutupMenit] = setting.jamTutup.split(':');
+
+  const nowMenit = wib.getHours() * 60 + wib.getMinutes();
+  const bukaTotal = bukaJam * 60 + Number(bukaMenit);
+  const tutupTotal = tutupJam * 60 + Number(tutupMenit);
+
+  const jamSesuai = nowMenit >= bukaTotal && nowMenit <= tutupTotal;
 
   const cover = document.getElementById('operasional-cover');
 
-  // Isi informasi tanggal & jam
-  const namaBulan = [
-    'Januari','Februari','Maret','April','Mei','Juni',
-    'Juli','Agustus','September','Oktober','November','Desember'
-  ];
-
-  document.getElementById('cover-tanggal').textContent =
-    `${String(OPERASIONAL_TANGGAL).padStart(2, '0')} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
-
-  document.getElementById('cover-jam-buka').textContent =
-    JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
-
-  document.getElementById('cover-jam-tutup').textContent =
-    JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
-
-
   if (tanggalSesuai && jamSesuai) {
-    // ✅ BUKA → Cover hilang
     cover.classList.add('hidden');
-  document.body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
   } else {
-    // ❌ TUTUP → Cover muncul
     cover.classList.remove('hidden');
-  document.body.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
   }
 }
 

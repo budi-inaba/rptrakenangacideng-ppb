@@ -1614,6 +1614,31 @@ function closeProdukModal() {
     showToast("Gagal menghapus data", 'error');
   }
 }
+
+    function simpanSettingOperasional() {
+
+  const tanggal = document.getElementById('set-tanggal').value;
+  const jamBuka = document.getElementById('set-jam-buka').value;
+  const jamTutup = document.getElementById('set-jam-tutup').value;
+
+  if (!tanggal || !jamBuka || !jamTutup) {
+    showToast("Semua setting wajib diisi", "error");
+    return;
+  }
+
+  const data = {
+    tanggal,
+    jamBuka,
+    jamTutup
+  };
+
+  // simpan ke localStorage (sementara)
+  localStorage.setItem("settingOperasional", JSON.stringify(data));
+
+  showToast("Setting berhasil disimpan");
+
+  cekJamOperasional(); // langsung update
+}
         
  // ==========================
 // DATATABLE INIT

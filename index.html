@@ -1206,22 +1206,27 @@ async function loadStokAdmin() {
       </p>
 
       <!-- STOK -->
-      <div class="flex flex-wrap gap-1 mt-2">
-      <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap">
-        Cideng: ${cideng}
-      </span>
-      <span class="bg-purple-50 text-purple-600 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap">
-        Lainnya: ${lainnya}
-      </span>
-    </div>
+      <div class="mt-2 text-xs space-y-1">
+
+      <div class="flex justify-between">
+        <span class="text-gray-500">Cideng</span>
+        <span class="font-semibold text-blue-600">${cideng}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-gray-500">Lainnya</span>
+        <span class="font-semibold text-purple-600">${lainnya}</span>
+      </div>
+
+</div>
 
       <!-- TOTAL -->
-      <div class="mt-2 flex justify-between items-center">
-        <span class="text-xs text-gray-400">Total</span>
-        <span class="text-lg font-bold text-gray-800">
-          ${cideng + lainnya}
-        </span>
-      </div>
+      <div class="mt-2 flex justify-between items-center border-t pt-2">
+      <span class="text-xs text-gray-400">Total</span>
+      <span class="text-lg font-bold text-gray-800">
+        ${cideng + lainnya}
+      </span>
+    </div>
 
     </div>
 

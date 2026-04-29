@@ -1639,6 +1639,19 @@ function closeProdukModal() {
 
   cekJamOperasional(); // langsung update
 }
+
+// ==========================
+// LOAD SETTING OPERASIONAL
+// ==========================
+function loadSettingOperasional() {
+
+  const setting = JSON.parse(localStorage.getItem("settingOperasional"));
+  if (!setting) return;
+
+  document.getElementById('set-tanggal').value = setting.tanggal;
+  document.getElementById('set-jam-buka').value = setting.jamBuka;
+  document.getElementById('set-jam-tutup').value = setting.jamTutup;
+}
         
  // ==========================
 // DATATABLE INIT

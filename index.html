@@ -1641,6 +1641,7 @@ function closeProdukModal() {
   .then(res => {
     if (res.success) {
       showToast("Setting berhasil disimpan");
+      loadSettingOperasional();
       cekJamOperasional();
     } else {
       showToast(res.message, "error");

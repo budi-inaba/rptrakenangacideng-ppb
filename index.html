@@ -157,11 +157,9 @@
     <script>
 
 function cekOperasionalRealtime(data) {
-  const now = new Date();
 
-  const wib = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
-  );
+  const now = new Date();
+  const wib = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
 
   const tanggal = parseTanggalIndo(data.tanggal);
 

@@ -163,7 +163,7 @@ function cekOperasionalRealtime(data) {
     now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
   );
 
-  const tanggal = new Date(data.tanggal);
+  const tanggal = parseTanggalIndo(data.tanggal);
 
   const samaTanggal =
     wib.getFullYear() === tanggal.getFullYear() &&

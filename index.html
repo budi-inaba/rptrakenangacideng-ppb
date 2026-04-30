@@ -1761,44 +1761,51 @@ const JAM_BUKA  = 8;   // 08.00 WIB
 const JAM_TUTUP = 23;  // 23.00 WIB
 
 
-function cekJamOperasional() {
+async function cekJamOperasional() {
 
-  const setting = JSON.parse(localStorage.getItem("settingOperasional"));
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOperasional`);
+    const setting = await res.json();
 
-  if (!setting) return; // belum diset
+    if (!setting.success) return;
 
-  const now = new Date();
-  const wib = new Date(
-    now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
-  );
+    const now = new Date();
+    const wib = new Date(
+      now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
+    );
 
-  const selectedDate = new Date(setting.tanggal);
+    const selectedDate = new Date(setting.tanggal);
 
-  const tanggalSesuai =
-    wib.getFullYear() === selectedDate.getFullYear() &&
-    wib.getMonth() === selectedDate.getMonth() &&
-    wib.getDate() === selectedDate.getDate();
+    const tanggalSesuai =
+      wib.getFullYear() === selectedDate.getFullYear() &&
+      wib.getMonth() === selectedDate.getMonth() &&
+      wib.getDate() === selectedDate.getDate();
 
-  const [bukaJam, bukaMenit] = setting.jamBuka.split(':');
-  const [tutupJam, tutupMenit] = setting.jamTutup.split(':');
+    const [bukaJam, bukaMenit] = setting.jamBuka.split(':');
+    const [tutupJam, tutupMenit] = setting.jamTutup.split(':');
 
-  const nowMenit = wib.getHours() * 60 + wib.getMinutes();
-  const bukaTotal = bukaJam * 60 + Number(bukaMenit);
-  const tutupTotal = tutupJam * 60 + Number(tutupMenit);
+    const nowMenit = wib.getHours() * 60 + wib.getMinutes();
+    const bukaTotal = bukaJam * 60 + Number(bukaMenit);
+    const tutupTotal = tutupJam * 60 + Number(tutupMenit);
 
-  const jamSesuai = nowMenit >= bukaTotal && nowMenit <= tutupTotal;
+    const jamSesuai = nowMenit >= bukaTotal && nowMenit <= tutupTotal;
 
-  const cover = document.getElementById('operasional-cover');
+    const cover = document.getElementById('operasional-cover');
+
     document.getElementById('cover-tanggal').textContent = setting.tanggal;
     document.getElementById('cover-jam-buka').textContent = setting.jamBuka;
     document.getElementById('cover-jam-tutup').textContent = setting.jamTutup;
 
-  if (tanggalSesuai && jamSesuai) {
-    cover.classList.add('hidden');
-    document.body.classList.remove('overflow-hidden');
-  } else {
-    cover.classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
+    if (tanggalSesuai && jamSesuai) {
+      cover.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    } else {
+      cover.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+  } catch (err) {
+    console.error("Gagal cek jam operasional");
   }
 }
 

@@ -193,21 +193,34 @@ function cekOperasionalRealtime(data) {
     .then(res => res.json())
     .then(res => {
 
+      console.log("DEBUG OPERASIONAL:", res);
+
       const data = res;
 
-      // tampilkan tanggal & jam (format kamu sebelumnya)
-      document.getElementById("cover-tanggal").innerText = formatTanggalIndonesia(data.tanggal);
-      document.getElementById("cover-jam-buka").innerText = formatJamWIB(data.jamBuka);
-      document.getElementById("cover-jam-tutup").innerText = formatJamWIB(data.jamTutup);
+      // tampilkan UI
+      document.getElementById("cover-tanggal").innerText =
+        formatTanggalIndonesia(data.tanggal);
 
-      // ✅ cek pertama kali
+      document.getElementById("cover-jam-buka").innerText =
+        formatJamWIB(data.jamBuka);
+
+      document.getElementById("cover-jam-tutup").innerText =
+        formatJamWIB(data.jamTutup);
+
+      // cek pertama
       cekOperasionalRealtime(data);
 
-      // ✅ AUTO CHECK tiap 10 detik
+      // realtime refresh data dari server (INI PENTING)
       setInterval(() => {
-        cekOperasionalRealtime(data);
-      }, 10000); // 10 detik
-    });
+        fetch("https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec?action=getOperasional")
+          .then(r => r.json())
+          .then(newData => {
+            cekOperasionalRealtime(newData);
+          });
+      }, 5000); // 5 detik (realtime ringan)
+
+    })
+    .catch(err => console.error("ERROR FETCH:", err));
 }
 
 // ===============================

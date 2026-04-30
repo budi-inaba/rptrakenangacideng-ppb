@@ -1769,6 +1769,9 @@ function cekJamOperasional() {
   const jamSesuai = nowMenit >= bukaTotal && nowMenit <= tutupTotal;
 
   const cover = document.getElementById('operasional-cover');
+    document.getElementById('cover-tanggal').textContent = setting.tanggal;
+    document.getElementById('cover-jam-buka').textContent = setting.jamBuka;
+    document.getElementById('cover-jam-tutup').textContent = setting.jamTutup;
 
   if (tanggalSesuai && jamSesuai) {
     cover.classList.add('hidden');

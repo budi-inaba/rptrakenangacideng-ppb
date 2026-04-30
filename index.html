@@ -154,6 +154,41 @@
 
 </div>
 
+    <script>
+
+function cekOperasionalRealtime(data) {
+  const now = new Date();
+
+  const wib = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+  );
+
+  const tanggal = new Date(data.tanggal);
+
+  const samaTanggal =
+    wib.getFullYear() === tanggal.getFullYear() &&
+    wib.getMonth() === tanggal.getMonth() &&
+    wib.getDate() === tanggal.getDate();
+
+  const sekarang = wib.getHours() * 60 + wib.getMinutes();
+
+  const [bukaH, bukaM] = data.jamBuka.split(":").map(Number);
+  const [tutupH, tutupM] = data.jamTutup.split(":").map(Number);
+
+  const buka = bukaH * 60 + bukaM;
+  const tutup = tutupH * 60 + tutupM;
+
+  const cover = document.getElementById("operasional-cover");
+
+  if (samaTanggal && sekarang >= buka && sekarang <= tutup) {
+    cover.classList.add("hidden");
+  } else {
+    cover.classList.remove("hidden");
+  }
+}
+
+</script>
+
     <!-- KONFIGURASI -->
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec"; 

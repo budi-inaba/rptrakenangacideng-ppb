@@ -1656,14 +1656,21 @@ function closeProdukModal() {
 // ==========================
 // LOAD SETTING OPERASIONAL
 // ==========================
-function loadSettingOperasional() {
+async function loadSettingOperasional() {
 
-  const setting = JSON.parse(localStorage.getItem("settingOperasional"));
-  if (!setting) return;
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOperasional`);
+    const data = await res.json();
 
-  document.getElementById('set-tanggal').value = setting.tanggal;
-  document.getElementById('set-jam-buka').value = setting.jamBuka;
-  document.getElementById('set-jam-tutup').value = setting.jamTutup;
+    if (!data.success) return;
+
+    document.getElementById('set-tanggal').value = data.tanggal;
+    document.getElementById('set-jam-buka').value = data.jamBuka;
+    document.getElementById('set-jam-tutup').value = data.jamTutup;
+
+  } catch (err) {
+    console.error("Gagal load setting operasional");
+  }
 }
         
  // ==========================

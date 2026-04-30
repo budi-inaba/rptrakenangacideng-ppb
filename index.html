@@ -1627,18 +1627,29 @@ function closeProdukModal() {
     return;
   }
 
-  const data = {
-    tanggal,
-    jamBuka,
-    jamTutup
-  };
+  fetch(URL_WEB_APP, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "setOperasional", // 🔥 kirim ke backend
+      tanggal: tanggal,
+      jamBuka: jamBuka,
+      jamTutup: jamTutup
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      showToast("Setting berhasil disimpan");
+      cekJamOperasional();
+    } else {
+      showToast(res.message, "error");
+    }
+  })
+  .catch(err => {
+    showToast("Gagal koneksi ke server", "error");
+    console.error(err);
+  });
 
-  // simpan ke localStorage (sementara)
-  localStorage.setItem("settingOperasional", JSON.stringify(data));
-
-  showToast("Setting berhasil disimpan");
-
-  cekJamOperasional(); // langsung update
 }
 
 // ==========================

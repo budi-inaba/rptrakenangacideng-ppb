@@ -1969,6 +1969,104 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     </div>
   </div>
 </div>
+
+    <script>
+
+// ==========================
+// FORMAT TANGGAL INDONESIA
+// ==========================
+function formatTanggalIndonesia(tgl) {
+
+  const bulan = [
+    "Januari","Februari","Maret","April","Mei","Juni",
+    "Juli","Agustus","September","Oktober","November","Desember"
+  ];
+
+  const date = new Date(tgl);
+
+  const d = date.getDate();
+  const m = bulan[date.getMonth()];
+  const y = date.getFullYear();
+
+  return `${d} ${m} ${y}`;
+}
+
+// ==========================
+// FORMAT JAM WIB
+// ==========================
+function formatJamWIB(jam) {
+
+  if (!jam) return "-";
+
+  let [h, m] = jam.split(":");
+
+  if (!m) m = "00";
+
+  return `${h.padStart(2,'0')}:${m.padStart(2,'0')} WIB`;
+}
+
+// ==========================
+// LOAD OPERASIONAL
+// ==========================
+async function loadCoverOperasional() {
+
+  try {
+
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec?action=getOperasional");
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    // ✅ isi ke cover
+    document.getElementById("cover-tanggal").innerText =
+      formatTanggalIndonesia(data.tanggal);
+
+    document.getElementById("cover-jam-buka").innerText =
+      formatJamWIB(data.jamBuka);
+
+    document.getElementById("cover-jam-tutup").innerText =
+      formatJamWIB(data.jamTutup);
+
+    // ==========================
+    // CEK OPERASIONAL
+    // ==========================
+    const now = new Date();
+
+    const tanggalSetting = new Date(data.tanggal);
+
+    const samaTanggal =
+      now.getFullYear() === tanggalSetting.getFullYear() &&
+      now.getMonth() === tanggalSetting.getMonth() &&
+      now.getDate() === tanggalSetting.getDate();
+
+    const sekarang = now.getHours() * 60 + now.getMinutes();
+
+    const [hb, mb] = data.jamBuka.split(":");
+    const [ht, mt] = data.jamTutup.split(":");
+
+    const buka = (parseInt(hb) * 60) + parseInt(mb || 0);
+    const tutup = (parseInt(ht) * 60) + parseInt(mt || 0);
+
+    const isBuka = samaTanggal && sekarang >= buka && sekarang <= tutup;
+
+    // ==========================
+    // TAMPILKAN COVER
+    // ==========================
+    if (!isBuka) {
+      document.getElementById("operasional-cover").classList.remove("hidden");
+    }
+
+  } catch (err) {
+    console.error("Gagal load operasional:", err);
+  }
+}
+
+// ==========================
+// AUTO JALAN
+// ==========================
+document.addEventListener("DOMContentLoaded", loadCoverOperasional);
+
+</script>
     
 </body>
 </html>

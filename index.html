@@ -2121,7 +2121,7 @@ async function loadCoverOperasional() {
     // ==========================
     const now = new Date();
 
-    const tanggalSetting = new Date(data.tanggal);
+    const tanggalSetting = parseTanggalIndo(data.tanggal);
 
     const samaTanggal =
       now.getFullYear() === tanggalSetting.getFullYear() &&

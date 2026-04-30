@@ -1782,9 +1782,14 @@ async function cekJamOperasional() {
 
     const cover = document.getElementById('operasional-cover');
 
-    document.getElementById('cover-tanggal').textContent = setting.tanggal;
-    document.getElementById('cover-jam-buka').textContent = setting.jamBuka;
-    document.getElementById('cover-jam-tutup').textContent = setting.jamTutup;
+    document.getElementById('cover-tanggal').textContent =
+      formatTanggalIndonesia(setting.tanggal);
+
+    document.getElementById('cover-jam-buka').textContent =
+      formatJamWIB(setting.jamBuka);
+
+    document.getElementById('cover-jam-tutup').textContent =
+      formatJamWIB(setting.jamTutup);
 
     if (tanggalSesuai && jamSesuai) {
       cover.classList.add('hidden');

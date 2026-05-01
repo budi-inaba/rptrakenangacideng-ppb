@@ -174,37 +174,57 @@
   }
 }
 
-        function renderStokDashboard(stokData) {
+       function renderStokDashboard(stokData) {
 
   const container = document.getElementById("stok-container");
+  const summary = document.getElementById("stok-summary");
+
   container.innerHTML = "";
+  summary.innerHTML = "";
+
+  let totalItem = 0;
+  let totalCideng = 0;
+  let totalLainnya = 0;
+  let stokHabis = 0;
 
   Object.keys(stokData).forEach(nama => {
 
-    const cideng = stokData[nama].cideng || 0;
-    const lainnya = stokData[nama].lainnya || 0;
+    const cideng = Number(stokData[nama].cideng || 0);
+    const lainnya = Number(stokData[nama].lainnya || 0);
 
-    // indikator warna
-    const warnaCideng = cideng === 0 ? "bg-red-500" : "bg-green-500";
-    const warnaLainnya = lainnya === 0 ? "bg-red-500" : "bg-green-500";
+    totalItem++;
+    totalCideng += cideng;
+    totalLainnya += lainnya;
+
+    if (cideng === 0 && lainnya === 0) stokHabis++;
+
+    // indikator warna badge
+    const badge = (val) => {
+      if (val === 0) return "bg-red-100 text-red-600";
+      if (val < 10) return "bg-yellow-100 text-yellow-700";
+      return "bg-green-100 text-green-700";
+    };
 
     const card = `
-      <div class="bg-white shadow-md rounded-xl p-4 border">
+      <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
 
-        <h3 class="font-semibold text-lg mb-3">${nama}</h3>
+        <div class="flex justify-between items-center mb-3">
+          <h4 class="font-semibold text-gray-800">${nama}</h4>
+          <span class="text-xs bg-gray-100 px-2 py-1 rounded">Komoditas</span>
+        </div>
 
         <div class="space-y-2 text-sm">
 
           <div class="flex justify-between items-center">
-            <span>Cideng</span>
-            <span class="px-2 py-1 text-white rounded ${warnaCideng}">
+            <span class="text-gray-500">Cideng</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold ${badge(cideng)}">
               ${cideng}
             </span>
           </div>
 
           <div class="flex justify-between items-center">
-            <span>Lainnya</span>
-            <span class="px-2 py-1 text-white rounded ${warnaLainnya}">
+            <span class="text-gray-500">Lainnya</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold ${badge(lainnya)}">
               ${lainnya}
             </span>
           </div>
@@ -215,9 +235,34 @@
     `;
 
     container.innerHTML += card;
-
   });
 
+  // =====================
+  // SUMMARY BOX
+  // =====================
+  summary.innerHTML = `
+    <div class="bg-blue-50 p-4 rounded-xl border">
+      <p class="text-xs text-gray-500">Total Komoditas</p>
+      <p class="text-xl font-bold text-blue-700">${totalItem}</p>
+    </div>
+
+    <div class="bg-green-50 p-4 rounded-xl border">
+      <p class="text-xs text-gray-500">Total Stok Cideng</p>
+      <p class="text-xl font-bold text-green-700">${totalCideng}</p>
+    </div>
+
+    <div class="bg-purple-50 p-4 rounded-xl border">
+      <p class="text-xs text-gray-500">Total Stok Lainnya</p>
+      <p class="text-xl font-bold text-purple-700">${totalLainnya}</p>
+    </div>
+
+    <div class="bg-red-50 p-4 rounded-xl border">
+      <p class="text-xs text-gray-500">Stok Habis</p>
+      <p class="text-xl font-bold text-red-700">${stokHabis}</p>
+    </div>
+  `;
+
+  lucide.createIcons();
 }
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
         function handleImgError(img) {

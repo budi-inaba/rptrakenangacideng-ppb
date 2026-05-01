@@ -743,6 +743,25 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
    CEK STOK KOMODITAS
 ================================= */
 async function loadStokKomoditas() {
+  // ==============================
+  // 🔥 RESET UI DULU (PENTING)
+  // ==============================
+  const checkboxes = document.querySelectorAll('input[name="komoditas"]');
+
+  checkboxes.forEach(cb => {
+    cb.disabled = false;
+
+    const label = cb.closest('label');
+
+    label.classList.remove(
+      'opacity-60',
+      'cursor-not-allowed'
+    );
+
+    // hapus badge stok habis
+    const oldBadge = label.querySelector('.stok-habis');
+    if (oldBadge) oldBadge.remove();
+  });
 
   try {
 

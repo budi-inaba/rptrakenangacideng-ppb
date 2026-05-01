@@ -159,15 +159,25 @@
 function cekOperasionalRealtime(data) {
 
   const now = new Date();
-  const wib = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+  const wib = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+  );
 
-  const tanggal = parseTanggalIndo(data.tanggal);
+  const tanggal = new Date(data.tanggal);
 
+  const cover = document.getElementById("operasional-cover");
+
+  // =========================
+  // CEK TANGGAL
+  // =========================
   const samaTanggal =
     wib.getFullYear() === tanggal.getFullYear() &&
     wib.getMonth() === tanggal.getMonth() &&
     wib.getDate() === tanggal.getDate();
 
+  // =========================
+  // CEK JAM
+  // =========================
   const sekarang = wib.getHours() * 60 + wib.getMinutes();
 
   const [bukaH, bukaM] = data.jamBuka.split(":").map(Number);
@@ -176,13 +186,36 @@ function cekOperasionalRealtime(data) {
   const buka = bukaH * 60 + bukaM;
   const tutup = tutupH * 60 + tutupM;
 
-  const cover = document.getElementById("operasional-cover");
+  // =========================
+  // LOGIKA UTAMA
+  // =========================
+  let status = "TUTUP";
 
-  if (samaTanggal && sekarang >= buka && sekarang <= tutup) {
+  if (samaTanggal) {
+
+    if (sekarang < buka) {
+      status = "BELUM BUKA";
+    } else if (sekarang > tutup) {
+      status = "SUDAH TUTUP";
+    } else {
+      status = "BUKA";
+    }
+
+  } else {
+    status = "TANGGAL TIDAK SESUAI";
+  }
+
+  // =========================
+  // AKSI UI
+  // =========================
+  if (status === "BUKA") {
     cover.classList.add("hidden");
   } else {
     cover.classList.remove("hidden");
   }
+
+  // DEBUG (opsional)
+  console.log("STATUS OPERASIONAL:", status);
 }
 
     function loadCover() {

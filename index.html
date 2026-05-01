@@ -756,7 +756,7 @@ async function loadStokKomoditas() {
 
     if (!data.success) return;
 
-    const kategori = kelurahan === "cideng" ? "cideng" : "lainnya";
+    const kategori = kelurahan.includes("cideng") ? "cideng" : "lainnya";
 
     const checkboxes = document.querySelectorAll('input[name="komoditas"]');
 
@@ -766,9 +766,9 @@ async function loadStokKomoditas() {
 
     let stok = 0;
 
-    Object.keys(data.data).forEach(key => {
-    if (key.toLowerCase() === nama) {
-    stok = data.data[key][kategori] || 0;
+    Object.entries(data.data).forEach(([key, val]) => {
+  if (key.toLowerCase().trim() === nama) {
+    stok = Number(val[kategori] || 0);
   }
 });
 

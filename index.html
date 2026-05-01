@@ -216,19 +216,14 @@ function cekOperasionalRealtime(data) {
   // AKSI UI
   // =========================
   if (status === "BUKA") {
-    cover.classList.add("hidden");
+    cover.classList.add("hidden");  // ❌ sembunyikan cover
   } else {
-    cover.classList.remove("hidden");
+    cover.classList.remove("hidden");  // ✅ tampilkan cover
   }
 
   // DEBUG (opsional)
   console.log("STATUS OPERASIONAL:", status);
 
-     if (status === "BUKA") {
-    cover.classList.add("hidden");      // ❌ sembunyikan cover
-  } else {
-    cover.classList.remove("hidden");   // ✅ tampilkan cover
-  }
 }
 
     function loadCover() {

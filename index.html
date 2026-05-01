@@ -157,9 +157,69 @@
     <!-- KONFIGURASI -->
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxijUD_mymqeUGsvzVKLYsD8dKT1YcqLVoAJnvmw53lxtlcQTQ6vddDvqDbDnk-8NSF/exec/exec"; 
-        
-        // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
+        async function loadStokKomoditas() {
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
+    const result = await res.json();
+
+    if (result.success) {
+      renderStokDashboard(result.data);
+    } else {
+      console.error("Gagal ambil stok");
+    }
+
+  } catch (err) {
+    console.error("Error fetch stok:", err);
+  }
+}
+
+        function renderStokDashboard(stokData) {
+
+  const container = document.getElementById("stok-container");
+  container.innerHTML = "";
+
+  Object.keys(stokData).forEach(nama => {
+
+    const cideng = stokData[nama].cideng || 0;
+    const lainnya = stokData[nama].lainnya || 0;
+
+    // indikator warna
+    const warnaCideng = cideng === 0 ? "bg-red-500" : "bg-green-500";
+    const warnaLainnya = lainnya === 0 ? "bg-red-500" : "bg-green-500";
+
+    const card = `
+      <div class="bg-white shadow-md rounded-xl p-4 border">
+
+        <h3 class="font-semibold text-lg mb-3">${nama}</h3>
+
+        <div class="space-y-2 text-sm">
+
+          <div class="flex justify-between items-center">
+            <span>Cideng</span>
+            <span class="px-2 py-1 text-white rounded ${warnaCideng}">
+              ${cideng}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span>Lainnya</span>
+            <span class="px-2 py-1 text-white rounded ${warnaLainnya}">
+              ${lainnya}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    container.innerHTML += card;
+
+  });
+
+}
+        // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
         function handleImgError(img) {
             const container = img.parentElement;
             img.style.display = 'none';

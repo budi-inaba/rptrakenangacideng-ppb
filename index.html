@@ -728,13 +728,19 @@ document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 
 document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
 
     // jalankan cek stok saat halaman dibuka
-    loadStokKomoditas();
-    // 🔄 update stok otomatis setiap 30 detik
-    setInterval(loadStokKomoditas, 30000);
+loadStokKomoditas();
 
-    // jalankan lagi jika kelurahan berubah
-    document.getElementById('input-kelurahan')
-      .addEventListener('input', loadStokKomoditas);
+// 🔄 update stok otomatis setiap 30 detik (HANYA kalau kelurahan ada)
+setInterval(() => {
+  const kel = document.getElementById('input-kelurahan').value.trim();
+  if (kel) {
+    loadStokKomoditas();
+  }
+}, 30000);
+
+// realtime saat user mengetik
+document.getElementById('input-kelurahan')
+  .addEventListener('input', debounce(loadStokKomoditas, 300));
 
 });
 

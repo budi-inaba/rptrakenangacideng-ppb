@@ -1757,6 +1757,7 @@ function closeProdukModal() {
   const tanggal = document.getElementById('set-tanggal').value;
   const jamBuka = document.getElementById('set-jam-buka').value;
   const jamTutup = document.getElementById('set-jam-tutup').value;
+    console.log("SETTING BARU:", tanggal, jamBuka, jamTutup);
 
   if (!tanggal || !jamBuka || !jamTutup) {
     showToast("Semua setting wajib diisi", "error");

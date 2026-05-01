@@ -156,61 +156,23 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsq4B4ivjt9_jeWOp72SPT8yApkDK5vhZyYX9UVpc3bjv7YoquGAuI4YNOObRzY52j/exec"; 
-const ikonKomoditas = {
-  Beras: "🍚",
-  Minyak: "🛢️",
-  Gula: "🍬",
-  Telur: "🥚",
-  Tepung: "🌾",
-  Default: "📦"
-};
-        let lastData = "";
-        
-       async function loadStokKomoditas() {
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzD_956O-poJUuNohvowYwrsVUFjl4Y9pv-qyvqZgKYgpWqGQo5E6lxNPIlnoKcLRrO/exec"; 
+
+        async function loadStokKomoditas() {
   try {
-    const res = await fetch(`${SCRIPT_URL}?action=getStok`);
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
     const result = await res.json();
 
-    if (!result.success) return;
-
-    const currentData = JSON.stringify(result.data);
-    if (currentData === lastData) return;
-
-    lastData = currentData;
-
-    const data = result.data;
-    const container = document.getElementById("grid-komoditas");
-    container.innerHTML = "";
-
-    Object.keys(data).forEach(nama => {
-      const cideng = Number(data[nama].cideng) || 0;
-      const lainnya = Number(data[nama].lainnya) || 0;
-
-      const icon = ikonKomoditas[nama] || ikonKomoditas.Default;
-
-      const cidengClass = cideng === 0 ? "text-red-500 font-bold" : "text-green-600";
-      const lainnyaClass = lainnya === 0 ? "text-red-500 font-bold" : "text-blue-600";
-
-      container.innerHTML += `
-        <div class="bg-white rounded-2xl shadow-md p-4 hover:scale-105 transition">
-          <div class="text-3xl">${icon}</div>
-          <h3 class="font-semibold text-lg mt-2">${nama}</h3>
-          <div class="mt-2 text-sm">
-            Cideng: <span class="${cidengClass}">${cideng}</span><br>
-            Lainnya: <span class="${lainnyaClass}">${lainnya}</span>
-          </div>
-        </div>
-      `;
-    });
+    if (result.success) {
+      renderStokDashboard(result.data);
+    } else {
+      console.error("Gagal ambil stok");
+    }
 
   } catch (err) {
-    console.error(err);
+    console.error("Error fetch stok:", err);
   }
 }
-
-loadStokKomoditas();
-setInterval(loadStokKomoditas, 10000);
 
        function renderStokDashboard(stokData) {
 
@@ -782,6 +744,11 @@ document.getElementById('input-kelurahan')
 
 });
 
+
+/* =================================
+   CEK STOK KOMODITAS
+================================= */
+async function loadStokKomoditas() {
   // ==============================
   // 🔥 RESET UI DULU (PENTING)
   // ==============================

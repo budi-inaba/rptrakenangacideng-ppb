@@ -908,7 +908,7 @@ async function cekKK() {
     return;
   }
 
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKLengkap&kk=${kk}`);
+  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekKKLengkap&kk=${kk}`);
   const data = await res.json();
 
   // ❌ CEK DUPLIKAT DULU (PRIORITAS)
@@ -950,7 +950,7 @@ async function cekKTP() {
 
   if (ktp.length !== 16) return;
 
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKTP&ktp=${ktp}`);
+  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekKTP&ktp=${ktp}`);
   const data = await res.json();
 
   const input = document.getElementById('input-ktp');
@@ -973,7 +973,7 @@ async function cekKTP() {
 
   if (atm.length !== 16 && atm.length !== 18) return;
 
-  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekATM&atm=${atm}`);
+  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekATM&atm=${atm}`);
   const data = await res.json();
 
   const input = document.getElementById('input-atm');
@@ -1055,7 +1055,7 @@ async function loginAdmin() {
 
   try {
 
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "loginAdmin",
@@ -1149,7 +1149,7 @@ if (
     showGlobalLoading(true);
 
     try {
-        const res = await fetch(GOOGLE_SCRIPT_URL, {
+        const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
         method: 'POST',
         body: JSON.stringify(payload)
 });
@@ -1314,7 +1314,7 @@ async function loadStokAdmin() {
 
   try {
 
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
+    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getStok`);
     const data = await res.json();
 
     if (!data.success) {
@@ -1427,7 +1427,7 @@ async function loadDataAdmin() {
   tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
 
   try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
+    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getAllData`);
     const data = await res.json();
 
     if (!data.success) {
@@ -1533,7 +1533,7 @@ async function updateData() {
   };
 
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify(payload)
     });
@@ -1563,7 +1563,7 @@ async function updateProdukDropdown(id, selectEl) {
   if (produkBaru === produkLama || produkBaru === '') return;
 
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "updateProduk",
@@ -1600,7 +1600,7 @@ async function resetKomoditas(id) {
   if (!konfirmasi) return;
 
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "resetProduk",
@@ -1629,7 +1629,7 @@ async function resetKomoditas(id) {
 
   try {
 
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "hapusProdukSatuan",
@@ -1663,7 +1663,7 @@ async function resetKomoditas(id) {
 
   try {
 
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "deleteData",
@@ -1730,7 +1730,7 @@ function closeProdukModal() {
   if (!konfirmasi) return;
 
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
+    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
       method: "POST",
       body: JSON.stringify({
         action: "deleteData",
@@ -1796,7 +1796,7 @@ function closeProdukModal() {
 async function loadSettingOperasional() {
 
   try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOperasional`);
+    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getOperasional`);
     const data = await res.json();
 
     if (!data.success) return;
@@ -1890,7 +1890,7 @@ rt
 async function cekJamOperasional() {
 
   try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOperasional`);
+    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getOperasional`);
     const setting = await res.json();
 
     if (!setting.success) return;
@@ -1964,7 +1964,7 @@ async function cekModeVerifikasi() {
   try {
 
     const res = await fetch(
-      `${GOOGLE_SCRIPT_URL}?action=getById&id=${id}`
+      `${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getById&id=${id}`
     );
 
     const data = await res.json();

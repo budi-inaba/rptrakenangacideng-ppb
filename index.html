@@ -154,125 +154,9 @@
 
 </div>
 
-    <script>
-        
-function parseTanggalLocal(tglStr) {
-  const [y, m, d] = tglStr.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-        
-function cekOperasionalRealtime(data) {
-  console.log("data:", data);
-
-  const now = new Date();
-  const wib = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
-  );
-
-  const tanggal = parseTanggalLocal(data.tanggal);
-  console.log("WIB:", wib);
-  console.log("Tanggal Setting:", tanggal);
-
-  const cover = document.getElementById("operasional-cover");
-
-  // =========================
-  // CEK TANGGAL
-  // =========================
-  const samaTanggal =
-    wib.getFullYear() === tanggal.getFullYear() &&
-    wib.getMonth() === tanggal.getMonth() &&
-    wib.getDate() === tanggal.getDate();
-
-  // =========================
-  // CEK JAM
-  // =========================
-  const sekarang = wib.getHours() * 60 + wib.getMinutes();
-
-  const [bukaH, bukaM] = data.jamBuka.split(":").map(Number);
-  const [tutupH, tutupM] = data.jamTutup.split(":").map(Number);
-
-  const buka = bukaH * 60 + bukaM;
-  const tutup = tutupH * 60 + tutupM;
-
-  // =========================
-  // LOGIKA UTAMA
-  // =========================
-  let status = "TUTUP";
-
-  if (samaTanggal) {
-
-    if (sekarang < buka) {
-      status = "BELUM BUKA";
-    } else if (sekarang > tutup) {
-      status = "SUDAH TUTUP";
-    } else {
-      status = "BUKA";
-    }
-
-  } else {
-    status = "TANGGAL TIDAK SESUAI";
-  }
-
-  // =========================
-  // AKSI UI
-  // =========================
-  if (status === "BUKA") {
-    cover.classList.add("hidden");  // ❌ sembunyikan cover
-  } else {
-    cover.classList.remove("hidden");  // ✅ tampilkan cover
-  }
-
-  // DEBUG (opsional)
-  console.log("STATUS OPERASIONAL:", status);
-
-}
-
-    function loadCover() {
-
-  fetch("https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec?action=getOperasional")
-    .then(res => res.json())
-    .then(res => {
-
-      console.log("DEBUG OPERASIONAL:", res);
-
-      const data = res;
-
-      // tampilkan UI
-      document.getElementById("cover-tanggal").innerText =
-        formatTanggalIndonesia(data.tanggal);
-
-      document.getElementById("cover-jam-buka").innerText =
-        formatJamWIB(data.jamBuka);
-
-      document.getElementById("cover-jam-tutup").innerText =
-        formatJamWIB(data.jamTutup);
-
-      // cek pertama
-      cekOperasionalRealtime(data);
-
-      // realtime refresh data dari server (INI PENTING)
-      setInterval(() => {
-        fetch("https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec?action=getOperasional")
-          .then(r => r.json())
-          .then(newData => {
-            cekOperasionalRealtime(newData);
-          });
-      }, 5000); // 5 detik (realtime ringan)
-
-    })
-    .catch(err => console.error("ERROR FETCH:", err));
-}
-
-// ===============================
-// JALANKAN SAAT HALAMAN LOAD
-// ===============================
-document.addEventListener("DOMContentLoaded", loadCover);
-        
-</script>
-
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRTbNulNNmi9-FQM1R67X8SFypnyJUw2c-leyZGGCzqdQCd9dRAMP8SXuLODFy9fpO/exec"; 
         
         // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
 
@@ -451,28 +335,10 @@ document.addEventListener("DOMContentLoaded", loadCover);
                         </div>
                     </div>
 
-        <button type="submit" id="btn-submit"
-  class="w-full relative overflow-hidden
-         bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600
-         text-white font-semibold py-4 rounded-xl
-         shadow-lg
-         transition-all duration-300 ease-out
-         hover:shadow-xl hover:-translate-y-0.5
-         active:scale-95
-         disabled:opacity-50 disabled:cursor-not-allowed
-         flex justify-center items-center gap-2">
-
-  <!-- ICON -->
-  <i data-lucide="shield-check" class="w-5 h-5"></i>
-
-  <!-- TEXT -->
-  <span class="tracking-wide">Cek Data & Daftar</span>
-
-  <!-- EFFECT GLOW -->
-  <span class="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition duration-300"></span>
-
-</button>
-                    
+                    <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        <span>Cek Data & Daftar</span>
+                    </button>
                     <div id="loading-indicator" class="hidden text-center text-blue-600">
                         <i data-lucide="loader-2" class="animate-spin w-6 h-6 mx-auto"></i>
                     </div>
@@ -601,7 +467,7 @@ document.addEventListener("DOMContentLoaded", loadCover);
   <h2 class="text-xl font-bold mb-2 text-center">Login Admin</h2>
 
   <p class="text-center text-gray-500 text-sm mb-6">
-    Silahkan login untuk mengakses dashboard admin
+    Silakan login untuk mengakses dashboard admin
   </p>
 
   <!-- USERNAME -->
@@ -666,39 +532,6 @@ document.addEventListener("DOMContentLoaded", loadCover);
 
   </div>
 </div>
-
-      <div class="bg-gray-50 border rounded-xl p-4 mb-6">
-  <h3 class="font-bold mb-3 text-sm text-gray-700">Setting Operasional</h3>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-
-    <!-- TANGGAL -->
-    <input type="date" id="set-tanggal"
-      class="border p-2 rounded-lg">
-
-    <!-- JAM BUKA -->
-    <input type="time" id="set-jam-buka"
-      class="border p-2 rounded-lg">
-
-    <!-- JAM TUTUP -->
-    <input type="time" id="set-jam-tutup"
-      class="border p-2 rounded-lg">
-
-  </div>
-
-  <button onclick="simpanSettingOperasional()"
-    class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
-    Simpan Setting
-  </button>
-</div>
-      
-      <!-- SUMMARY STOK -->
-<div id="stok-summary" 
-     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-
-  <!-- Card akan diisi otomatis -->
-  
-</div>
       
     <div class="overflow-x-auto">
       <table id="admin-table-main" class="w-full text-sm border">
@@ -733,25 +566,6 @@ function debounce(func, delay) {
     timer = setTimeout(() => func.apply(this, args), delay);
   };
 }
-
-// ===============================
-// FORMAT TANGGAL & JAM
-// ===============================
-function formatTanggalIndonesia(tgl) {
-  const bulan = [
-    "Januari","Februari","Maret","April","Mei","Juni",
-    "Juli","Agustus","September","Oktober","November","Desember"
-  ];
-
-  const [year, month, day] = tgl.split('-');
-
-  return `${Number(day)} ${bulan[Number(month)-1]} ${year}`;
-}
-
-function formatJamWIB(jam) {
-  return `${jam} WIB`;
-}
-        
         // --- STATE & UTILS ---
         let currentView = 'form';
         let registeredData = null;
@@ -770,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   lucide.createIcons();
-    loadSettingOperasional();
             
     // =========================
     // CEK KK OTOMATIS
@@ -783,11 +596,6 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
     loadStokKomoditas();
     // 🔄 update stok otomatis setiap 30 detik
     setInterval(loadStokKomoditas, 30000);
-    setInterval(() => {
-  if (currentView === 'admin') {
-    loadStokAdmin();
-  }
-}, 30000);
 
     // jalankan lagi jika kelurahan berubah
     document.getElementById('input-kelurahan')
@@ -808,7 +616,7 @@ async function loadStokKomoditas() {
 
     if (!kelurahan) kelurahan = "lainnya";
 
-    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getStok`);
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
     const data = await res.json();
 
     if (!data.success) return;
@@ -908,7 +716,7 @@ async function cekKK() {
     return;
   }
 
-  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekKKLengkap&kk=${kk}`);
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKKLengkap&kk=${kk}`);
   const data = await res.json();
 
   // ❌ CEK DUPLIKAT DULU (PRIORITAS)
@@ -950,7 +758,7 @@ async function cekKTP() {
 
   if (ktp.length !== 16) return;
 
-  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekKTP&ktp=${ktp}`);
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekKTP&ktp=${ktp}`);
   const data = await res.json();
 
   const input = document.getElementById('input-ktp');
@@ -973,7 +781,7 @@ async function cekKTP() {
 
   if (atm.length !== 16 && atm.length !== 18) return;
 
-  const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=cekATM&atm=${atm}`);
+  const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=cekATM&atm=${atm}`);
   const data = await res.json();
 
   const input = document.getElementById('input-atm');
@@ -1041,7 +849,7 @@ async function loginAdmin() {
 
   // ✅ VALIDASI DULU (PENTING)
   if (!username || !password) {
-    showToast("Username dan password wajib di isi", "error");
+    showToast("Username dan password wajib diisi", "error");
     return;
   }
 
@@ -1055,7 +863,7 @@ async function loginAdmin() {
 
   try {
 
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "loginAdmin",
@@ -1078,7 +886,6 @@ async function loginAdmin() {
 
     switchView('admin');
     loadDataAdmin();
-    loadSettingOperasional();
 
   } catch (err) {
     showToast("Error login", 'error');
@@ -1149,7 +956,7 @@ if (
     showGlobalLoading(true);
 
     try {
-        const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(payload)
 });
@@ -1297,123 +1104,7 @@ function togglePassword() {
 
   lucide.createIcons();
 }
-
-// ==========================
-// LOAD STOK UNTUK DASHBOARD ADMIN
-// ==========================
-async function loadStokAdmin() {
-
-  const container = document.getElementById('stok-summary');
-
-  // loading skeleton
-  container.innerHTML = `
-    <div class="col-span-full text-center text-gray-400 text-sm">
-      Loading stok...
-    </div>
-  `;
-
-  try {
-
-    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getStok`);
-    const data = await res.json();
-
-    if (!data.success) {
-      container.innerHTML = `<p class="text-red-500">Gagal load stok</p>`;
-      return;
-    }
-
-    const stokData = data.data;
-
-    // mapping icon lucide
-    const iconMap = {
-      "ayam": "drumstick",
-      "daging sapi": "beef",
-      "telur": "egg",
-      "beras": "package",
-      "ikan kembung": "fish",
-      "susu uht": "milk"
-    };
-
-    container.innerHTML = '';
-
-    Object.keys(stokData).forEach(nama => {
-
-     const cideng = stokData[nama].cideng || 0;
-     const lainnya = stokData[nama].lainnya || 0;
-
-    // indikator warna otomatis
-    const cidengClass = cideng === 0 
-    ? "bg-red-100 text-red-600" 
-    : "bg-blue-100 text-blue-700";
-
-    const lainnyaClass = lainnya === 0 
-    ? "bg-red-100 text-red-600" 
-    : "bg-purple-100 text-purple-700";
-
-      const icon = iconMap[nama.toLowerCase()] || "box";
-
-      const card = document.createElement('div');
-
-      card.className = "bg-white rounded-2xl shadow-sm border p-4 flex gap-3 items-start hover:shadow-md transition";
-
-card.innerHTML = `
-  <!-- ICON -->
-  <div class="bg-blue-50 p-3 rounded-xl">
-    <i data-lucide="${icon}" class="w-5 h-5 text-blue-600"></i>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="flex-1">
-
-    <!-- NAMA -->
-    <p class="text-sm font-semibold text-gray-800 leading-tight">
-      ${nama}
-    </p>
-
-    <!-- STOK (SEJAJAR SEPERTI LAPORAN) -->
-    <div class="mt-2 text-xs space-y-1">
-
-      <div class="flex justify-between">
-        <span class="text-gray-500">Cideng</span>
-        <span class="font-semibold ${cideng === 0 ? 'text-red-600' : 'text-blue-600'}">
-          ${cideng}
-        </span>
-      </div>
-
-      <div class="flex justify-between">
-        <span class="text-gray-500">Lainnya</span>
-        <span class="font-semibold ${lainnya === 0 ? 'text-red-600' : 'text-purple-600'}">
-          ${lainnya}
-        </span>
-      </div>
-
-    </div>
-
-    <!-- GARIS PEMISAH -->
-    <div class="border-t my-2"></div>
-
-    <!-- TOTAL -->
-    <div class="flex justify-between items-center">
-      <span class="text-xs text-gray-400">Total</span>
-      <span class="text-lg font-bold text-gray-800">
-        ${cideng + lainnya}
-      </span>
-    </div>
-
-  </div>
-`;
-
-      container.appendChild(card);
-
-    });
-
-    lucide.createIcons();
-
-  } catch (err) {
-    container.innerHTML = `<p class="text-red-500">Error koneksi</p>`;
-  }
-}
-        
+    
 // ==========================
 // ADMIN: LOAD DATA (sudah diperbaiki)
 async function loadDataAdmin() {
@@ -1422,12 +1113,11 @@ async function loadDataAdmin() {
     switchView('login');
     return;
   }
-    loadStokAdmin();
   const tbody = document.getElementById('admin-table');
   tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
 
   try {
-    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getAllData`);
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
     const data = await res.json();
 
     if (!data.success) {
@@ -1533,7 +1223,7 @@ async function updateData() {
   };
 
   try {
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify(payload)
     });
@@ -1563,7 +1253,7 @@ async function updateProdukDropdown(id, selectEl) {
   if (produkBaru === produkLama || produkBaru === '') return;
 
   try {
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "updateProduk",
@@ -1600,7 +1290,7 @@ async function resetKomoditas(id) {
   if (!konfirmasi) return;
 
   try {
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "resetProduk",
@@ -1629,7 +1319,7 @@ async function resetKomoditas(id) {
 
   try {
 
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "hapusProdukSatuan",
@@ -1663,7 +1353,7 @@ async function resetKomoditas(id) {
 
   try {
 
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "deleteData",
@@ -1730,7 +1420,7 @@ function closeProdukModal() {
   if (!konfirmasi) return;
 
   try {
-    const res = await fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         action: "deleteData",
@@ -1749,64 +1439,6 @@ function closeProdukModal() {
     loadDataAdmin();
   } catch (err) {
     showToast("Gagal menghapus data", 'error');
-  }
-}
-
-    function simpanSettingOperasional() {
-
-  const tanggal = document.getElementById('set-tanggal').value;
-  const jamBuka = document.getElementById('set-jam-buka').value;
-  const jamTutup = document.getElementById('set-jam-tutup').value;
-    console.log("SETTING BARU:", tanggal, jamBuka, jamTutup);
-
-  if (!tanggal || !jamBuka || !jamTutup) {
-    showToast("Semua setting wajib diisi", "error");
-    return;
-  }
-
-  fetch(https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "setOperasional", // 🔥 kirim ke backend
-      tanggal: tanggal,
-      jamBuka: jamBuka,
-      jamTutup: jamTutup
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      showToast("Setting berhasil disimpan");
-      loadSettingOperasional();
-      cekJamOperasional();
-    } else {
-      showToast(res.message, "error");
-    }
-  })
-  .catch(err => {
-    showToast("Gagal koneksi ke server", "error");
-    console.error(err);
-  });
-
-}
-
-// ==========================
-// LOAD SETTING OPERASIONAL
-// ==========================
-async function loadSettingOperasional() {
-
-  try {
-    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getOperasional`);
-    const data = await res.json();
-
-    if (!data.success) return;
-
-    document.getElementById('set-tanggal').value = data.tanggal;
-    document.getElementById('set-jam-buka').value = data.jamBuka;
-    document.getElementById('set-jam-tutup').value = data.jamTutup;
-
-  } catch (err) {
-    console.error("Gagal load setting operasional");
   }
 }
         
@@ -1886,57 +1518,66 @@ rt
 </div>
 
 <script>
+// ================================
+// KONFIGURASI JADWAL
+// ================================
+const OPERASIONAL_TAHUN  = 2026;
+const OPERASIONAL_BULAN  = 4;  // April
+const OPERASIONAL_TANGGAL = 17;
 
-async function cekJamOperasional() {
+const JAM_BUKA  = 8;   // 08.00 WIB
+const JAM_TUTUP = 23;  // 23.00 WIB
 
-  try {
-    const res = await fetch(`${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getOperasional`);
-    const setting = await res.json();
 
-    if (!setting.success) return;
+function cekJamOperasional() {
 
-    const now = new Date();
-    const wib = new Date(
-      now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
-    );
+  const now = new Date();
+  const wib = new Date(
+    now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
+  );
 
-    const selectedDate = new Date(setting.tanggal);
+  const tahun = wib.getFullYear();
+  const bulan = wib.getMonth() + 1;
+  const tanggal = wib.getDate();
+  const jam = wib.getHours();
+  const menit = wib.getMinutes();
+  const totalMenit = jam * 60 + menit;
 
-    const tanggalSesuai =
-      wib.getFullYear() === selectedDate.getFullYear() &&
-      wib.getMonth() === selectedDate.getMonth() &&
-      wib.getDate() === selectedDate.getDate();
+  const tanggalSesuai =
+    tahun === OPERASIONAL_TAHUN &&
+    bulan === OPERASIONAL_BULAN &&
+    tanggal === OPERASIONAL_TANGGAL;
 
-    const [bukaJam, bukaMenit] = setting.jamBuka.split(':');
-    const [tutupJam, tutupMenit] = setting.jamTutup.split(':');
+  const jamSesuai =
+    totalMenit >= JAM_BUKA * 60 &&
+    totalMenit <= JAM_TUTUP * 60;
 
-    const nowMenit = wib.getHours() * 60 + wib.getMinutes();
-    const bukaTotal = bukaJam * 60 + Number(bukaMenit);
-    const tutupTotal = tutupJam * 60 + Number(tutupMenit);
+  const cover = document.getElementById('operasional-cover');
 
-    const jamSesuai = nowMenit >= bukaTotal && nowMenit <= tutupTotal;
+  // Isi informasi tanggal & jam
+  const namaBulan = [
+    'Januari','Februari','Maret','April','Mei','Juni',
+    'Juli','Agustus','September','Oktober','November','Desember'
+  ];
 
-    const cover = document.getElementById('operasional-cover');
+  document.getElementById('cover-tanggal').textContent =
+    `${String(OPERASIONAL_TANGGAL).padStart(2, '0')} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
 
-    document.getElementById('cover-tanggal').textContent =
-      formatTanggalIndonesia(setting.tanggal);
+  document.getElementById('cover-jam-buka').textContent =
+    JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
 
-    document.getElementById('cover-jam-buka').textContent =
-      formatJamWIB(setting.jamBuka);
+  document.getElementById('cover-jam-tutup').textContent =
+    JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
 
-    document.getElementById('cover-jam-tutup').textContent =
-      formatJamWIB(setting.jamTutup);
 
-    if (tanggalSesuai && jamSesuai) {
-      cover.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    } else {
-      cover.classList.remove('hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-
-  } catch (err) {
-    console.error("Gagal cek jam operasional");
+  if (tanggalSesuai && jamSesuai) {
+    // ✅ BUKA → Cover hilang
+    cover.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+  } else {
+    // ❌ TUTUP → Cover muncul
+    cover.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
   }
 }
 
@@ -1964,7 +1605,7 @@ async function cekModeVerifikasi() {
   try {
 
     const res = await fetch(
-      `${https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec}?action=getById&id=${id}`
+      `${GOOGLE_SCRIPT_URL}?action=getById&id=${id}`
     );
 
     const data = await res.json();
@@ -2086,118 +1727,6 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     </div>
   </div>
 </div>
-
-    <script>
-
-// ==========================
-// FORMAT TANGGAL INDONESIA
-// ==========================
-function formatTanggalIndonesia(tgl) {
-
-  const bulan = [
-    "Januari","Februari","Maret","April","Mei","Juni",
-    "Juli","Agustus","September","Oktober","November","Desember"
-  ];
-
-  const date = new Date(tgl);
-
-  const d = date.getDate();
-  const m = bulan[date.getMonth()];
-  const y = date.getFullYear();
-
-  return `${d} ${m} ${y}`;
-}
-
-// ==========================
-// FORMAT JAM WIB
-// ==========================
-function formatJamWIB(jam) {
-
-  if (!jam) return "-";
-
-  let [h, m] = jam.split(":");
-
-  if (!m) m = "00";
-
-  return `${h.padStart(2,'0')}:${m.padStart(2,'0')} WIB`;
-}
-
-function parseTanggalIndo(str) {
-
-  const bulanMap = {
-    Januari: 0, Februari: 1, Maret: 2, April: 3,
-    Mei: 4, Juni: 5, Juli: 6, Agustus: 7,
-    September: 8, Oktober: 9, November: 10, Desember: 11
-  };
-
-  const [day, month, year] = str.split(" ");
-
-  return new Date(year, bulanMap[month], day);
-}        
-
-// ==========================
-// LOAD OPERASIONAL
-// ==========================
-async function loadCoverOperasional() {
-
-  try {
-
-    const res = await fetch("https://script.google.com/macros/s/AKfycbwGlf7SxLQZJdIuLjJKlE0JcnsCac0UkWPeZfZnt7dDMC4yKbqP8iRZ9ck87JD1LHal/exec?action=getOperasional");
-    const data = await res.json();
-
-    if (!data.success) return;
-
-    // ✅ isi ke cover
-    document.getElementById("cover-tanggal").innerText =
-      formatTanggalIndonesia(data.tanggal);
-
-    document.getElementById("cover-jam-buka").innerText =
-      formatJamWIB(data.jamBuka);
-
-    document.getElementById("cover-jam-tutup").innerText =
-      formatJamWIB(data.jamTutup);
-
-    // ==========================
-    // CEK OPERASIONAL
-    // ==========================
-    const now = new Date();
-
-    const tanggalSetting = parseTanggalIndo(data.tanggal);
-
-    const samaTanggal =
-      now.getFullYear() === tanggalSetting.getFullYear() &&
-      now.getMonth() === tanggalSetting.getMonth() &&
-      now.getDate() === tanggalSetting.getDate();
-
-    const sekarang = now.getHours() * 60 + now.getMinutes();
-
-    const [hb, mb] = data.jamBuka.split(":");
-    const [ht, mt] = data.jamTutup.split(":");
-
-    const buka = (parseInt(hb) * 60) + parseInt(mb || 0);
-    const tutup = (parseInt(ht) * 60) + parseInt(mt || 0);
-
-    const isBuka = samaTanggal && sekarang >= buka && sekarang <= tutup;
-
-    // ==========================
-    // TAMPILKAN COVER
-    // ==========================
-    if (!isBuka) {
-      document.getElementById("operasional-cover").classList.remove("hidden");
-    }
-
-  } catch (err) {
-    console.error("Gagal load operasional:", err);
-  }
-}
-
-// ==========================
-// AUTO JALAN
-// ==========================
-document.addEventListener("DOMContentLoaded", loadCoverOperasional);
-
-</script>
     
 </body>
 </html>
-

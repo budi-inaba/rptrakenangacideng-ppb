@@ -155,7 +155,12 @@
 </div>
 
     <script>
-
+        
+function parseTanggalLocal(tglStr) {
+  const [y, m, d] = tglStr.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+        
 function cekOperasionalRealtime(data) {
 
   const now = new Date();
@@ -163,7 +168,9 @@ function cekOperasionalRealtime(data) {
     now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
   );
 
-  const tanggal = new Date(data.tanggal);
+  const tanggal = parseTanggalLocal(data.tanggal);
+  console.log("WIB:", wib);
+  console.log("Tanggal Setting:", tanggal);
 
   const cover = document.getElementById("operasional-cover");
 

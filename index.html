@@ -157,7 +157,15 @@
     <!-- KONFIGURASI -->
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzD_956O-poJUuNohvowYwrsVUFjl4Y9pv-qyvqZgKYgpWqGQo5E6lxNPIlnoKcLRrO/exec"; 
-
+const ikonKomoditas = {
+  Beras: "🍚",
+  Minyak: "🛢️",
+  Gula: "🍬",
+  Telur: "🥚",
+  Tepung: "🌾",
+  Default: "📦"
+};
+        
         async function loadStokKomoditas() {
   try {
     const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);

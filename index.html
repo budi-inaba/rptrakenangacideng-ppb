@@ -67,188 +67,112 @@
   min-height:100dvh;
 }
 
- /* ==================================================
-   RESPONSIVE STOK KOMODITAS
-   PRESISI MOBILE + TABLET + DESKTOP
-================================================== */
+        /* ===============================
+   RAPIIHKAN CARD STOK KOMODITAS
+   =============================== */
 
 #stok-summary{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:18px;
-  margin-top:12px;
-}
-
-/* CARD */
-.stok-card{
-  background:#ffffff;
-  border-radius:26px;
-  padding:20px;
-  border:1px solid #ececec;
-  box-shadow:0 8px 18px rgba(0,0,0,.06);
-  transition:.2s ease;
-  min-height:240px;
-}
-
-.stok-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 24px rgba(0,0,0,.08);
-}
-
-/* TOP */
-.stok-top{
-  display:flex;
-  align-items:flex-start;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:16px;
 }
 
-/* ICON */
-.stok-icon{
-  width:68px;
-  height:68px;
-  min-width:68px;
-  border-radius:22px;
+@media (max-width:640px){
+  #stok-summary{
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+}
+
+/* CARD */
+#stok-summary .stok-card{
+  background:#fff;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border:1px solid #f1f1f1;
+  min-height:220px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* HEADER */
+#stok-summary .stok-top{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+
+#stok-summary .stok-icon{
+  width:64px;
+  height:64px;
+  border-radius:20px;
   background:#dbeafe;
   display:flex;
   align-items:center;
   justify-content:center;
+  flex-shrink:0;
 }
 
-.stok-icon i{
+#stok-summary .stok-icon i{
   width:34px;
   height:34px;
   color:#2563eb;
 }
 
-/* TITLE */
-.stok-title{
-  font-size:28px;
-  line-height:1.2;
+#stok-summary .stok-title{
+  font-size:18px;
   font-weight:700;
   color:#1f2937;
-  margin-bottom:14px;
+  line-height:1.25;
+  word-break:break-word;
 }
 
 /* BADGE */
-.stok-badge-wrap{
+#stok-summary .stok-badge-wrap{
+  margin-top:12px;
   display:flex;
-  flex-wrap:wrap;
+  flex-direction:column;
   gap:10px;
-  margin-bottom:18px;
 }
 
-.stok-badge{
-  padding:10px 14px;
-  border-radius:16px;
+#stok-summary .stok-badge{
   font-size:15px;
   font-weight:600;
+  padding:10px 14px;
+  border-radius:16px;
+  width:100%;
+  text-align:left;
 }
 
-.cideng{
+#stok-summary .cideng{
   background:#fee2e2;
   color:#dc2626;
 }
 
-.lainnya{
+#stok-summary .lainnya{
   background:#f3e8ff;
   color:#7c3aed;
 }
 
 /* FOOTER */
-.stok-total-label{
-  font-size:15px;
+#stok-summary .stok-footer{
+  margin-top:18px;
+}
+
+#stok-summary .stok-total-label{
+  font-size:14px;
   color:#9ca3af;
 }
 
-.stok-total{
-  font-size:46px;
+#stok-summary .stok-total{
+  font-size:42px;
   line-height:1;
   font-weight:800;
   color:#111827;
   margin-top:4px;
-}
-
-/* ==========================
-   MOBILE
-========================== */
-@media(max-width:768px){
-
-#stok-summary{
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-
-.stok-card{
-  padding:16px;
-  border-radius:22px;
-  min-height:210px;
-}
-
-.stok-top{
-  gap:12px;
-}
-
-.stok-icon{
-  width:56px;
-  height:56px;
-  min-width:56px;
-  border-radius:18px;
-}
-
-.stok-icon i{
-  width:28px;
-  height:28px;
-}
-
-.stok-title{
-  font-size:18px;
-  margin-bottom:10px;
-}
-
-.stok-badge{
-  font-size:13px;
-  padding:8px 12px;
-  border-radius:14px;
-}
-
-.stok-total-label{
-  font-size:14px;
-}
-
-.stok-total{
-  font-size:34px;
-}
-
-}
-
-/* ==========================
-   EXTRA SMALL MOBILE
-========================== */
-@media(max-width:480px){
-
-#stok-summary{
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.stok-card{
-  padding:14px;
-  min-height:190px;
-}
-
-.stok-title{
-  font-size:16px;
-}
-
-.stok-total{
-  font-size:30px;
-}
-
-.stok-badge{
-  font-size:12px;
-  padding:7px 10px;
-}
-
 }
         
     </style>
@@ -872,9 +796,9 @@
       </div>
 
       <!-- SUMMARY -->
-     <div id="stok-summary"
-        class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 mb-5">
-     </div>
+      <div id="stok-summary"
+        class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+      </div>
         
   <!-- UPDATE -->
     <div class="mt-8 text-sm text-gray-500">
@@ -926,89 +850,55 @@ function debounce(func, delay) {
         let views = {};
 
         const komoditasData = [
-  { nama: "Ayam", icon: "drumstick", cideng: 0, lainnya: 0 },
-  { nama: "Daging Sapi", icon: "beef", cideng: 0, lainnya: 0 },
-  { nama: "Telur", icon: "egg", cideng: 0, lainnya: 0 },
-  { nama: "Beras", icon: "package", cideng: 0, lainnya: 0 },
-  { nama: "Ikan Kembung", icon: "fish", cideng: 0, lainnya: 0 },
-  { nama: "Susu UHT", icon: "milk", cideng: 0, lainnya: 0 }
+  { nama: "Ayam", icon: "drumstick", cideng: 0, lainnya: 1 },
+  { nama: "Daging Sapi", icon: "beef", cideng: 0, lainnya: 1 },
+  { nama: "Telur", icon: "egg", cideng: 0, lainnya: 1 },
+  { nama: "Beras", icon: "package", cideng: 0, lainnya: 1 },
+  { nama: "Ikan Kembung", icon: "fish", cideng: 0, lainnya: 1 },
+  { nama: "Susu UHT", icon: "milk", cideng: 0, lainnya: 1 }
 ];
 
-function loadDashboardAdmin(dataStok) {
-
-  const komoditas = [
-    { nama:"Ayam", icon:"drumstick" },
-    { nama:"Daging Sapi", icon:"beef" },
-    { nama:"Telur", icon:"egg" },
-    { nama:"Beras", icon:"package" },
-    { nama:"Ikan Kembung", icon:"fish" },
-    { nama:"Susu UHT", icon:"milk" }
-  ];
+function loadDashboardAdmin() {
 
   const wrap = document.getElementById("stok-summary");
+
   wrap.innerHTML = "";
 
-  komoditas.forEach(item => {
+  komoditasData.forEach(item => {
 
-    const stok = dataStok[item.nama] || {
-      cideng:0,
-      lainnya:0
-    };
+    const total = item.cideng + item.lainnya;
 
-    const total =
-      Number(stok.cideng) +
-      Number(stok.lainnya);
+   wrap.innerHTML += `
+<div class="stok-card">
+  <div class="stok-top">
 
-    wrap.innerHTML += `
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100
-      p-3 md:p-4">
+    <div class="stok-icon">
+      <i data-lucide="${item.icon}"></i>
+    </div>
 
-        <div class="flex items-start gap-3">
+    <div class="flex-1">
+      <div class="stok-title">${item.nama}</div>
 
-          <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-blue-100
-          flex items-center justify-center shrink-0">
-            <i data-lucide="${item.icon}"
-            class="w-6 h-6 md:w-7 md:h-7 text-blue-600"></i>
-          </div>
-
-          <div class="flex-1 min-w-0">
-
-            <h4 class="text-sm md:text-lg font-bold text-gray-800 leading-tight mb-2">
-              ${item.nama}
-            </h4>
-
-            <div class="grid grid-cols-2 gap-2 mb-2">
-
-              <div class="bg-red-50 text-red-600 rounded-xl px-2 py-1 text-xs md:text-sm">
-                Cideng<br>
-                <b>${stok.cideng}</b>
-              </div>
-
-              <div class="bg-purple-50 text-purple-700 rounded-xl px-2 py-1 text-xs md:text-sm">
-                Lainnya<br>
-                <b>${stok.lainnya}</b>
-              </div>
-
-            </div>
-
-            <div class="text-gray-400 text-xs">
-              Total
-            </div>
-
-            <div class="text-xl md:text-3xl font-bold text-gray-800 leading-none">
-              ${total}
-            </div>
-
-          </div>
-        </div>
+      <div class="stok-badge-wrap">
+        <div class="stok-badge cideng">Cideng: ${item.cideng}</div>
+        <div class="stok-badge lainnya">Lainnya: ${item.lainnya}</div>
       </div>
-    `;
+
+      <div class="stok-footer">
+        <div class="stok-total-label">Total</div>
+        <div class="stok-total">${total}</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+`;
   });
 
-  lucide.createIcons();
-
   document.getElementById("stok-last-update").innerText =
-  new Date().toLocaleTimeString("id-ID");
+    new Date().toLocaleTimeString('id-ID');
+
+  lucide.createIcons();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

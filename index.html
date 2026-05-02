@@ -639,33 +639,62 @@
 </div>
 
 <!-- ===================== -->
-<!-- STOK KOMODITAS -->
+<!-- STOK KOMODITAS PRO -->
 <!-- ===================== -->
-<div class="mb-6">
+<div class="mb-8">
 
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-      <i data-lucide="package" class="w-5 h-5"></i>
-      Stok Komoditas
-    </h3>
+  <!-- HEADER -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
 
-    <button onclick="loadStokKomoditas()"
-      class="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-sm">
-      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-      Update
-    </button>
+    <div>
+      <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <i data-lucide="warehouse" class="w-6 h-6 text-blue-600"></i>
+        Monitoring Stok Komoditas
+      </h3>
+
+      <p class="text-sm text-gray-500 mt-1">
+        Terintegrasi Spreadsheet STOK • Update Real-Time
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <!-- status realtime -->
+      <div id="stok-live-status"
+        class="px-3 py-2 rounded-xl bg-green-50 text-green-700 text-sm font-semibold border border-green-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        Live
+      </div>
+
+      <!-- refresh -->
+      <button onclick="loadStokKomoditas()"
+        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm shadow-md">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        Refresh
+      </button>
+
+    </div>
   </div>
+
 
   <!-- SUMMARY -->
   <div id="stok-summary"
-       class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4"></div>
+       class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5"></div>
 
-  <!-- LIST STOK -->
-  <div id="stok-container"
-       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+  <!-- LAST UPDATE -->
+  <div class="mb-4 flex justify-between items-center text-sm">
+
+    <div class="text-gray-500">
+      Sinkronisasi terakhir:
+      <span id="stok-last-update" class="font-semibold text-gray-700">-</span>
+    </div>
+
+    <div class="text-gray-400 text-xs">
+      Auto refresh setiap 3 detik
+    </div>
+
   </div>
-
-</div>
       
       <!-- TABEL DATA -->
     <div class="overflow-x-auto">

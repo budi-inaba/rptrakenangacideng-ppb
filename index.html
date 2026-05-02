@@ -654,9 +654,6 @@
   </div>
 </div>
 
-<!-- ===================== -->
-<!-- STOK KOMODITAS PRO -->
-<!-- ===================== -->
  <!-- CARD STOK -->
     <div class="mb-8 p-5 border rounded-2xl bg-gray-50">
 
@@ -694,23 +691,14 @@
       <div id="stok-summary"
         class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
       </div>
-
-      <!-- TABEL STOK -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm border rounded-xl overflow-hidden">
-          <thead class="bg-blue-50">
-            <tr>
-              <th class="p-2 border">No</th>
-              <th class="p-2 border">Komoditas</th>
-              <th class="p-2 border">Stok</th>
-              <th class="p-2 border">Satuan</th>
-              <th class="p-2 border">Status</th>
-            </tr>
-          </thead>
-          <tbody id="stok-table-body"></tbody>
-        </table>
-      </div>
-
+        
+  <!-- UPDATE -->
+    <div class="mt-8 text-sm text-gray-500">
+      Sinkronisasi terakhir:
+      <span id="stok-last-update" class="font-semibold text-gray-700">
+        -
+      </span>
+    </div>
     </div>
       
       <!-- TABEL DATA -->
@@ -751,8 +739,74 @@ function debounce(func, delay) {
         let currentView = 'form';
         let registeredData = null;
         let adminDataCache = []; // simpan data agar bisa difilter tanpa request ulang
+        let views = {};
 
-      let views = {};
+        const komoditasData = [
+  { nama: "Ayam", icon: "drumstick", cideng: 0, lainnya: 1 },
+  { nama: "Daging Sapi", icon: "beef", cideng: 0, lainnya: 1 },
+  { nama: "Telur", icon: "egg", cideng: 0, lainnya: 1 },
+  { nama: "Beras", icon: "package", cideng: 0, lainnya: 1 },
+  { nama: "Ikan Kembung", icon: "fish", cideng: 0, lainnya: 1 },
+  { nama: "Susu UHT", icon: "milk", cideng: 0, lainnya: 1 }
+];
+
+function loadDashboardAdmin() {
+
+  const wrap = document.getElementById("stok-summary");
+
+  wrap.innerHTML = "";
+
+  komoditasData.forEach(item => {
+
+    const total = item.cideng + item.lainnya;
+
+    wrap.innerHTML += `
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-md p-5">
+
+        <div class="flex gap-4">
+
+          <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center">
+            <i data-lucide="${item.icon}" class="w-8 h-8 text-blue-600"></i>
+          </div>
+
+          <div class="flex-1">
+
+            <h4 class="text-xl font-semibold text-gray-800 mb-3">
+              ${item.nama}
+            </h4>
+
+            <div class="flex gap-2 mb-3 flex-wrap">
+
+              <div class="bg-red-100 text-red-600 px-3 py-2 rounded-xl text-sm">
+                Cideng: ${item.cideng}
+              </div>
+
+              <div class="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm">
+                Lainnya: ${item.lainnya}
+              </div>
+
+            </div>
+
+            <div class="text-gray-400 text-sm">
+              Total
+            </div>
+
+            <div class="text-3xl font-bold text-gray-800">
+              ${total}
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("stok-last-update").innerText =
+    new Date().toLocaleTimeString('id-ID');
+
+  lucide.createIcons();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -1335,6 +1389,7 @@ function togglePassword() {
 // ==========================
 // ADMIN: LOAD DATA
 async function loadDataAdmin() {
+    loadDashboardAdmin();
     // 🔒 CEK LOGIN ADMIN
   if (!localStorage.getItem('isAdmin')) {
     switchView('login');

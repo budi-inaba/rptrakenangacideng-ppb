@@ -67,112 +67,188 @@
   min-height:100dvh;
 }
 
-        /* ===============================
-   RAPIIHKAN CARD STOK KOMODITAS
-   =============================== */
+ /* ==================================================
+   RESPONSIVE STOK KOMODITAS
+   PRESISI MOBILE + TABLET + DESKTOP
+================================================== */
 
 #stok-summary{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
-}
-
-@media (max-width:640px){
-  #stok-summary{
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-  }
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;
+  margin-top:12px;
 }
 
 /* CARD */
-#stok-summary .stok-card{
-  background:#fff;
-  border-radius:24px;
-  padding:18px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
-  border:1px solid #f1f1f1;
-  min-height:220px;
-
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+.stok-card{
+  background:#ffffff;
+  border-radius:26px;
+  padding:20px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
+  transition:.2s ease;
+  min-height:240px;
 }
 
-/* HEADER */
-#stok-summary .stok-top{
+.stok-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 24px rgba(0,0,0,.08);
+}
+
+/* TOP */
+.stok-top{
   display:flex;
   align-items:flex-start;
-  gap:14px;
+  gap:16px;
 }
 
-#stok-summary .stok-icon{
-  width:64px;
-  height:64px;
-  border-radius:20px;
+/* ICON */
+.stok-icon{
+  width:68px;
+  height:68px;
+  min-width:68px;
+  border-radius:22px;
   background:#dbeafe;
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-shrink:0;
 }
 
-#stok-summary .stok-icon i{
+.stok-icon i{
   width:34px;
   height:34px;
   color:#2563eb;
 }
 
-#stok-summary .stok-title{
-  font-size:18px;
+/* TITLE */
+.stok-title{
+  font-size:28px;
+  line-height:1.2;
   font-weight:700;
   color:#1f2937;
-  line-height:1.25;
-  word-break:break-word;
+  margin-bottom:14px;
 }
 
 /* BADGE */
-#stok-summary .stok-badge-wrap{
-  margin-top:12px;
+.stok-badge-wrap{
   display:flex;
-  flex-direction:column;
+  flex-wrap:wrap;
   gap:10px;
+  margin-bottom:18px;
 }
 
-#stok-summary .stok-badge{
-  font-size:15px;
-  font-weight:600;
+.stok-badge{
   padding:10px 14px;
   border-radius:16px;
-  width:100%;
-  text-align:left;
+  font-size:15px;
+  font-weight:600;
 }
 
-#stok-summary .cideng{
+.cideng{
   background:#fee2e2;
   color:#dc2626;
 }
 
-#stok-summary .lainnya{
+.lainnya{
   background:#f3e8ff;
   color:#7c3aed;
 }
 
 /* FOOTER */
-#stok-summary .stok-footer{
-  margin-top:18px;
-}
-
-#stok-summary .stok-total-label{
-  font-size:14px;
+.stok-total-label{
+  font-size:15px;
   color:#9ca3af;
 }
 
-#stok-summary .stok-total{
-  font-size:42px;
+.stok-total{
+  font-size:46px;
   line-height:1;
   font-weight:800;
   color:#111827;
   margin-top:4px;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+@media(max-width:768px){
+
+#stok-summary{
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.stok-card{
+  padding:16px;
+  border-radius:22px;
+  min-height:210px;
+}
+
+.stok-top{
+  gap:12px;
+}
+
+.stok-icon{
+  width:56px;
+  height:56px;
+  min-width:56px;
+  border-radius:18px;
+}
+
+.stok-icon i{
+  width:28px;
+  height:28px;
+}
+
+.stok-title{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.stok-badge{
+  font-size:13px;
+  padding:8px 12px;
+  border-radius:14px;
+}
+
+.stok-total-label{
+  font-size:14px;
+}
+
+.stok-total{
+  font-size:34px;
+}
+
+}
+
+/* ==========================
+   EXTRA SMALL MOBILE
+========================== */
+@media(max-width:480px){
+
+#stok-summary{
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.stok-card{
+  padding:14px;
+  min-height:190px;
+}
+
+.stok-title{
+  font-size:16px;
+}
+
+.stok-total{
+  font-size:30px;
+}
+
+.stok-badge{
+  font-size:12px;
+  padding:7px 10px;
+}
+
 }
         
     </style>

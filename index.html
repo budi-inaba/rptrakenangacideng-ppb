@@ -1332,7 +1332,7 @@ function togglePassword() {
 }
     
 // ==========================
-// ADMIN: LOAD DATA (sudah diperbaiki)
+// ADMIN: LOAD DATA
 async function loadDataAdmin() {
     // 🔒 CEK LOGIN ADMIN
   if (!localStorage.getItem('isAdmin')) {
@@ -1353,6 +1353,7 @@ async function loadDataAdmin() {
 
        adminDataCache = data.data; // SIMPAN DATA
     renderAdminTable(adminDataCache);      
+      loadStokKomoditas();
       
 } catch (err) {
     tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;

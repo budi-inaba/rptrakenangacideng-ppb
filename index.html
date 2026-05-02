@@ -775,13 +775,13 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
     // jalankan cek stok saat halaman dibuka
 loadStokKomoditas();
 
-// 🔄 update stok otomatis setiap 30 detik (HANYA kalau kelurahan ada)
+// 🔄 update stok otomatis setiap 3 detik (HANYA kalau kelurahan ada)
 setInterval(() => {
   const kel = document.getElementById('input-kelurahan').value.trim();
   if (kel) {
     loadStokKomoditas();
   }
-}, 30000);
+}, 3000);
 
 // realtime saat user mengetik
 document.getElementById('input-kelurahan')

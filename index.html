@@ -174,10 +174,10 @@
   }
 }
 
-       function renderStokDashboard(stokData) {
+      function renderStokDashboard(stokData) {
 
   const container = document.getElementById("stok-container");
-  const summary = document.getElementById("stok-summary");
+  const summary   = document.getElementById("stok-summary");
 
   container.innerHTML = "";
   summary.innerHTML = "";
@@ -185,82 +185,98 @@
   let totalItem = 0;
   let totalCideng = 0;
   let totalLainnya = 0;
+  let stokMenipis = 0;
   let stokHabis = 0;
 
   Object.keys(stokData).forEach(nama => {
 
-    const cideng = Number(stokData[nama].cideng || 0);
-    const lainnya = Number(stokData[nama].lainnya || 0);
+    const cideng   = Number(stokData[nama].cideng || 0);
+    const lainnya  = Number(stokData[nama].lainnya || 0);
+    const total    = cideng + lainnya;
 
     totalItem++;
     totalCideng += cideng;
     totalLainnya += lainnya;
 
-    if (cideng === 0 && lainnya === 0) stokHabis++;
+    let status = "";
+    let warna = "";
 
-    // indikator warna badge
-    const badge = (val) => {
-      if (val === 0) return "bg-red-100 text-red-600";
-      if (val < 10) return "bg-yellow-100 text-yellow-700";
-      return "bg-green-100 text-green-700";
-    };
+    if (total === 0) {
+      status = "Habis";
+      warna = "bg-red-100 text-red-700";
+      stokHabis++;
+    }
+    else if (total <= 10) {
+      status = "Menipis";
+      warna = "bg-yellow-100 text-yellow-700";
+      stokMenipis++;
+    }
+    else {
+      status = "Aman";
+      warna = "bg-green-100 text-green-700";
+    }
 
-    const card = `
-      <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+    container.innerHTML += `
+      <tr class="border-b hover:bg-slate-50 transition">
 
-        <div class="flex justify-between items-center mb-3">
-          <h4 class="font-semibold text-gray-800">${nama}</h4>
-          <span class="text-xs bg-gray-100 px-2 py-1 rounded">Komoditas</span>
-        </div>
+        <td class="px-4 py-3 font-semibold text-gray-800">
+          ${nama}
+        </td>
 
-        <div class="space-y-2 text-sm">
+        <td class="px-4 py-3 text-center">
+          <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-bold">
+            ${cideng}
+          </span>
+        </td>
 
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500">Cideng</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold ${badge(cideng)}">
-              ${cideng}
-            </span>
-          </div>
+        <td class="px-4 py-3 text-center">
+          <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 font-bold">
+            ${lainnya}
+          </span>
+        </td>
 
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500">Lainnya</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold ${badge(lainnya)}">
-              ${lainnya}
-            </span>
-          </div>
+        <td class="px-4 py-3 text-center font-bold text-gray-800">
+          ${total}
+        </td>
 
-        </div>
+        <td class="px-4 py-3 text-center">
+          <span class="px-3 py-1 rounded-full text-xs font-bold ${warna}">
+            ${status}
+          </span>
+        </td>
 
-      </div>
+      </tr>
     `;
-
-    container.innerHTML += card;
   });
 
-  // =====================
-  // SUMMARY BOX
-  // =====================
   summary.innerHTML = `
-    <div class="bg-blue-50 p-4 rounded-xl border">
+    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
       <p class="text-xs text-gray-500">Total Komoditas</p>
-      <p class="text-xl font-bold text-blue-700">${totalItem}</p>
+      <p class="text-2xl font-bold text-blue-700">${totalItem}</p>
     </div>
 
-    <div class="bg-green-50 p-4 rounded-xl border">
-      <p class="text-xs text-gray-500">Total Stok Cideng</p>
-      <p class="text-xl font-bold text-green-700">${totalCideng}</p>
+    <div class="bg-green-50 border border-green-100 rounded-2xl p-4">
+      <p class="text-xs text-gray-500">Stok Cideng</p>
+      <p class="text-2xl font-bold text-green-700">${totalCideng}</p>
     </div>
 
-    <div class="bg-purple-50 p-4 rounded-xl border">
-      <p class="text-xs text-gray-500">Total Stok Lainnya</p>
-      <p class="text-xl font-bold text-purple-700">${totalLainnya}</p>
+    <div class="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+      <p class="text-xs text-gray-500">Stok Kel. Lainnya</p>
+      <p class="text-2xl font-bold text-purple-700">${totalLainnya}</p>
     </div>
 
-    <div class="bg-red-50 p-4 rounded-xl border">
-      <p class="text-xs text-gray-500">Stok Habis</p>
-      <p class="text-xl font-bold text-red-700">${stokHabis}</p>
+    <div class="bg-red-50 border border-red-100 rounded-2xl p-4">
+      <p class="text-xs text-gray-500">Menipis / Habis</p>
+      <p class="text-2xl font-bold text-red-700">
+        ${stokMenipis + stokHabis}
+      </p>
     </div>
   `;
+
+  // waktu update realtime
+  const now = new Date();
+  document.getElementById("stok-last-update").textContent =
+    now.toLocaleTimeString("id-ID");
 
   lucide.createIcons();
 }

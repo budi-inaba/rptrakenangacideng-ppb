@@ -868,46 +868,31 @@ function loadDashboardAdmin() {
 
     const total = item.cideng + item.lainnya;
 
-    wrap.innerHTML += `
-      <div class="bg-white rounded-3xl border border-gray-100 shadow-md p-5">
+   wrap.innerHTML += `
+<div class="stok-card">
+  <div class="stok-top">
 
-        <div class="flex gap-4">
+    <div class="stok-icon">
+      <i data-lucide="${item.icon}"></i>
+    </div>
 
-          <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center">
-            <i data-lucide="${item.icon}" class="w-8 h-8 text-blue-600"></i>
-          </div>
+    <div class="flex-1">
+      <div class="stok-title">${item.nama}</div>
 
-          <div class="flex-1">
-
-            <h4 class="text-xl font-semibold text-gray-800 mb-3">
-              ${item.nama}
-            </h4>
-
-            <div class="flex gap-2 mb-3 flex-wrap">
-
-              <div class="bg-red-100 text-red-600 px-3 py-2 rounded-xl text-sm">
-                Cideng: ${item.cideng}
-              </div>
-
-              <div class="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm">
-                Lainnya: ${item.lainnya}
-              </div>
-
-            </div>
-
-            <div class="text-gray-400 text-sm">
-              Total
-            </div>
-
-            <div class="text-3xl font-bold text-gray-800">
-              ${total}
-            </div>
-
-          </div>
-        </div>
-
+      <div class="stok-badge-wrap">
+        <div class="stok-badge cideng">Cideng: ${item.cideng}</div>
+        <div class="stok-badge lainnya">Lainnya: ${item.lainnya}</div>
       </div>
-    `;
+
+      <div class="stok-footer">
+        <div class="stok-total-label">Total</div>
+        <div class="stok-total">${total}</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+`;
   });
 
   document.getElementById("stok-last-update").innerText =

@@ -872,9 +872,9 @@
       </div>
 
       <!-- SUMMARY -->
-      <div id="stok-summary"
-        class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-      </div>
+     <div id="stok-summary"
+        class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 mb-5">
+     </div>
         
   <!-- UPDATE -->
     <div class="mt-8 text-sm text-gray-500">
@@ -934,47 +934,81 @@ function debounce(func, delay) {
   { nama: "Susu UHT", icon: "milk", cideng: 0, lainnya: 0 }
 ];
 
-function loadDashboardAdmin() {
+function loadDashboardAdmin(dataStok) {
+
+  const komoditas = [
+    { nama:"Ayam", icon:"drumstick" },
+    { nama:"Daging Sapi", icon:"beef" },
+    { nama:"Telur", icon:"egg" },
+    { nama:"Beras", icon:"package" },
+    { nama:"Ikan Kembung", icon:"fish" },
+    { nama:"Susu UHT", icon:"milk" }
+  ];
 
   const wrap = document.getElementById("stok-summary");
-
   wrap.innerHTML = "";
 
-  komoditasData.forEach(item => {
+  komoditas.forEach(item => {
 
-    const total = item.cideng + item.lainnya;
+    const stok = dataStok[item.nama] || {
+      cideng:0,
+      lainnya:0
+    };
 
-   wrap.innerHTML += `
-<div class="stok-card">
-  <div class="stok-top">
+    const total =
+      Number(stok.cideng) +
+      Number(stok.lainnya);
 
-    <div class="stok-icon">
-      <i data-lucide="${item.icon}"></i>
-    </div>
+    wrap.innerHTML += `
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100
+      p-3 md:p-4">
 
-    <div class="flex-1">
-      <div class="stok-title">${item.nama}</div>
+        <div class="flex items-start gap-3">
 
-      <div class="stok-badge-wrap">
-        <div class="stok-badge cideng">Cideng: ${item.cideng}</div>
-        <div class="stok-badge lainnya">Lainnya: ${item.lainnya}</div>
+          <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-blue-100
+          flex items-center justify-center shrink-0">
+            <i data-lucide="${item.icon}"
+            class="w-6 h-6 md:w-7 md:h-7 text-blue-600"></i>
+          </div>
+
+          <div class="flex-1 min-w-0">
+
+            <h4 class="text-sm md:text-lg font-bold text-gray-800 leading-tight mb-2">
+              ${item.nama}
+            </h4>
+
+            <div class="grid grid-cols-2 gap-2 mb-2">
+
+              <div class="bg-red-50 text-red-600 rounded-xl px-2 py-1 text-xs md:text-sm">
+                Cideng<br>
+                <b>${stok.cideng}</b>
+              </div>
+
+              <div class="bg-purple-50 text-purple-700 rounded-xl px-2 py-1 text-xs md:text-sm">
+                Lainnya<br>
+                <b>${stok.lainnya}</b>
+              </div>
+
+            </div>
+
+            <div class="text-gray-400 text-xs">
+              Total
+            </div>
+
+            <div class="text-xl md:text-3xl font-bold text-gray-800 leading-none">
+              ${total}
+            </div>
+
+          </div>
+        </div>
       </div>
-
-      <div class="stok-footer">
-        <div class="stok-total-label">Total</div>
-        <div class="stok-total">${total}</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-`;
+    `;
   });
 
-  document.getElementById("stok-last-update").innerText =
-    new Date().toLocaleTimeString('id-ID');
-
   lucide.createIcons();
+
+  document.getElementById("stok-last-update").innerText =
+  new Date().toLocaleTimeString("id-ID");
 }
 
 document.addEventListener('DOMContentLoaded', () => {

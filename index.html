@@ -66,6 +66,114 @@
   width:100%;
   min-height:100dvh;
 }
+
+        /* ===============================
+   RAPIIHKAN CARD STOK KOMODITAS
+   =============================== */
+
+#stok-summary{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
+@media (max-width:640px){
+  #stok-summary{
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+}
+
+/* CARD */
+#stok-summary .stok-card{
+  background:#fff;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border:1px solid #f1f1f1;
+  min-height:220px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* HEADER */
+#stok-summary .stok-top{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+
+#stok-summary .stok-icon{
+  width:64px;
+  height:64px;
+  border-radius:20px;
+  background:#dbeafe;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+#stok-summary .stok-icon i{
+  width:34px;
+  height:34px;
+  color:#2563eb;
+}
+
+#stok-summary .stok-title{
+  font-size:18px;
+  font-weight:700;
+  color:#1f2937;
+  line-height:1.25;
+  word-break:break-word;
+}
+
+/* BADGE */
+#stok-summary .stok-badge-wrap{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+#stok-summary .stok-badge{
+  font-size:15px;
+  font-weight:600;
+  padding:10px 14px;
+  border-radius:16px;
+  width:100%;
+  text-align:left;
+}
+
+#stok-summary .cideng{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+#stok-summary .lainnya{
+  background:#f3e8ff;
+  color:#7c3aed;
+}
+
+/* FOOTER */
+#stok-summary .stok-footer{
+  margin-top:18px;
+}
+
+#stok-summary .stok-total-label{
+  font-size:14px;
+  color:#9ca3af;
+}
+
+#stok-summary .stok-total{
+  font-size:42px;
+  line-height:1;
+  font-weight:800;
+  color:#111827;
+  margin-top:4px;
+}
         
     </style>
 </head>

@@ -7,6 +7,15 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- jQuery (WAJIB duluan) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -56,6 +65,114 @@
   inset:0;
   width:100%;
   min-height:100dvh;
+}
+
+        /* ===============================
+   RAPIIHKAN CARD STOK KOMODITAS
+   =============================== */
+
+#stok-summary{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
+@media (max-width:640px){
+  #stok-summary{
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+}
+
+/* CARD */
+#stok-summary .stok-card{
+  background:#fff;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border:1px solid #f1f1f1;
+  min-height:220px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* HEADER */
+#stok-summary .stok-top{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+
+#stok-summary .stok-icon{
+  width:64px;
+  height:64px;
+  border-radius:20px;
+  background:#dbeafe;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+#stok-summary .stok-icon i{
+  width:34px;
+  height:34px;
+  color:#2563eb;
+}
+
+#stok-summary .stok-title{
+  font-size:18px;
+  font-weight:700;
+  color:#1f2937;
+  line-height:1.25;
+  word-break:break-word;
+}
+
+/* BADGE */
+#stok-summary .stok-badge-wrap{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+#stok-summary .stok-badge{
+  font-size:15px;
+  font-weight:600;
+  padding:10px 14px;
+  border-radius:16px;
+  width:100%;
+  text-align:left;
+}
+
+#stok-summary .cideng{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+#stok-summary .lainnya{
+  background:#f3e8ff;
+  color:#7c3aed;
+}
+
+/* FOOTER */
+#stok-summary .stok-footer{
+  margin-top:18px;
+}
+
+#stok-summary .stok-total-label{
+  font-size:14px;
+  color:#9ca3af;
+}
+
+#stok-summary .stok-total{
+  font-size:42px;
+  line-height:1;
+  font-weight:800;
+  color:#111827;
+  margin-top:4px;
 }
         
     </style>
@@ -140,17 +257,135 @@
 
   <!-- FOOTER COVER -->
   <div class="text-center text-white/70 text-sm pb-6 pt-2 relative z-10">
-    © 2026 RPTRA Kenanga • PPB
+    © 2026 RPTRA Kenanga Cideng • PPB
   </div>
 
 </div>
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_WnHm8XZt6yUkbt79qbNshjukgB3bbpYF3qjiWVGTqhw5HyuubKNjYFmjQln4TpKU/exec"; 
-        
-        // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSrNsmCwPY9Qa8o41vtPG2JudqEg2ZePkNow_qNkNAPPCfUM_kQ0wG_AoIGygBQWvg/exec"; 
 
+        async function loadStokKomoditas() {
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
+    const result = await res.json();
+
+    if (result.success) {
+      renderStokDashboard(result.data);
+    } else {
+      console.error("Gagal ambil stok");
+    }
+
+  } catch (err) {
+    console.error("Error fetch stok:", err);
+  }
+}
+
+    function renderStokDashboard(stokData) {
+
+  const container = document.getElementById("stok-container");
+  const summary   = document.getElementById("stok-summary");
+
+  container.innerHTML = "";
+  summary.innerHTML = "";
+
+  let totalItem = 0;
+  let totalCideng = 0;
+  let totalLainnya = 0;
+  let stokMenipis = 0;
+  let stokHabis = 0;
+
+  Object.keys(stokData).forEach(nama => {
+
+    const cideng   = Number(stokData[nama].cideng || 0);
+    const lainnya  = Number(stokData[nama].lainnya || 0);
+    const total    = cideng + lainnya;
+
+    totalItem++;
+    totalCideng += cideng;
+    totalLainnya += lainnya;
+
+    let status = "Aman";
+    let warna = "bg-green-100 text-green-700";
+
+    if (total === 0) {
+      status = "Habis";
+      warna = "bg-red-100 text-red-700";
+      stokHabis++;
+    } else if (total <= 10) {
+      status = "Menipis";
+      warna = "bg-yellow-100 text-yellow-700";
+      stokMenipis++;
+    }
+
+    container.innerHTML += `
+      <tr class="border-b hover:bg-slate-50 transition text-sm">
+
+        <td class="px-2 py-2 font-semibold text-gray-700 whitespace-nowrap">
+          ${nama}
+        </td>
+
+        <td class="px-2 py-2 text-center">
+          <span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
+            ${cideng}
+          </span>
+        </td>
+
+        <td class="px-2 py-2 text-center">
+          <span class="px-2 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold">
+            ${lainnya}
+          </span>
+        </td>
+
+        <td class="px-2 py-2 text-center font-bold text-gray-800">
+          ${total}
+        </td>
+
+        <td class="px-2 py-2 text-center">
+          <span class="px-2 py-1 rounded-full text-[10px] font-bold ${warna}">
+            ${status}
+          </span>
+        </td>
+
+      </tr>
+    `;
+  });
+
+  summary.innerHTML = `
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+
+      <div class="bg-white border rounded-xl p-3 shadow-sm">
+        <p class="text-[10px] md:text-xs text-gray-500">Komoditas</p>
+        <p class="text-lg md:text-2xl font-bold text-blue-700">${totalItem}</p>
+      </div>
+
+      <div class="bg-white border rounded-xl p-3 shadow-sm">
+        <p class="text-[10px] md:text-xs text-gray-500">Cideng</p>
+        <p class="text-lg md:text-2xl font-bold text-green-700">${totalCideng}</p>
+      </div>
+
+      <div class="bg-white border rounded-xl p-3 shadow-sm">
+        <p class="text-[10px] md:text-xs text-gray-500">Lainnya</p>
+        <p class="text-lg md:text-2xl font-bold text-purple-700">${totalLainnya}</p>
+      </div>
+
+      <div class="bg-white border rounded-xl p-3 shadow-sm">
+        <p class="text-[10px] md:text-xs text-gray-500">Alert</p>
+        <p class="text-lg md:text-2xl font-bold text-red-700">
+          ${stokMenipis + stokHabis}
+        </p>
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("stok-last-update").textContent =
+    new Date().toLocaleTimeString("id-ID");
+
+  lucide.createIcons();
+}
+        // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
         function handleImgError(img) {
             const container = img.parentElement;
             img.style.display = 'none';
@@ -177,9 +412,26 @@
                          class="h-10" 
                          onerror="handleImgError(this)">
                 </div>
+                
                 <div class="h-6 w-[1px] bg-gray-300"></div>
                 <span class="font-bold text-gray-800 text-lg tracking-tight">Program Pangan Bersubsidi</span>
             </div>
+            
+            <!-- KANAN: TOMBOL ADMIN -->
+            <button onclick="switchView('login')"
+          class="flex items-center gap-2 
+         border border-gray-300 
+         hover:border-gray-400
+         text-gray-700 hover:text-black
+         px-4 py-2 rounded-xl text-sm font-semibold
+         bg-white hover:bg-gray-50
+         transition-all">
+
+  <i data-lucide="shield-check" class="w-4 h-4"></i>
+  <span>Admin</span>
+
+</button>
+            
         </div>
     </nav>
 
@@ -211,7 +463,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kelurahan sesuai Kartu Keluarga</label>
                         <input type="text" name="kelurahan" id="input-kelurahan" required
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition" 
-                            placeholder="Tulis tanpa Kelurahan">
+                            placeholder="Contoh : Petojo Utara">
                     </div>
 
                     <!-- No. Kartu Keluarga -->
@@ -432,33 +684,232 @@
 
   </div>
 </div>
+
+<!-- ========================= -->
+<!-- LOGIN ADMIN -->
+<!-- ========================= -->
+<div id="login-view" class="hidden-view max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl border border-gray-100 fade-in">
+
+  <h2 class="text-xl font-bold mb-2 text-center">Login Admin</h2>
+
+  <p class="text-center text-gray-500 text-sm mb-6">
+    Silakan login untuk mengakses dashboard admin
+  </p>
+
+  <!-- USERNAME -->
+  <div class="relative mb-4">
+    <i data-lucide="user" class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"></i>
+    <input id="admin-username" type="text" placeholder="Username"
+      class="w-full pl-10 pr-3 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="relative mb-4">
+    <i data-lucide="lock" class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"></i>
+    
+    <input id="admin-password" type="password" placeholder="Password"
+      class="w-full pl-10 pr-10 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+
+    <!-- TOGGLE PASSWORD -->
+    <button type="button" onclick="togglePassword()"
+      class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+      <i id="icon-eye" data-lucide="eye" class="w-5 h-5"></i>
+    </button>
+  </div>
+
+  <!-- BUTTON LOGIN -->
+  <button id="btn-login" onclick="loginAdmin()"
+  class="w-full flex items-center justify-center gap-2 
+         bg-blue-500 hover:bg-blue-600
+         text-white font-semibold py-3 rounded-xl 
+         shadow-[0_0_15px_rgba(59,130,246,0.6)]
+         hover:shadow-[0_0_25px_rgba(59,130,246,0.9)]
+         transition-all duration-300 active:scale-95
+         disabled:opacity-50 disabled:cursor-not-allowed">
+
+  <i data-lucide="log-in" class="w-5 h-5"></i>
+  <span>Masuk ke Dashboard</span>
+
+</button>
+
+</div>
+        
+        <!-- VIEW: ADMIN -->
+<div id="view-admin" class="max-w-5xl mx-auto py-6 hidden-view fade-in">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+
+    <div class="flex justify-between items-center mb-6">
+
+  <h2 class="text-xl font-bold">Dashboard Admin</h2>
+
+  <div class="flex items-center gap-2">
+
+    <button onclick="loadDataAdmin()"
+      class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm shadow-sm">
+      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      Refresh
+    </button>
+
+    <button onclick="logoutAdmin()"
+      class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm shadow-sm">
+      <i data-lucide="log-out" class="w-4 h-4"></i>
+      Logout
+    </button>
+
+  </div>
+</div>
+
+ <!-- CARD STOK -->
+    <div class="mb-8 p-5 border rounded-2xl bg-gray-50">
+
+      <h3 class="text-xl font-bold flex items-center gap-2 mb-1">
+        📦 Monitoring Stok Komoditas
+      </h3>
+
+      <p class="text-sm text-gray-500 mb-4">
+        Terintegrasi Spreadsheet STOK • Update Real-Time
+      </p>
+
+      <div class="flex gap-3 mb-4">
+
+        <div class="px-4 py-2 bg-green-100 text-green-700 rounded-xl font-semibold">
+          ● Live
+        </div>
+
+        <button onclick="loadStokKomoditas()"
+          class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+          Refresh
+        </button>
+
+      </div>
+
+      <div class="flex justify-between text-sm text-gray-500 mb-4">
+        <div>
+          Sinkronisasi terakhir:
+          <span id="stok-last-update" class="font-semibold">-</span>
+        </div>
+
+        <div>Auto refresh setiap 3 detik</div>
+      </div>
+
+      <!-- SUMMARY -->
+     <div id="stok-summary"
+        class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4">
+    </div>
+        
+  <!-- UPDATE -->
+    <div class="mt-8 text-sm text-gray-500">
+      Sinkronisasi terakhir:
+      <span id="stok-last-update" class="font-semibold text-gray-700">
+        -
+      </span>
+    </div>
+    </div>
+      
+      <!-- TABEL DATA -->
+    <div class="overflow-x-auto">
+      <table id="admin-table-main" class="w-full text-sm border">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-2 border">ID</th>
+            <th class="p-2 border">Nama</th>
+            <th class="p-2 border">KK</th>
+            <th class="p-2 border">Kelurahan</th>
+            <th class="p-2 border">Komoditas</th>
+            <th class="p-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
         
     </main>
 
     <script>
-        // --- STATE & UTILS ---
-        let currentView = 'form';
-        let registeredData = null;
 
-        const views = {
-    form: document.getElementById('view-form'),
-    review: document.getElementById('view-review'),
-    verifikasi: document.getElementById('view-verifikasi')
-};
-
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-
-            function debounce(func, delay) {
-
+// ===============================
+// UTILITAS GLOBAL
+// ===============================
+function debounce(func, delay) {
   let timer;
-
   return function (...args) {
     clearTimeout(timer);
     timer = setTimeout(() => func.apply(this, args), delay);
   };
-
 }
+        // --- STATE & UTILS ---
+        let currentView = 'form';
+        let registeredData = null;
+        let adminDataCache = []; // simpan data agar bisa difilter tanpa request ulang
+        let views = {};
+
+        const komoditasData = [
+  { nama: "Ayam", icon: "drumstick", cideng: 0, lainnya: 0 },
+  { nama: "Daging Sapi", icon: "beef", cideng: 0, lainnya: 0 },
+  { nama: "Telur", icon: "egg", cideng: 0, lainnya: 0 },
+  { nama: "Beras", icon: "package", cideng: 0, lainnya: 0 },
+  { nama: "Ikan Kembung", icon: "fish", cideng: 0, lainnya: 0 },
+  { nama: "Susu UHT", icon: "milk", cideng: 0, lainnya: 0 }
+];
+
+function loadDashboardAdmin() {
+
+  const wrap = document.getElementById("stok-summary");
+
+  wrap.innerHTML = "";
+
+  komoditasData.forEach(item => {
+
+    const total = item.cideng + item.lainnya;
+
+   wrap.innerHTML += `
+<div class="stok-card">
+  <div class="stok-top">
+
+    <div class="stok-icon">
+      <i data-lucide="${item.icon}"></i>
+    </div>
+
+    <div class="flex-1">
+      <div class="stok-title">${item.nama}</div>
+
+      <div class="stok-badge-wrap">
+        <div class="stok-badge cideng">Cideng: ${item.cideng}</div>
+        <div class="stok-badge lainnya">Lainnya: ${item.lainnya}</div>
+      </div>
+
+      <div class="stok-footer">
+        <div class="stok-total-label">Total</div>
+        <div class="stok-total">${total}</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+`;
+  });
+
+  document.getElementById("stok-last-update").innerText =
+    new Date().toLocaleTimeString('id-ID');
+
+  lucide.createIcons();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  views = {
+    form: document.getElementById('view-form'),
+    login: document.getElementById('login-view'),
+    review: document.getElementById('view-review'),
+    verifikasi: document.getElementById('view-verifikasi'),
+    admin: document.getElementById('view-admin')
+  };
+
+  lucide.createIcons();
+            
     // =========================
     // CEK KK OTOMATIS
     // =========================
@@ -467,13 +918,19 @@ document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 
 document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
 
     // jalankan cek stok saat halaman dibuka
-    loadStokKomoditas();
-    // 🔄 update stok otomatis setiap 30 detik
-    setInterval(loadStokKomoditas, 30000);
+loadStokKomoditas();
 
-    // jalankan lagi jika kelurahan berubah
-    document.getElementById('input-kelurahan')
-      .addEventListener('change', loadStokKomoditas);
+// 🔄 update stok otomatis setiap 3 detik (HANYA kalau kelurahan ada)
+setInterval(() => {
+  const kel = document.getElementById('input-kelurahan').value.trim();
+  if (kel) {
+    loadStokKomoditas();
+  }
+}, 3000);
+
+// realtime saat user mengetik
+document.getElementById('input-kelurahan')
+  .addEventListener('input', debounce(loadStokKomoditas, 300));
 
 });
 
@@ -482,20 +939,60 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
    CEK STOK KOMODITAS
 ================================= */
 async function loadStokKomoditas() {
+  // ==============================
+  // 🔥 RESET UI DULU (PENTING)
+  // ==============================
+  const checkboxes = document.querySelectorAll('input[name="komoditas"]');
+
+  checkboxes.forEach(cb => {
+    cb.disabled = false;
+
+    const label = cb.closest('label');
+
+    label.classList.remove(
+      'opacity-60',
+      'cursor-not-allowed'
+    );
+
+    // hapus badge stok habis
+    const oldBadge = label.querySelector('.stok-habis');
+    if (oldBadge) oldBadge.remove();
+  });
 
   try {
 
     const kelurahanInput = document.getElementById('input-kelurahan');
-    let kelurahan = kelurahanInput.value.toLowerCase().trim();
+    let kelurahan = (kelurahanInput?.value || '').toLowerCase().trim();
 
-    if (!kelurahan) kelurahan = "lainnya";
+    if (!kelurahan) {
+
+  const checkboxes = document.querySelectorAll('input[name="komoditas"]');
+
+  checkboxes.forEach(cb => {
+    cb.disabled = false;
+    cb.checked = false;
+
+    const label = cb.closest('label');
+
+    label.classList.remove(
+      'opacity-60',
+      'cursor-not-allowed'
+    );
+
+    // hapus tulisan stok habis jika ada
+    const oldBadge = label.querySelector('.stok-habis');
+    if (oldBadge) oldBadge.remove();
+  });
+
+  return; // ⛔ STOP di sini (tidak cek stok)
+}
 
     const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStok`);
     const data = await res.json();
 
     if (!data.success) return;
 
-    const kategori = kelurahan === "cideng" ? "cideng" : "lainnya";
+    const kategori = kelurahan.includes("cideng") ? "cideng" : "lainnya";
 
     const checkboxes = document.querySelectorAll('input[name="komoditas"]');
 
@@ -505,9 +1002,9 @@ async function loadStokKomoditas() {
 
     let stok = 0;
 
-    Object.keys(data.data).forEach(key => {
-    if (key.toLowerCase() === nama) {
-    stok = data.data[key][kategori] || 0;
+    Object.entries(data.data).forEach(([key, val]) => {
+  if (key.toLowerCase().trim() === nama) {
+    stok = Number(val[kategori] || 0);
   }
 });
 
@@ -712,6 +1209,78 @@ katSelect.addEventListener('change', function(e){
             views[viewName].classList.remove('hidden-view');
             window.scrollTo(0,0);
         }
+// ==========================
+// LOGIN ADMIN
+// ==========================
+async function loginAdmin() {
+
+  const btn = document.getElementById('btn-login');
+  const username = document.getElementById('admin-username').value.trim();
+  const password = document.getElementById('admin-password').value.trim();
+
+  // ✅ VALIDASI DULU (PENTING)
+  if (!username || !password) {
+    showToast("Username dan password wajib diisi", "error");
+    return;
+  }
+
+  // 🔒 DISABLE SETELAH VALIDASI LOLOS
+  btn.disabled = true;
+  btn.innerHTML = `
+    <i data-lucide="loader-2" class="animate-spin w-5 h-5"></i>
+    Memproses...
+  `;
+  lucide.createIcons();
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "loginAdmin",
+        username: username,
+        password: password
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast("Login gagal", 'error');
+      resetBtnLogin(); // 🔥 WAJIB
+      return;
+    }
+
+    localStorage.setItem('isAdmin', 'true');
+
+    showToast("Login berhasil");
+
+    switchView('admin');
+    loadDataAdmin();
+
+  } catch (err) {
+    showToast("Error login", 'error');
+  }
+
+  // 🔓 SELALU AKTIFKAN LAGI
+  resetBtnLogin();
+}
+
+// ==========================
+// RESET BUTTON LOGIN
+// ==========================
+function resetBtnLogin() {
+  const btn = document.getElementById('btn-login');
+
+  btn.disabled = false;
+
+  btn.innerHTML = `
+    <i data-lucide="log-in" class="w-5 h-5"></i>
+    Masuk ke Dashboard
+  `;
+
+  lucide.createIcons();
+}
 
         document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -760,8 +1329,11 @@ if (
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
-});
+    });
 
         const result = await res.json();
         showGlobalLoading(false);
@@ -817,9 +1389,12 @@ function getWaktuOperasionalText() {
             document.getElementById('review-kategori').textContent = registeredData.kategori;
             document.getElementById('review-produk').textContent = registeredData.produk;
             // =========================// URL REAL VERIFIKASI// =========================
-            const baseUrl = window.location.origin;
-            const path = window.location.pathname.replace('index.html','');
-            const verifikasiUrl = `${baseUrl}${path}verifikasi.html?id=${registeredData.id}`;
+            // Ambil path folder saat ini (lebih aman walau nama file bukan index.html)
+const basePath =
+  window.location.origin +
+  window.location.pathname.split('/').slice(0, -1).join('/');
+
+const verifikasiUrl = `${basePath}/verifikasi.html?id=${registeredData.id}`;
 
             document.getElementById('qr-image').src =
         `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;
@@ -833,15 +1408,19 @@ function getWaktuOperasionalText() {
         }
 
         function showGlobalLoading(show = true) {
-            const el = document.getElementById('global-loading');
-            if (show) {
-            el.classList.remove('hidden');
-            el.classList.add('flex');
-        }   else {
-            el.classList.add('hidden');
-            el.classList.remove('flex');
-        }
-        }
+  const el = document.getElementById('global-loading');
+
+  // ⛔ jika elemen tidak ada, hentikan fungsi
+  if (!el) return;
+
+  if (show) {
+    el.classList.remove('hidden');
+    el.classList.add('flex');
+  } else {
+    el.classList.add('hidden');
+    el.classList.remove('flex');
+  }
+}
 
         let toastActive = false;
 
@@ -872,6 +1451,426 @@ function showToast(msg, type = 'success') {
         }, 300);
     }, 3000);
 }
+        
+function logoutAdmin() {
+  localStorage.removeItem('isAdmin');
+
+  showToast("Logout berhasil");
+
+  switchView('login');
+}
+        
+// ==========================
+// TOGGLE PASSWORD
+// ==========================
+function togglePassword() {
+
+  const input = document.getElementById('admin-password');
+  const icon = document.getElementById('icon-eye');
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.setAttribute("data-lucide", "eye-off");
+  } else {
+    input.type = "password";
+    icon.setAttribute("data-lucide", "eye");
+  }
+
+  lucide.createIcons();
+}
+    
+// ==========================
+// ADMIN: LOAD DATA
+async function loadDataAdmin() {
+    loadDashboardAdmin();
+    // 🔒 CEK LOGIN ADMIN
+  if (!localStorage.getItem('isAdmin')) {
+    switchView('login');
+    return;
+  }
+  const tbody = document.getElementById('admin-table');
+  tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
+
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
+    const data = await res.json();
+
+    if (!data.success) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Gagal load data</td></tr>`;
+      return;
+    }
+
+       adminDataCache = data.data; // SIMPAN DATA
+    renderAdminTable(adminDataCache);      
+      loadStokKomoditas();
+      
+} catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-red-500">Error koneksi</td></tr>`;
+  }
+}
+
+        function renderAdminTable(list) {
+
+  const tbody = document.getElementById('admin-table');
+  tbody.innerHTML = '';
+
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-gray-400">Data tidak ditemukan</td></tr>`;
+    return;
+  }
+
+  list.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="border p-2 font-mono text-center">${row.id}</td>
+      <td class="border p-2">${row.nama}</td>
+      <td class="border p-2 font-mono">${row.kk}</td>
+      <td class="border p-2">${row.kelurahan}</td>
+      <td class="border p-2">
+  ${(row.produk || '').split(',').map(p => `
+    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs mr-1">
+      ${p.trim()}
+    </span>
+  `).join('')}
+</td>
+      
+    <td class="border p-2">
+  <div class="flex justify-center items-center gap-2">
+
+    <button onclick="editData('${row.id}')"
+      class="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded-md text-xs shadow-sm">
+      <i data-lucide="pencil" class="w-3 h-3"></i>
+      Edit
+    </button>
+
+    <button onclick="showProdukManager('${row.id}', '${row.produk}')"
+      class="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md text-xs shadow-sm">
+      <i data-lucide="box" class="w-3 h-3"></i>
+      Komoditas
+    </button>
+
+    <button onclick="hapusData('${row.id}')"
+      class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs shadow-sm">
+      <i data-lucide="trash-2" class="w-3 h-3"></i>
+      Hapus
+    </button>
+
+  </div>
+</td>
+    `;
+    tbody.appendChild(tr);
+  });
+    lucide.createIcons();
+    initDataTable();
+}
+
+// ==========================
+// BUKA MODAL EDIT DATA
+// ==========================
+function editData(id) {
+
+  const row = adminDataCache.find(r => r.id === id);
+
+  document.getElementById('edit-id').value = row.id;
+  document.getElementById('edit-nama').value = row.nama;
+  document.getElementById('edit-kk').value = row.kk;
+  document.getElementById('edit-kelurahan').value = row.kelurahan;
+  document.getElementById('edit-produk').value = row.produk;
+
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEdit() {
+  document.getElementById('edit-modal').classList.add('hidden');
+}    
+        
+// ==========================
+// UPDATE DATA KE SERVER
+// ==========================
+async function updateData() {
+
+  const payload = {
+    action: "updateData",
+    id: document.getElementById('edit-id').value,
+    nama: document.getElementById('edit-nama').value,
+    kk: document.getElementById('edit-kk').value,
+    kelurahan: document.getElementById('edit-kelurahan').value,
+    produk: document.getElementById('edit-produk').value
+  };
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast("Gagal update data", 'error');
+      return;
+    }
+
+    showToast("Data berhasil diperbarui");
+    closeEdit();
+    loadDataAdmin();
+
+  } catch(err) {
+    showToast("Gagal koneksi server", 'error');
+  }
+}
+        
+// ==========================
+// UPDATE KOMODITAS + REFRESH OTOMATIS
+async function updateProdukDropdown(id, selectEl) {
+  const produkBaru = selectEl.value;
+  const produkLama = selectEl.getAttribute('data-old') || '';
+
+  if (produkBaru === produkLama || produkBaru === '') return;
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "updateProduk",
+        id: id,
+        produkBaru: produkBaru,
+        produkLama: produkLama
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message || "Gagal mengupdate komoditas", 'error');
+      selectEl.value = produkLama;
+      return;
+    }
+
+    selectEl.setAttribute('data-old', produkBaru);
+    showToast("Komoditas berhasil diupdate", 'success');
+
+    // 🔥 PERBAIKAN UTAMA: refresh tabel otomatis
+    loadDataAdmin();
+
+  } catch (err) {
+    showToast("Error koneksi server", 'error');
+    selectEl.value = produkLama;
+  }
+}
+
+// ==========================
+// HAPUS KOMODITAS SAJA (Reset)
+async function resetKomoditas(id) {
+  const konfirmasi = confirm("Yakin ingin menghapus komoditas ini dan mengembalikan stok?");
+  if (!konfirmasi) return;
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "resetProduk",
+        id: id
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message || "Gagal menghapus komoditas", 'error');
+      return;
+    }
+
+    showToast("Komoditas berhasil dihapus & stok dikembalikan", 'success');
+    loadDataAdmin();   // refresh tabel
+  } catch (err) {
+    showToast("Gagal menghubungi server", 'error');
+  }
+}
+        
+        async function hapusSatuProduk(id, produk) {
+
+  const konfirmasi = confirm(`Hapus ${produk}?`);
+  if (!konfirmasi) return;
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "hapusProdukSatuan",
+        id: id,
+        produk: produk
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message, 'error');
+      return;
+    }
+
+    showToast("Produk dihapus & stok kembali");
+
+    closeProdukModal();   // tutup modal
+    loadDataAdmin();      // refresh tabel
+
+  } catch(err) {
+    showToast("Error server", 'error');
+  }
+}
+  
+        async function hapusData(id) {
+
+  const konfirmasi = confirm("Yakin ingin menghapus data ini?");
+
+  if (!konfirmasi) return;
+
+  try {
+
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "deleteData",
+        id: id
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message, 'error');
+      return;
+    }
+
+    showToast("Data berhasil dihapus");
+    loadDataAdmin();
+
+  } catch (err) {
+    showToast("Gagal hapus data", 'error');
+  }
+}
+        
+        let currentProdukId = null;
+
+function showProdukManager(id, produkString) {
+
+  currentProdukId = id;
+
+  const list = document.getElementById('produk-list');
+  list.innerHTML = '';
+
+  if (!produkString) {
+    list.innerHTML = '<p class="text-gray-400 text-sm">Tidak ada komoditas</p>';
+  } else {
+
+    const produkArr = produkString.split(',');
+
+    produkArr.forEach(p => {
+
+      const item = document.createElement('div');
+      item.className = "flex justify-between items-center border p-2 rounded";
+
+      item.innerHTML = `
+        <span>${p}</span>
+        <button onclick="hapusSatuProduk('${id}', '${p.trim()}')"
+          class="bg-red-500 text-white px-2 py-1 rounded text-xs">
+          Hapus
+        </button>
+      `;
+
+      list.appendChild(item);
+    });
+  }
+
+  document.getElementById('produk-modal').classList.remove('hidden');
+}
+
+function closeProdukModal() {
+  document.getElementById('produk-modal').classList.add('hidden');
+}
+
+        async function hapusSemuaKomoditas(id) {
+  const konfirmasi = confirm("Yakin ingin menghapus semua komoditas dan mengembalikan stok?");
+  if (!konfirmasi) return;
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "deleteData",
+        id: id
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showToast(result.message, 'error');
+      return;
+    }
+
+    showToast("Semua komoditas berhasil dihapus");
+    loadDataAdmin();
+  } catch (err) {
+    showToast("Gagal menghapus data", 'error');
+  }
+}
+        
+ // ==========================
+// DATATABLE INIT
+// ==========================
+let dataTableInstance = null;
+
+function initDataTable() {
+
+  if (dataTableInstance) {
+    dataTableInstance.destroy();
+  }
+
+  dataTableInstance = $('#admin-table-main').DataTable({
+  dom: `
+<"flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-4"
+  <"flex items-center gap-2"l>
+  <"w-full md:w-auto"f>>
+rt
+<"flex flex-col md:flex-row md:justify-between md:items-center gap-2 mt-4"ip>
+`,
+  pageLength: 10,
+  lengthMenu: [5, 10, 25, 50],
+  ordering: true,
+  searching: true,
+  responsive: true,
+  language: {
+    search: "Cari:",
+    lengthMenu: "Tampilkan _MENU_ data",
+    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+    paginate: {
+      next: "→",
+      previous: "←"
+    }
+  }
+});
+    setTimeout(() => {
+  // Styling search input
+  document.querySelector('.dataTables_filter input')
+    .classList.add(
+      'border','rounded-lg','px-3','py-2',
+      'focus:ring-2','focus:ring-blue-500',
+      'w-full','md:w-64'
+    );
+
+  // Styling dropdown length
+  document.querySelector('.dataTables_length select')
+    .classList.add(
+      'border','rounded-lg','px-2','py-1',
+      'focus:ring-2','focus:ring-blue-500'
+    );
+
+}, 100);
+}
+        
     </script>
 
     <!-- FULLSCREEN LOADING OVERLAY -->
@@ -902,8 +1901,8 @@ const OPERASIONAL_TAHUN  = 2026;
 const OPERASIONAL_BULAN  = 5;  // Mei
 const OPERASIONAL_TANGGAL = 7;
 
-const JAM_BUKA  = 8;   // 08.00 WIB
-const JAM_TUTUP = 12;  // 11.00 WIB
+const JAM_BUKA  = 9;   // 08.00 WIB
+const JAM_TUTUP = 11;  // 11.00 WIB
 
 
 function cekJamOperasional() {
@@ -964,7 +1963,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(cekJamOperasional, 30000);
 });
 
-    // ===============================
+// ===============================
 // AUTO MODE VERIFIKASI
 // ===============================
 async function cekModeVerifikasi() {
@@ -1051,6 +2050,59 @@ function tampilkanTidakValid(pesan) {
 document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
 </script>
+    
+    <!-- MODAL EDIT DATA -->
+<div id="edit-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
+  <div class="bg-white w-[90%] max-w-md rounded-xl p-5">
+
+    <h3 class="font-bold text-lg mb-3">Edit Data</h3>
+
+    <input type="hidden" id="edit-id">
+
+    <label>Nama</label>
+    <input id="edit-nama" class="w-full border p-2 mb-2 rounded">
+
+    <label>No KK</label>
+    <input id="edit-kk" class="w-full border p-2 mb-2 rounded">
+
+    <label>Kelurahan</label>
+    <input id="edit-kelurahan" class="w-full border p-2 mb-2 rounded">
+
+    <label>Produk</label>
+    <input id="edit-produk" class="w-full border p-2 mb-2 rounded">
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closeEdit()" class="px-3 py-1 bg-gray-400 text-white rounded">
+        Batal
+      </button>
+      <button onclick="updateData()" class="px-3 py-1 bg-blue-600 text-white rounded">
+        Simpan
+      </button>
+    </div>
+
+  </div>
+</div>
+
+    <div id="produk-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
+  <div class="bg-white w-[90%] max-w-md rounded-xl p-5">
+
+    <h3 class="font-bold text-lg mb-3">Kelola Komoditas</h3>
+
+    <div id="produk-list" class="space-y-2 mb-4"></div>
+
+    <div class="flex justify-between">
+      <button onclick="resetKomoditas(currentProdukId)"
+        class="bg-gray-600 text-white px-3 py-1 rounded">
+        Reset Semua
+      </button>
+
+      <button onclick="closeProdukModal()"
+        class="bg-red-500 text-white px-3 py-1 rounded">
+        Tutup
+      </button>
+    </div>
+  </div>
+</div>
     
 </body>
 </html>

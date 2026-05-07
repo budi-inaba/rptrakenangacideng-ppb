@@ -1329,8 +1329,11 @@ if (
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
-});
+    });
 
         const result = await res.json();
         showGlobalLoading(false);

@@ -1,406 +1,808 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Verifikasi QR • RPTRA Kenanga Cideng</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { 
-      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-      background: linear-gradient(to bottom right, #0f172a, #1e293b);
-    }
-    .premium-card { 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
-      border: 1px solid rgba(255, 255, 255, 0.05); 
-    }
-    .shake { animation: shake 0.4s; }
-    @keyframes shake { 
-      0%,100% { transform: translateX(0); } 
-      25% { transform: translateX(-6px); } 
-      75% { transform: translateX(6px); } 
-    }
-    #password-input { 
-      -webkit-text-security: none !important; 
-    }
-    #scanner-container { 
-      width: 100% !important; 
-      height: 360px; 
-      background: #000; 
-      border-radius: 20px; 
-      overflow: hidden; 
-    }
-    .data-row { 
-      transition: all 0.2s ease; 
-    }
-    .data-row:hover { 
-      background: rgba(59, 130, 246, 0.05); 
-      border-radius: 12px; 
-      padding: 0.5rem; 
-      margin: -0.5rem; 
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Pendaftaran - RPTRA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.css"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- 🔥 QR Code 🔥 -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
+    <style>
+        body { background-color: #0f172a; font-family: 'Inter', sans-serif; }
+        
+        /* Animasi Fade In Halaman Utama */
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { 
+          from { opacity: 0; transform: translateY(10px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .neon-green { background-color: #10b981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); }
+        .neon-green:hover { background-color: #059669; }
+
+        /* 🔐 CSS MODAL LOGIN PETUGAS */
+        @keyframes fadeInModal {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fadeIn { animation: fadeInModal 0.25s ease-out; }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
+
+        .input-error {
+          border-color: #ef4444 !important;
+          background-color: #fef2f2 !important;
+          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+        }
+
+        /* ✨ CSS MODAL KONFIRMASI APPROVE */
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-slideUp { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes pulse-soft {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+          50% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+        }
+        .animate-pulse-soft { animation: pulse-soft 2s infinite; }
+
+        .backdrop-blur-md {
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        
+        /* ✨ Animasi transisi status */
+        .status-transition {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-  <div class="w-full max-w-md mx-auto space-y-6">
-
-    <!-- CARD UTAMA -->
-    <div class="bg-white rounded-3xl premium-card overflow-hidden">
-
-      <!-- HEADER PREMIUM -->
-  <div class="bg-gradient-to-br from-indigo-700 via-indigo-600 to-emerald-600 px-7 py-8 text-center relative">
-  <div class="absolute top-5 right-5 bg-white/20 backdrop-blur-md px-3 py-0.5 rounded-xl text-white text-xs font-medium tracking-wide">
-    RESMI
-  </div>
-  
-  <div class="flex justify-center mb-4">
-    <img
-      src="logo-rptra.png"
-      class="h-12 drop-shadow-xl"
-      onerror="this.outerHTML='<div class=\'text-white text-4xl font-extrabold tracking-tighter\'>RPTRA</div>'"
-    />
-  </div>
-  
-  <h1 class="text-2xl sm:text-2.5xl font-bold text-white tracking-tight">
-    Verifikasi Pendaftaran
-  </h1>
-  <p class="mt-1.5 text-indigo-100 text-base font-medium">
-    Program Pangan Bersubsidi
-  </p>
-  <p class="text-indigo-200/90 text-sm mt-0.5">
-    RPTRA Kenanga Cideng
-  </p>
-</div>
-
-      <!-- KONTEN -->
-      <div class="p-6 sm:p-8">
-
-        <!-- LOADING PREMIUM -->
-        <div id="loading" class="flex flex-col items-center py-16">
-          <div class="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-          <p class="mt-6 text-gray-600 font-medium text-lg">Memverifikasi data dari server...</p>
+    <!-- CARD CONTAINER -->
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative fade-in">
+        
+        <!-- HEADER -->
+        <div class="bg-gradient-to-r from-blue-600 to-emerald-500 p-6 text-white text-center relative">
+            <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="logo-container mb-2">
+                    <img src="logo-rptra.png" alt="Logo RPTRA" class="h-12 mx-auto drop-shadow-md rounded-lg" onerror="handleImgErrorVerifikasi(this)">
+                </div>
+                <h1 class="text-lg font-bold">Verifikasi Pendaftaran</h1>
+                <p class="text-xs text-blue-100 mt-1">Program Pangan Bersubsidi</p>
+                <p class="text-[10px] text-blue-200">RPTRA Kenanga Cideng</p>
+            </div>
         </div>
 
-        <!-- HASIL VERIFIKASI -->
-        <div id="result" class="hidden space-y-8">
-
-          <!-- STATUS ICON DATA VALID -->
-        <div class="flex flex-col items-center gap-1">
-          <div class="flex justify-center">
-            <div id="status-icon" class="w-24 h-24 rounded-3xl flex items-center justify-center text-6xl shadow-inner bg-gradient-to-br from-white/10 to-transparent"></div>
-          </div>
-          <h2 id="status-text" class="text-2xl font-bold text-center tracking-tight"></h2>
+        <!-- LOADING STATE -->
+        <div id="loading-state" class="p-12 flex flex-col items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+            <p class="text-gray-500 text-sm">Mengambil data...</p>
         </div>
 
-          <!-- DATA PREMIUM -->
-         <div class="bg-slate-50/70 backdrop-blur-sm rounded-2xl p-6 space-y-5 border border-slate-100/50 text-sm">
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="calendar" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">Waktu Pendaftaran</span>
-              </div>
-              <span id="v-waktu" class="font-medium text-indigo-700"></span>
-            </div>
-           
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="hash" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">ID Registrasi</span>
-              </div>
-              <span id="v-id" class="font-mono font-semibold text-slate-800"></span>
-            </div>
-           
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="id-card" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">No. KK</span>
-              </div>
-              <span id="v-kk" class="font-mono text-slate-800"></span>
+        <!-- ERROR STATE -->
+        <div id="error-state" class="hidden p-12 text-center">
+            <i data-lucide="alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-3"></i>
+            <h3 class="text-lg font-bold text-gray-800">Data Tidak Ditemukan</h3>
+            <p id="error-msg" class="text-sm text-gray-500 mt-2">ID Registrasi tidak valid.</p>
+        </div>
+
+        <!-- CONTENT STATE -->
+        <div id="content-state" class="hidden p-6">
+            
+            <!-- STATUS ICON & TEXT -->
+            <div class="text-center mb-6 status-transition" id="status-section">
+                <div id="status-icon-container" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 bg-gray-50 transition-all duration-300">
+                    <i id="status-icon" data-lucide="clock" class="w-8 h-8 text-amber-500"></i>
+                </div>
+                <h2 id="status-text" class="text-lg font-bold uppercase tracking-wide text-amber-500 transition-colors duration-300">
+                    MENUNGGU VERIFIKASI
+                </h2>
             </div>
 
-           <div class="data-row flex justify-between items-center py-1">
-            <div class="flex items-center gap-2.5">
-            <i data-lucide="map-pin" class="w-4.5 h-4.5 text-indigo-500"></i>
-            <span class="text-gray-600">Kelurahan</span>
+            <!-- DATA DETAILS -->
+            <div class="bg-gray-50 rounded-xl p-4 space-y-3 border border-gray-100 text-sm">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="calendar" class="w-4 h-4 text-gray-400 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Waktu Pendaftaran</p>
+                        <p id="detail-waktu" class="text-gray-700 font-medium">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="hash" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">ID Registrasi</p>
+                        <p id="detail-id" class="text-gray-700 font-mono font-bold">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="id-card" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">No. KK</p>
+                        <p id="detail-kk" class="text-gray-700 font-mono">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Kelurahan</p>
+                        <p id="detail-kelurahan" class="text-gray-700 font-semibold">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Nama Pemilik Kartu</p>
+                        <p id="detail-nama" class="text-gray-700 font-semibold">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="tag" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Kategori Penerima</p>
+                        <p id="detail-kategori" class="text-red-600 font-bold">-</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i data-lucide="package" class="w-4 h-4 text-gray-400 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Komoditas</p>
+                        <p id="detail-produk" class="text-emerald-600 font-medium text-xs leading-relaxed mt-1">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pt-2 border-t border-gray-200 mt-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-gray-400"></i>
+                    <div class="flex-1 flex justify-between items-center">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Status</p>
+                        <span id="badge-status" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 transition-all duration-300">Menunggu</span>
+                    </div>
+                </div>
             </div>
-            <span id="v-kelurahan" class="font-medium text-slate-800"></span>
+
+            <!-- ACTION BUTTONS -->
+            <div class="mt-6 space-y-3" id="action-buttons">
+                <button id="btn-approve" onclick="approveData()" class="w-full neon-green text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span>SETUJUI PENDAFTARAN</span>
+                </button>
+                <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="qr-code" class="w-5 h-5"></i>
+                    <span>SCAN QR CODE</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="bg-gray-50 p-3 text-center border-t border-gray-100">
+            <p class="text-[10px] text-gray-400">© 2026 RPTRA Kenanga Cideng • PPB</p>
+        </div>
+    </div>
+
+    <!-- 🔥 MODAL SCANNER 🔥 -->
+    <div id="scanner-modal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center">
+      <div class="bg-white rounded-2xl p-4 w-[95%] max-w-md">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold">Scan QR Code</h3>
+          <button onclick="closeScanner()" class="text-gray-500 hover:text-red-500">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+        <div id="qr-reader" class="rounded-lg overflow-hidden"></div>
+        <p class="text-xs text-gray-500 mt-2 text-center">Arahkan kamera ke QR Code</p>
+      </div>
+    </div>
+
+    <!-- 🔐 MODAL LOGIN VERIFIKASI PETUGAS -->
+    <div id="login-modal" class="hidden fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fadeIn">
+        <div class="bg-gradient-to-r from-blue-600 to-emerald-500 p-5 text-white text-center">
+          <div class="flex justify-center mb-3">
+            <div class="bg-white/20 p-3 rounded-xl">
+              <i data-lucide="shield-check" class="w-8 h-8"></i>
+            </div>
           </div>
-           
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="user" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">Nama Pemilik Kartu</span>
-              </div>
-              <span id="v-nama" class="font-medium text-slate-800"></span>
-            </div>
-           
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="award" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">Kategori Penerima</span>
-              </div>
-              <span id="v-kategori" class="font-bold text-pink-600 tracking-wide"></span>
-            </div>
-           
-            <div class="data-row flex justify-between items-center py-1">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="package" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600">Komoditas</span>
-              </div>
-              <span id="v-produk" class="font-medium text-emerald-700 text-right"></span>
-            </div>
-           
-            <div class="pt-5 mt-1 border-t border-slate-200 flex justify-between items-center">
-              <div class="flex items-center gap-2.5">
-                <i data-lucide="check-square" class="w-4.5 h-4.5 text-indigo-500"></i>
-                <span class="text-gray-600 font-medium">Status</span>
-              </div>
-              <span id="v-status" class="px-5 py-1.5 rounded-xl text-xs font-bold"></span>
-            </div>
-           
+          <h3 class="text-lg font-bold">Verifikasi Petugas</h3>
+          <p class="text-xs text-blue-100 mt-1">Program Pangan Bersubsidi</p>
+        </div>
+        <div class="p-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan Password Petugas</label>
+          <div class="relative">
+            <i data-lucide="lock" class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"></i>
+            <input type="password" id="petugas-password" class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="••••••••" maxlength="20">
+            <button type="button" onclick="togglePetugasPassword()" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+              <i id="icon-petugas-eye" data-lucide="eye" class="w-5 h-5"></i>
+            </button>
           </div>
-
-          <!-- TOMBOL PREMIUM -->
-          <div class="space-y-4">
-  <button id="btn-approve" onclick="showPasswordModal()"
-          class="hidden w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-3xl text-base shadow-2xl flex items-center justify-center gap-2.5 transition-all duration-300 transform hover:scale-[1.02]">
-    <i data-lucide="shield-check" class="w-5 h-5"></i>
-    SETUJUI PENDAFTARAN
-  </button>
-
-  <button onclick="startQRScanner()"
-          class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-3xl text-base shadow-2xl flex items-center justify-center gap-2.5 transition-all duration-300 transform hover:scale-[1.02]">
-    <i data-lucide="camera" class="w-5 h-5"></i>
-    SCAN QR CODE
-  </button>
-</div>
+          <p id="login-error" class="hidden text-red-600 text-xs mt-2 font-medium flex items-center gap-1">
+            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+            Password salah, silakan coba lagi
+          </p>
+          <button onclick="verifyPetugasPassword()" class="w-full mt-4 bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-700 hover:to-emerald-600 text-white font-semibold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+            <span>Masuk & Verifikasi</span>
+          </button>
+          <p class="text-[10px] text-gray-400 text-center mt-4">🔐 Password hanya diketahui petugas berwenang</p>
+        </div>
+        <div class="bg-gray-50 px-6 py-3 text-center border-t border-gray-100">
+          <p class="text-[10px] text-gray-400">© 2026 RPTRA Kenanga Cideng • PPB</p>
         </div>
       </div>
     </div>
 
-    <p class="text-center text-white/50 text-sm mt-6">
-      © 2026 RPTRA Kenanga Cideng • PPB
-    </p>
-  </div>
+    <!-- ✅ MODAL KONFIRMASI SETUJUI PENDAFTARAN -->
+    <div id="confirm-approve-modal" class="hidden fixed inset-0 z-[10001] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-slideUp">
+        <!-- Header Gradient -->
+        <div class="bg-gradient-to-r from-blue-600 to-emerald-500 p-5 text-white text-center relative">
+          <div class="absolute -top-8 -right-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+          <div class="relative z-10">
+            <div class="mx-auto w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-3 animate-pulse-soft">
+              <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+            </div>
+            <h3 class="text-lg font-bold">Konfirmasi Persetujuan</h3>
+            <p class="text-xs text-blue-100 mt-1">Program Pangan Bersubsidi</p>
+          </div>
+        </div>
 
-  <!-- SCANNER MODAL PREMIUM -->
-  <div id="scanner-modal" class="hidden fixed inset-0 bg-black z-[9999] flex flex-col">
-    <div class="bg-gradient-to-r from-black to-gray-900 p-5 flex justify-between items-center text-white">
-      <h3 class="font-semibold text-lg">Scan QR Code</h3>
-      <button onclick="stopQRScanner()" class="text-3xl hover:text-gray-300 transition">✕</button>
-    </div>
-    <div class="flex-1 flex items-center justify-center p-4 bg-black">
-      <div id="scanner-container" class="w-full max-w-md"></div>
-    </div>
-    <div class="bg-black p-6 text-center text-white/70 text-sm">
-      Arahkan kamera ke QR Code pendaftaran
-    </div>
-  </div>
+        <!-- Content -->
+        <div class="p-6">
+          <div class="text-center mb-5">
+            <p class="text-gray-600 text-sm mb-1">Anda akan menyetujui pendaftaran dengan detail:</p>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Nama</span>
+                <span id="confirm-nama" class="font-semibold text-gray-800">-</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">No. KK</span>
+                <span id="confirm-kk" class="font-mono text-gray-800">-</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Kategori</span>
+                <span id="confirm-kategori" class="font-bold text-red-600">-</span>
+              </div>
+              <div class="pt-2 border-t border-emerald-200">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-500">Komoditas</span>
+                  <span id="confirm-produk" class="font-medium text-emerald-700">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-  <!-- PASSWORD MODAL PREMIUM -->
-  <div id="password-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] px-4">
-    <div class="bg-white rounded-3xl premium-card w-full max-w-sm p-8">
-      <h3 class="text-2xl font-bold text-center mb-2">Verifikasi Petugas</h3>
-      <p class="text-center text-gray-500 mb-6">Masukkan password untuk melanjutkan</p>
-      
-      <div class="relative mb-6">
-        <input 
-          type="text" 
-          id="password-input" 
-          class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100/30 text-xl text-center font-mono tracking-widest outline-none transition"
-          placeholder="••••••••"
-        />
-        <button onclick="togglePassword()" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition">
-          <i id="eye-icon" data-lucide="eye-off" class="w-6 h-6"></i>
-        </button>
+          <!-- Warning Note -->
+          <div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg mb-5">
+            <p class="text-xs text-amber-800 flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+              <span>Data yang disetujui <strong>tidak dapat diubah</strong>. Pastikan seluruh informasi sudah benar.</span>
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3">
+            <button onclick="closeConfirmModal()" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="x" class="w-4 h-4"></i>
+              Batalkan
+            </button>
+            <button id="btn-confirm-approve" onclick="executeApprove()" class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-700 hover:to-emerald-600 text-white font-semibold rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              Ya, Setujui
+            </button>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-3 text-center border-t border-gray-100">
+          <p class="text-[10px] text-gray-400">© 2026 RPTRA Kenanga Cideng • PPB</p>
+        </div>
       </div>
-
-      <p id="password-error" class="text-red-600 text-center text-sm mb-6 hidden font-medium">Password salah!</p>
-
-      <div class="grid grid-cols-2 gap-4">
-        <button onclick="hidePasswordModal()" class="py-4 border border-gray-300 rounded-2xl font-medium hover:bg-gray-50 transition">Batal</button>
-        <button onclick="checkPassword()" class="py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl font-semibold hover:shadow-lg transition">Verifikasi</button>
-      </div>
     </div>
-  </div>
 
-  <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtGMvarWQUzU8vWh3ZdoPD5fH5a_Tz81acOMtAwadPKu23MsFgVPpsgLGU5xXUKI3t/exec";
-    const PASSWORD = "PPB";
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[11000] space-y-2 pointer-events-none"></div>
+    
+    <script>
+        // =======================
+        // KONFIGURASI URL BACKEND
+        // =======================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3aC7okjXZ7_M1q9NS2kSGYD5irf0zE8OTGO6NR7eaTKEfe-awhH3KOv54pIdX_bAw/exec";
+        
+        let currentId = "";
+        let pendingApprovalId = null;
+        let isApproved = false; // Flag untuk tracking status approval
+        let optimisticApproved = false;  // ✨ Baru: flag untuk optimistic UI
+        let isSyncing = false;         
 
-    let currentId = null;
-    let isPasswordVisible = true;
-    let html5QrCode = null;
-
-    function resetVerificationUI() {
-      document.getElementById('result').classList.add('hidden');
-      document.getElementById('loading').classList.remove('hidden');
-      document.getElementById('btn-approve').classList.add('hidden');
+// ==========================================
+// INISIALISASI
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 🔄 RESET SEMUA FLAG SAAT HALAMAN LOAD
+    optimisticApproved = false;
+    isSyncing = false;
+    isApproved = false;
+    
+    console.log("🔍 Full URL:", window.location.href);
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+    console.log("🔍 ID extracted:", id);
+    
+    if (!id) {
+        console.error("❌ ID tidak ditemukan!");
+        showError("ID Pendaftaran tidak ditemukan di URL");
+        return;
     }
-
-    async function verify() {
-  resetVerificationUI();
-  const params = new URLSearchParams(window.location.search);
-  currentId = params.get("id");
-  if (!currentId) {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-    document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
-    document.getElementById('status-text').innerHTML = `<span class="text-red-600">QR Code Tidak Valid</span>`;
-    lucide.createIcons();
-    return;
-  }
-  try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getById&id=${currentId}`);
-    const data = await res.json();
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-    if (!data.success) {
-      document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
-      document.getElementById('status-text').innerHTML = `<span class="text-red-600">TIDAK VALID</span>`;
-      lucide.createIcons();
-      return;
-    }
-    isiDataVerifikasi(data);
-  } catch (err) {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-    document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
-    document.getElementById('status-text').innerHTML = `<span class="text-red-600">Gagal menghubungi server</span>`;
-    lucide.createIcons();
-  }
-}
-
-    function isiDataVerifikasi(data) {
-  document.getElementById('v-waktu').textContent = data.waktu || "—";
-  document.getElementById('v-id').textContent = data.id || "—";
-  document.getElementById('v-kk').textContent = data.kk || "—";
-  document.getElementById('v-kelurahan').textContent = data.kelurahan || "—";
-  document.getElementById('v-nama').textContent = data.nama || "—";
-  document.getElementById('v-kategori').textContent = data.kategori || "—";
-  document.getElementById('v-produk').textContent = data.produk || "—";
-
-  const statusEl = document.getElementById('v-status');
-  const approveBtn = document.getElementById('btn-approve');
-
-  if (data.status === "Disetujui") {
-    document.getElementById('status-icon').innerHTML = `<i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>`;
-    document.getElementById('status-text').innerHTML = `<span class="text-emerald-600">DATA VALID</span>`;
-    statusEl.className = "bg-emerald-100 text-emerald-700 px-6 py-2 rounded-2xl text-sm font-bold";
-    statusEl.textContent = "Disetujui";
-    approveBtn.classList.add('hidden');
-  } else {
-    document.getElementById('status-icon').innerHTML = `<i data-lucide="clock" class="w-10 h-10 text-amber-500"></i>`;
-    document.getElementById('status-text').innerHTML = `<span class="text-amber-600">MENUNGGU VERIFIKASI</span>`;
-    statusEl.className = "bg-amber-100 text-amber-700 px-6 py-2 rounded-2xl text-sm font-bold";
-    statusEl.textContent = data.status || "Menunggu";
-    approveBtn.classList.remove('hidden');
-  }
-  lucide.createIcons();
-}
-
-    // ================== SCAN QR PREMIUM ==================
-    function startQRScanner() {
-      document.getElementById('scanner-modal').classList.remove('hidden');
-      html5QrCode = new Html5Qrcode("scanner-container");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          stopQRScanner();
-          resetVerificationUI();
-          const separator = decodedText.includes('?') ? '&' : '?';
-          window.location.replace(decodedText + separator + 't=' + Date.now());
+    
+    console.log("✅ ID valid, memulai fetch data...");
+    currentId = id;
+    fetchData(id);
+});
+        
+        // ==========================================
+        // AMBIL DATA DARI SERVER
+        // ==========================================
+        async function fetchData(id) {
+            try {
+                const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
+                console.log("🌐 Fetch URL:", url);
+                
+                const res = await fetch(url);
+                console.log("📡 HTTP Status:", res.status);
+                
+                const text = await res.text();
+                console.log("📦 Raw Response:", text.substring(0, 500));
+                
+                const result = JSON.parse(text);
+                
+                if (result.success && result.data) {
+                    console.log("✅ Data found:", result.data);
+                    // Reset flag jika data dari server masih "Menunggu"
+                    if (result.data.status !== "Disetujui") {
+                        isApproved = false;
+                    }
+                    renderData(result.data);
+                } else {
+                    console.error("❌ Backend returned error:", result.message);
+                    showError(result.message || "Data tidak ditemukan");
+                }
+            } catch (err) {
+                console.error("💥 Exception:", err);
+                showError("Error: " + err.message);
+            }
         }
-      ).catch(err => {
-        alert("Gagal membuka kamera: " + err);
-        stopQRScanner();
-      });
+
+        // ==========
+        // RENDER UI
+        // ==========
+        function renderData(data) {
+             if (optimisticApproved && isSyncing) {
+        console.log("⏳ Skipping render - masih dalam mode optimistic");
+        return;
     }
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('content-state').classList.remove('hidden');
+            document.getElementById('error-state').classList.add('hidden');
 
-    function stopQRScanner() {
-      if (html5QrCode) {
-        html5QrCode.stop();
-      }
-      document.getElementById('scanner-modal').classList.add('hidden');
+            document.getElementById('detail-waktu').textContent = data.waktu || "-";
+            document.getElementById('detail-id').textContent = data.id || "-";
+            document.getElementById('detail-kk').textContent = data.kk || "-";
+            document.getElementById('detail-kelurahan').textContent = data.kelurahan || "-";
+            document.getElementById('detail-nama').textContent = data.nama || "-";
+            document.getElementById('detail-kategori').textContent = data.kategori || "-";
+            document.getElementById('detail-produk').textContent = data.produk || "-";
+
+            const status = data.status;
+            const badge = document.getElementById('badge-status');
+            const statusText = document.getElementById('status-text');
+            const iconContainer = document.getElementById('status-icon-container');
+            const btnApprove = document.getElementById('btn-approve');
+            const actionButtons = document.getElementById('action-buttons');
+
+            if (optimisticApproved || status === "Disetujui") {
+                // ✨ TAMPILAN DATA VALID
+                statusText.textContent = "DATA VALID";
+                statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
+                
+                iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
+                iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
+                
+                badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
+                badge.textContent = "✓ Disetujui";
+                
+                // Sembunyikan tombol approve, tampilkan hanya scan QR
+                if (btnApprove) btnApprove.classList.add('hidden');
+                if (actionButtons) {
+                    actionButtons.innerHTML = `
+                        <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                            <i data-lucide="qr-code" class="w-5 h-5"></i>
+                            <span>SCAN QR CODE</span>
+                        </button>
+                    `;
+                }
+                
+                // Trigger confetti hanya jika baru pertama kali approved
+                if (!isApproved) {
+            triggerConfetti();
+            isApproved = true;
+        }
+                
+            } else {
+                // ✨ TAMPILAN MENUNGGU VERIFIKASI
+                optimisticApproved = false;
+                statusText.textContent = "MENUNGGU VERIFIKASI";
+                statusText.className = "text-lg font-bold text-amber-500 uppercase tracking-wide transition-colors duration-300";
+                
+                iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 bg-gray-50 transition-all duration-300";
+                iconContainer.innerHTML = '<i data-lucide="clock" class="w-8 h-8 text-amber-500"></i>';
+                
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 transition-all duration-300";
+                badge.textContent = "Menunggu";
+                
+                if (btnApprove) btnApprove.classList.remove('hidden');
+                if (actionButtons) {
+                    actionButtons.innerHTML = `
+                        <button id="btn-approve" onclick="approveData()" class="w-full neon-green text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            <span>SETUJUI PENDAFTARAN</span>
+                        </button>
+                        <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                            <i data-lucide="qr-code" class="w-5 h-5"></i>
+                            <span>SCAN QR CODE</span>
+                        </button>
+                    `;
+                }
+            }
+            lucide.createIcons();
+        }
+        
+        // ==========================================
+        // ✨ FUNGSI UPDATE STATUS LANGSUNG (OPTIMISTIC UI)
+        // ==========================================
+        function updateStatusToValid() {
+            const statusText = document.getElementById('status-text');
+            const iconContainer = document.getElementById('status-icon-container');
+            const badge = document.getElementById('badge-status');
+            const btnApprove = document.getElementById('btn-approve');
+            const actionButtons = document.getElementById('action-buttons');
+            
+            // ✨ Update teks status
+            statusText.textContent = "DATA VALID";
+            statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
+            
+            // ✨ Update icon dengan animasi
+            iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
+            iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
+            
+            // ✨ Update badge
+            badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
+            badge.textContent = "✓ Disetujui";
+            
+            // ✨ Sembunyikan tombol approve
+            if (btnApprove) btnApprove.classList.add('hidden');
+            
+            // ✨ Update action buttons (hanya tampilkan scan QR)
+            if (actionButtons) {
+                actionButtons.innerHTML = `
+                    <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <i data-lucide="qr-code" class="w-5 h-5"></i>
+                        <span>SCAN QR CODE</span>
+                    </button>
+                `;
+            }
+            
+            // ✨ Trigger confetti
+            triggerConfetti();
+            
+            // ✨ Re-render icons
+            lucide.createIcons();
+        }
+        
+        // ==========================================
+        // FUNGSI APPROVE DENGAN MODAL KONFIRMASI
+        // ==========================================
+        function approveData() {
+            showConfirmApproveModal();
+        }
+
+        function showConfirmApproveModal() {
+            // Isi data ke dalam modal konfirmasi
+            document.getElementById('confirm-nama').textContent = document.getElementById('detail-nama').textContent;
+            document.getElementById('confirm-kk').textContent = document.getElementById('detail-kk').textContent;
+            document.getElementById('confirm-kategori').textContent = document.getElementById('detail-kategori').textContent;
+            document.getElementById('confirm-produk').textContent = document.getElementById('detail-produk').textContent;
+            
+            pendingApprovalId = currentId;
+            
+            const modal = document.getElementById('confirm-approve-modal');
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+            
+            // ESC key handler
+            const handleEsc = (e) => {
+                if (e.key === 'Escape') {
+                    closeConfirmModal();
+                    document.removeEventListener('keydown', handleEsc);
+                }
+            };
+            document.addEventListener('keydown', handleEsc);
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-approve-modal').classList.add('hidden');
+            pendingApprovalId = null;
+        }
+
+        async function executeApprove() {
+    if (!pendingApprovalId) {
+        closeConfirmModal();
+        return;
     }
-
-    // ================== PASSWORD MODAL PREMIUM ==================
-    function showPasswordModal() {
-      document.getElementById('password-modal').classList.remove('hidden');
-      document.getElementById('password-input').focus();
-      document.getElementById('password-input').select();
-      document.getElementById('password-error').classList.add('hidden');
-    }
-
-    function hidePasswordModal() {
-      document.getElementById('password-modal').classList.add('hidden');
-      document.getElementById('password-input').value = '';
-    }
-
-    function togglePassword() {
-      const input = document.getElementById('password-input');
-      isPasswordVisible = !isPasswordVisible;
-      input.type = isPasswordVisible ? 'text' : 'password';
-      document.getElementById('eye-icon').setAttribute('data-lucide', isPasswordVisible ? 'eye-off' : 'eye');
-      lucide.createIcons();
-    }
-
-    function checkPassword() {
-      const input = document.getElementById('password-input').value.trim();
-      if (input === PASSWORD) {
-        hidePasswordModal();
-        approveData();
-      } else {
-        document.getElementById('password-error').classList.remove('hidden');
-        const modal = document.querySelector('#password-modal > div');
-        modal.classList.add('shake');
-        setTimeout(() => modal.classList.remove('shake'), 600);
-      }
-    }
-
-    // ================== APPROVE PREMIUM ==================
-    async function approveData() {
-      const btn = document.getElementById('btn-approve');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-6 h-6"></i> Memproses...`;
-      btn.disabled = true;
-
-      try {
+    
+    const btn = document.getElementById('btn-confirm-approve');
+    const originalBtnContent = btn.innerHTML;
+    
+    // Loading state
+    btn.disabled = true;
+    btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Memproses...`;
+    
+    try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'approve', id: currentId })
+            method: "POST",
+            body: JSON.stringify({ 
+                action: "approve", 
+                id: pendingApprovalId,
+                timestamp: new Date().toISOString()
+            })
         });
-        const result = await res.json();
-
-        if (result.success) {
-          document.getElementById('status-icon').innerHTML = `<i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>`;
-          document.getElementById('status-text').innerHTML = `<span class="text-emerald-600">DATA VALID</span>`;
-          document.getElementById('v-status').className = "bg-emerald-100 text-emerald-700 px-6 py-2 rounded-2xl text-sm font-bold";
-          document.getElementById('v-status').textContent = "Disetujui";
-          document.getElementById('btn-approve').classList.add('hidden');
-          confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-        } else {
-          alert("Gagal menyetujui: " + (result.message || "Unknown error"));
+        
+        console.log("📡 Response status:", res.status);
+        const responseText = await res.text();
+        console.log("📦 Raw response:", responseText);
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("Response bukan JSON valid: " + responseText.substring(0, 100));
         }
-      } catch (err) {
-        alert("Gagal menghubungi server. Periksa koneksi.");
-      } finally {
-        btn.innerHTML = originalText;
+        
+        if (result.success) {
+            // ✨ OPTIMISTIC UI: Update langsung
+            optimisticApproved = true;
+            isApproved = true;
+            updateStatusToValid();
+            
+            closeConfirmModal();
+            showToast("✅ Pendaftaran berhasil disetujui!", "success");
+            
+            // ✨ SYNC KE BACKEND DENGAN DELAY (hindari race condition)
+            isSyncing = true;
+            setTimeout(() => {
+                fetchData(pendingApprovalId);
+                isSyncing = false;
+            }, 1500); // Delay 1.5 detik biar backend sempat update
+            
+        } else {
+            throw new Error(result.message || "Gagal memproses persetujuan");
+        }
+    } catch (err) {
+        console.error("❌ Error approve:", err);
+        
+        if (err.message.includes("Failed to fetch")) {
+            showToast("⚠️ Koneksi gagal. Cek CORS / URL / Deploy script", "error");
+        } else {
+            showToast("⚠️ " + err.message, "error");
+        }
+    } finally {
         btn.disabled = false;
-      }
-      lucide.createIcons();
+        btn.innerHTML = originalBtnContent;
+        pendingApprovalId = null;
+        lucide.createIcons();
     }
+}
+        
+        function showError(msg) {
+    // ✨ Jangan tampilkan error jika dalam mode optimistic approved
+    if (optimisticApproved) {
+        console.log("⚠️ Error ignored - dalam mode optimistic:", msg);
+        return;
+    }
+    
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('content-state').classList.add('hidden'); // ✨ Hide content
+    document.getElementById('error-state').classList.remove('hidden');
+    document.getElementById('error-msg').textContent = msg;
+}
 
-    window.onload = () => {
-      verify();
-      lucide.createIcons();
-    };
-  </script>
+        function triggerConfetti() {
+            confetti({ 
+                particleCount: 100, 
+                spread: 70, 
+                origin: { y: 0.6 },
+                colors: ['#10b981', '#3b82f6', '#fbbf24']
+            });
+        }
+
+        // ==========================================
+        // FUNGSI SCANNER
+        // ==========================================
+        let html5QrCode = null;
+
+        function openScanner() {
+          document.getElementById('scanner-modal').classList.remove('hidden');
+          html5QrCode = new Html5Qrcode("qr-reader");
+          
+          html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => {
+              closeScanner();
+              processScannedURL(decodedText);
+            },
+            (errorMessage) => {}
+          ).catch(err => {
+            console.error("Gagal mulai scanner:", err);
+            alert("Gagal mengakses kamera. Pastikan izin kamera diaktifkan.");
+            closeScanner();
+          });
+          lucide.createIcons();
+        }
+
+        function closeScanner() {
+          document.getElementById('scanner-modal').classList.add('hidden');
+          if (html5QrCode) {
+            html5QrCode.stop().catch(err => console.error(err));
+            html5QrCode = null;
+          }
+        }
+
+        function processScannedURL(url) {
+          console.log("🔗 [DEBUG] QR Scanned:", url);
+          showPetugasLogin(url);
+        }
+        
+        // ==========================================
+        // FUNGSI LOGIN PETUGAS
+        // ==========================================
+        let scannedURL = null;
+
+        function showPetugasLogin(url) {
+          try {
+            console.log("🔐 [DEBUG] showPetugasLogin dipanggil dengan URL:", url);
+            scannedURL = url;
+            const modal = document.getElementById('login-modal');
+            if (!modal) throw new Error("Modal element not found");
+            modal.classList.remove('hidden');
+            const passwordInput = document.getElementById('petugas-password');
+            if (!passwordInput) throw new Error("Password input not found");
+            passwordInput.value = '';
+            passwordInput.focus();
+            lucide.createIcons();
+          } catch (err) {
+            console.error("💥 Error di showPetugasLogin:", err);
+            alert("Gagal menampilkan login: " + err.message);
+          }
+        }
+        
+        function togglePetugasPassword() {
+          const input = document.getElementById('petugas-password');
+          const icon = document.getElementById('icon-petugas-eye');
+          if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+          } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+          }
+          lucide.createIcons();
+        }
+
+        function verifyPetugasPassword() {
+          const password = document.getElementById('petugas-password').value.trim();
+          const errorMsg = document.getElementById('login-error');
+          const input = document.getElementById('petugas-password');
+          
+          if (password.toUpperCase() === 'PPB') {
+            errorMsg.classList.add('hidden');
+            input.classList.remove('input-error');
+            document.getElementById('login-modal').classList.add('hidden');
+            if (scannedURL) {
+              processScannedURLReal(scannedURL);
+              scannedURL = null;
+            }
+          } else {
+            errorMsg.classList.remove('hidden');
+            input.classList.add('input-error');
+            const modal = document.querySelector('#login-modal .bg-white');
+            modal.classList.add('shake');
+            setTimeout(() => modal.classList.remove('shake'), 300);
+            input.focus();
+            input.select();
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const passwordInput = document.getElementById('petugas-password');
+          if (passwordInput) {
+            passwordInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') verifyPetugasPassword();
+            });
+          }
+        });
+
+        function processScannedURLReal(url) {
+          console.log("🔗 URL dari QR (setelah login):", url);
+          try {
+            const urlObj = new URL(url);
+            const id = urlObj.searchParams.get("id");
+            if (id) {
+              console.log("✅ ID ditemukan:", id);
+              currentId = id;
+              fetchData(id);
+            } else {
+              alert("ID tidak ditemukan dalam QR Code");
+            }
+          } catch (e) {
+            const match = url.match(/[?&]id=([^&]+)/);
+            if (match && match[1]) {
+              currentId = match[1];
+              fetchData(match[1]);
+            } else {
+              alert("Format QR Code tidak valid");
+            }
+          }
+        }
+
+        // ==========================================
+        // TOAST NOTIFICATION
+        // ==========================================
+        function showToast(msg, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed top-4 right-4 z-[11000] space-y-2 pointer-events-none';
+                document.body.appendChild(container);
+            }
+            
+            const toast = document.createElement('div');
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info';
+            const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+            
+            toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 animate-slideUp pointer-events-auto`;
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i> <span>${msg}</span>`;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.3s, transform 0.3s';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+        
+        // Helper function untuk handle image error
+        function handleImgErrorVerifikasi(img) {
+            img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="12" cy="12" r="3"/><path d="M16 8h-4V4"/><path d="M8 16h4v4"/></svg>';
+        }
+    </script>
 </body>
 </html>

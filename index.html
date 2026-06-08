@@ -221,7 +221,37 @@
 .inline-flex.items-center.gap-1\.5.px-2\.5.py-1.bg-white:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}       
+}   
+
+/* ===============================
+           COVER LOGIN MODAL
+           =============================== */
+        #cover-login-modal.show-modal #cover-login-panel {
+          transform: scale(1);
+          opacity: 1;
+        }
+
+        #cover-login-modal {
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        #cover-login-modal.show-modal {
+          opacity: 1;
+        }
+
+        /* Shake animation for error */
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-6px); }
+          40% { transform: translateX(6px); }
+          60% { transform: translateX(-4px); }
+          80% { transform: translateX(4px); }
+        }
+
+        .shake {
+          animation: shake 0.4s ease-in-out;
+        }
         
     </style>
 </head>
@@ -303,16 +333,31 @@
 
   </div> <!-- PENUTUP AREA TENGAH -->
 
-  <!-- FOOTER COVER -->
-  <div class="text-center text-white/70 text-sm pb-6 pt-2 relative z-10">
-    © 2026 RPTRA Kenanga Cideng • PPB
+    <!-- FOOTER COVER -->
+  <div class="text-center pb-6 pt-2 relative z-10">
+    <p class="text-white/60 text-xs mb-3">© 2026 RPTRA Kenanga Cideng • PPB</p>
+    
+    <!-- LOGIN ADMIN BUTTON -->
+    <button onclick="openCoverLogin()" 
+      class="inline-flex items-center gap-2 
+             px-4 py-2 rounded-full
+             bg-white/10 hover:bg-white/20 
+             border border-white/20 hover:border-white/40
+             text-white/70 hover:text-white
+             text-xs font-medium
+             backdrop-blur-sm
+             transition-all duration-300
+             hover:scale-105 active:scale-95">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+      <span>Login Admin</span>
+    </button>
   </div>
 
 </div>
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTXREotPATlwryAe0J60AWAe2DsGeTMrsNBAYZ3jjEaU5lhsWgdLuS1yj1vh1D_S0QmQ/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjmPmwtBwShzNc7KniTQHcNPG6qmMBAV8F4qys-YkPJ8YTBcMioYSDHkYZbgexV4CsUQ/exec"; 
 
         // ===============================
 // 🔧 KONFIGURASI MONITORING STOK
@@ -1725,10 +1770,14 @@ function showToast(msg, type = 'success') {
         
 function logoutAdmin() {
   localStorage.removeItem('isAdmin');
+  localStorage.removeItem('adminBypass'); // 🔥 Hapus bypass juga
 
   showToast("Logout berhasil");
 
   switchView('login');
+  
+  // 🔥 Cek ulang jam operasional → cover bisa muncul lagi
+  setTimeout(() => cekJamOperasional(), 300);
 }
         
 // ==========================
@@ -2272,14 +2321,28 @@ document.addEventListener('DOMContentLoaded', () => {
 // ================================
 const OPERASIONAL_TAHUN  = 2026;
 const OPERASIONAL_BULAN  = 6;  // Juni
-const OPERASIONAL_TANGGAL = 8;
+const OPERASIONAL_TANGGAL = 9;
 
-const JAM_BUKA  = 6;   // 08.00 WIB
-const JAM_TUTUP = 23;  // 11.00 WIB
+const JAM_BUKA  = 8;   // 08.00 WIB
+const JAM_TUTUP = 11;  // 11.00 WIB
 
 
 function cekJamOperasional() {
 
+  const cover = document.getElementById('operasional-cover');
+
+  // ==============================
+  // ✅ CEK ADMIN BYPASS DULU
+  // ==============================
+  if (localStorage.getItem('adminBypass') === 'true') {
+    cover.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    return; // ⛔ Stop, jangan cek jam lagi
+  }
+
+  // ==============================
+  // ⏰ CEK JAM OPERASIONAL NORMAL
+  // ==============================
   const now = new Date();
   const wib = new Date(
     now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
@@ -2301,8 +2364,6 @@ function cekJamOperasional() {
     totalMenit >= JAM_BUKA * 60 &&
     totalMenit <= JAM_TUTUP * 60;
 
-  const cover = document.getElementById('operasional-cover');
-
   // Isi informasi tanggal & jam
   const namaBulan = [
     'Januari','Februari','Maret','April','Mei','Juni',
@@ -2318,15 +2379,14 @@ function cekJamOperasional() {
   document.getElementById('cover-jam-tutup').textContent =
     JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
 
-
   if (tanggalSesuai && jamSesuai) {
     // ✅ BUKA → Cover hilang
     cover.classList.add('hidden');
-  document.body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
   } else {
     // ❌ TUTUP → Cover muncul
     cover.classList.remove('hidden');
-  document.body.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
   }
 }
 
@@ -2337,8 +2397,190 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===============================
-// AUTO MODE VERIFIKASI
+// 🔐 COVER LOGIN - ADMIN BYPASS
 // ===============================
+
+function openCoverLogin() {
+  const modal = document.getElementById('cover-login-modal');
+  if (!modal) return;
+  
+  modal.classList.remove('hidden');
+  
+  // Trigger animation setelah display tidak hidden
+  requestAnimationFrame(() => {
+    modal.classList.add('show-modal');
+  });
+  
+  lucide.createIcons();
+  setTimeout(() => {
+    const usernameInput = document.getElementById('cover-username');
+    if (usernameInput) usernameInput.focus();
+  }, 300);
+}
+
+function closeCoverLogin() {
+  const modal = document.getElementById('cover-login-modal');
+  if (!modal) return;
+  
+  modal.classList.remove('show-modal');
+  
+  // Tunggu animasi selesai baru hide
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+  
+  // Reset form
+  const errorWrap = document.getElementById('cover-login-error-wrap');
+  const username = document.getElementById('cover-username');
+  const password = document.getElementById('cover-password');
+  
+  if (errorWrap) errorWrap.classList.add('hidden');
+  if (username) username.value = '';
+  if (password) password.value = '';
+  resetCoverLoginBtn();
+}
+
+function toggleCoverPassword() {
+  const input = document.getElementById('cover-password');
+  const icon = document.getElementById('cover-icon-eye');
+  
+  if (!input || !icon) return;
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('data-lucide', 'eye');
+  }
+  lucide.createIcons();
+}
+
+function showCoverLoginError(message) {
+  const wrap = document.getElementById('cover-login-error-wrap');
+  const errorText = document.getElementById('cover-login-error');
+  const panel = document.getElementById('cover-login-panel');
+  
+  if (errorText) errorText.textContent = message;
+  if (wrap) wrap.classList.remove('hidden');
+  
+  // Shake animation
+  if (panel) {
+    panel.classList.add('shake');
+    setTimeout(() => panel.classList.remove('shake'), 400);
+  }
+  
+  lucide.createIcons();
+}
+
+function resetCoverLoginBtn() {
+  const btn = document.getElementById('btn-cover-login');
+  if (!btn) return;
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> <span>Masuk</span>';
+  lucide.createIcons();
+}
+
+async function coverLoginAdmin() {
+  const btn = document.getElementById('btn-cover-login');
+  const username = document.getElementById('cover-username');
+  const password = document.getElementById('cover-password');
+  
+  if (!btn || !username || !password) return;
+  
+  const usernameVal = username.value.trim();
+  const passwordVal = password.value.trim();
+  
+  // Validasi
+  if (!usernameVal || !passwordVal) {
+    showCoverLoginError('Username dan password wajib diisi');
+    return;
+  }
+  
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> <span>Memverifikasi...</span>';
+  lucide.createIcons();
+  
+  // Hide previous error
+  const errorWrap = document.getElementById('cover-login-error-wrap');
+  if (errorWrap) errorWrap.classList.add('hidden');
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'loginAdmin',
+        username: usernameVal,
+        password: passwordVal
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showCoverLoginError('Username atau password salah');
+      resetCoverLoginBtn();
+      return;
+    }
+
+    // ✅ SET BYPASS FLAG
+    localStorage.setItem('adminBypass', 'true');
+    
+    // ✅ Hide modal & cover
+    closeCoverLogin();
+    
+    const cover = document.getElementById('operasional-cover');
+    if (cover) {
+      cover.style.transition = 'opacity 0.5s ease';
+      cover.style.opacity = '0';
+      
+      setTimeout(() => {
+        cover.classList.add('hidden');
+        cover.style.opacity = '';
+        document.body.classList.remove('overflow-hidden');
+      }, 500);
+    }
+    
+    showToast('✅ Login berhasil! Akses formulir dibuka.');
+    console.log('🔓 Admin bypass activated at:', new Date().toLocaleTimeString('id-ID'));
+
+  } catch (err) {
+    console.error('❌ Cover login error:', err);
+    showCoverLoginError('Gagal menghubungi server. Periksa koneksi internet.');
+    resetCoverLoginBtn();
+  }
+}
+
+// ===============================
+// 🔒 GLOBAL EVENT LISTENERS (Cover Modal) - OPTIMIZED
+// ===============================
+(function initCoverModalListeners() {
+  if (window.__coverModalListenersRegistered) return;
+  window.__coverModalListenersRegistered = true;
+
+  // Gunakan passive listener untuk performa scroll
+  const clickHandler = function(e) {
+    const modal = document.getElementById('cover-login-modal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    if (e.target === modal) closeCoverLogin();
+  };
+
+  const keyHandler = function(e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    const modal = document.getElementById('cover-login-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+      closeCoverLogin();
+    }
+  };
+
+  document.addEventListener('click', clickHandler, { passive: true });
+  document.addEventListener('keydown', keyHandler, { passive: true });
+  
+  console.log('✅ Cover modal listeners registered');
+})();
+
 // ===============================
 // AUTO MODE VERIFIKASI
 // ===============================
@@ -2529,5 +2771,97 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
   </div>
 </div>
     
+<!-- ===============================
+     MODAL LOGIN ADMIN (COVER PAGE)
+     =============================== -->
+<div id="cover-login-modal" 
+     class="hidden fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 backdrop-blur-md transition-all duration-300">
+  
+  <div class="bg-white w-[92%] max-w-sm rounded-3xl shadow-2xl p-6 
+              transform transition-all duration-300 scale-95 opacity-0" 
+       id="cover-login-panel">
+    
+    <!-- Header -->
+    <div class="text-center mb-5">
+      <div class="flex justify-center mb-4">
+        <img src="login.png"
+             alt="Login Admin"
+             class="w-28 h-28 object-contain drop-shadow-lg">
+      </div>
+        
+        <h3 class="text-lg font-bold text-gray-800">Admin Access</h3>
+        <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+          Akses khusus untuk manajemen sistem<br>di luar jam operasional
+        </p>
+    </div>
+    
+    <!-- Divider -->
+    <div class="border-t border-gray-100 mb-5"></div>
+    
+    <!-- Form -->
+    <div class="space-y-3">
+      <!-- Username -->
+      <div class="relative group">
+        <i data-lucide="user" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition"></i>
+        <input id="cover-username" type="text" placeholder="Username"
+          class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl 
+                 focus:ring-2 focus:ring-purple-500/30 focus:border-purple-400 
+                 outline-none text-sm transition-all"
+          onkeydown="if(event.key==='Enter') document.getElementById('cover-password').focus()">
+      </div>
+      
+      <!-- Password -->
+      <div class="relative group">
+        <i data-lucide="lock" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition"></i>
+        <input id="cover-password" type="password" placeholder="Password"
+          class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl 
+                 focus:ring-2 focus:ring-purple-500/30 focus:border-purple-400 
+                 outline-none text-sm transition-all"
+          onkeydown="if(event.key==='Enter') coverLoginAdmin()">
+        <button type="button" onclick="toggleCoverPassword()" 
+          class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition p-0.5">
+          <i id="cover-icon-eye" data-lucide="eye" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Error message -->
+    <div id="cover-login-error-wrap" class="hidden mt-3">
+      <div class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded-xl">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-red-500 flex-shrink-0"></i>
+        <p id="cover-login-error" class="text-red-600 text-xs font-medium"></p>
+      </div>
+    </div>
+    
+    <!-- Buttons -->
+    <div class="flex gap-2.5 mt-5">
+      <button onclick="closeCoverLogin()" 
+        class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 
+               rounded-xl hover:bg-gray-50 transition text-sm font-medium
+               active:scale-95">
+        Batal
+      </button>
+      <button onclick="coverLoginAdmin()" id="btn-cover-login"
+        class="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 
+               text-white rounded-xl 
+               hover:from-purple-700 hover:to-pink-700 
+               transition-all text-sm font-medium 
+               flex items-center justify-center gap-2 
+               shadow-lg shadow-purple-200/50
+               hover:shadow-purple-300/60
+               active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        <i data-lucide="log-in" class="w-4 h-4"></i> 
+        <span>Masuk</span>
+      </button>
+    </div>
+    
+    <!-- Footer info -->
+    <p class="text-center text-[10px] text-gray-400 mt-4">
+      🔒 Koneksi terenkripsi • Hanya untuk administrator
+    </p>
+    
+  </div>
+</div>
+
 </body>
 </html>

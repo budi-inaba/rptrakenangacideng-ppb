@@ -357,7 +357,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNcbk5VLNHRSLgghjqv-p3jK49ZzmyUKe8uvaTb2IRE4jiKZP2F18mTPPFD9k_bvTYfw/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLa2itYEVfD6bgokm6Gv-3rVstZWrif02_wH6hen2m5cUnbLZYOlbhMlOurFYnDvDTGg/exec"; 
 
         // ===============================
 // 🔧 KONFIGURASI MONITORING STOK
@@ -1166,10 +1166,59 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================
     // CEK KK OTOMATIS
     // =========================
-document.getElementById('input-kk').addEventListener('input', debounce(cekKK, 600));
-document.getElementById('input-ktp').addEventListener('input', debounce(cekKTP, 600));
-document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 600));
+// ============================================
+// ✅ EVENT LISTENER OPTIMIZED (ANTI SPAM REQUEST)
+// ============================================
 
+// 🔹 CEK KK — hanya saat panjang = 16 digit
+document.getElementById('input-kk').addEventListener('input', debounce(function() {
+  const val = this.value.trim();
+  const error = document.getElementById('error-kk');
+  const input = document.getElementById('input-kk');
+  const inputKelurahan = document.getElementById('input-kelurahan');
+  
+  if (val.length === 16) {
+    cekKK();  // panggil validasi ke server
+  } else {
+    // Reset error & kelurahan jika belum 16 digit
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
+    inputKelurahan.removeAttribute("readonly");
+    inputKelurahan.placeholder = "Contoh : Petojo Utara";
+  }
+}, 800));
+
+// 🔹 CEK KTP — hanya saat panjang = 16 digit
+document.getElementById('input-ktp').addEventListener('input', debounce(function() {
+  const val = this.value.trim();
+  const error = document.getElementById('error-ktp');
+  const input = document.getElementById('input-ktp');
+  
+  if (val.length === 16) {
+    cekKTP();  // panggil validasi ke server
+  } else {
+    // Reset error jika belum 16 digit
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
+  }
+}, 800));
+
+// 🔹 CEK ATM — hanya saat panjang = 16 atau 18 digit
+document.getElementById('input-atm').addEventListener('input', debounce(function() {
+  // ⚠️ ATM di-format dengan spasi tiap 4 digit, jadi hitung tanpa spasi
+  const val = this.value.replace(/\s/g, '');
+  const error = document.getElementById('error-atm');
+  const input = document.getElementById('input-atm');
+  
+  if (val.length === 16 || val.length === 18) {
+    cekATM();  // panggil validasi ke server
+  } else {
+    // Reset error jika belum 16 atau 18 digit
+    error.classList.add('hidden');
+    input.classList.remove('input-error');
+  }
+}, 800));
+    
         // realtime saat user mengetik
         document.getElementById('input-kelurahan')
           .addEventListener('input', debounce(function() {

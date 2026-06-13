@@ -321,7 +321,7 @@
         // =======================
         // KONFIGURASI URL BACKEND
         // =======================
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLa2itYEVfD6bgokm6Gv-3rVstZWrif02_wH6hen2m5cUnbLZYOlbhMlOurFYnDvDTGg/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjmPmwtBwShzNc7KniTQHcNPG6qmMBAV8F4qys-YkPJ8YTBcMioYSDHkYZbgexV4CsUQ/exec";
         
         let currentId = "";
         let pendingApprovalId = null;
@@ -354,38 +354,38 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchData(id);
 });
         
-        // ==========================================
-        // AMBIL DATA DARI SERVER
-        // ==========================================
-        async function fetchData(id) {
-            try {
-                const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
-                console.log("🌐 Fetch URL:", url);
-                
-                const res = await fetch(url);
-                console.log("📡 HTTP Status:", res.status);
-                
-                const text = await res.text();
-                console.log("📦 Raw Response:", text.substring(0, 500));
-                
-                const result = JSON.parse(text);
-                
-                if (result.success && result.data) {
-                    console.log("✅ Data found:", result.data);
-                    // Reset flag jika data dari server masih "Menunggu"
-                    if (result.data.status !== "Disetujui") {
-                        isApproved = false;
-                    }
-                    renderData(result.data);
-                } else {
-                    console.error("❌ Backend returned error:", result.message);
-                    showError(result.message || "Data tidak ditemukan");
-                }
-            } catch (err) {
-                console.error("💥 Exception:", err);
-                showError("Error: " + err.message);
+       // ==========================================
+// AMBIL DATA DARI SERVER
+// ==========================================
+async function fetchData(id) {
+    // ✅ RESET STATE SAAT FETCH DATA BARU (PENTING!)
+    optimisticApproved = false;
+    isSyncing = false;
+    
+    try {
+        const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
+        console.log("🌐 Fetch URL:", url);
+        const res = await fetch(url);
+        console.log("📡 HTTP Status:", res.status);
+        const text = await res.text();
+        console.log("📦 Raw Response:", text.substring(0, 500));
+        const result = JSON.parse(text);
+        if (result.success && result.data) {
+            console.log("✅ Data found:", result.data);
+            // Reset flag jika data dari server masih "Menunggu"
+            if (result.data.status !== "Disetujui") {
+                isApproved = false;
             }
+            renderData(result.data);
+        } else {
+            console.error("❌ Backend returned error:", result.message);
+            showError(result.message || "Data tidak ditemukan");
         }
+    } catch (err) {
+        console.error("💥 Exception:", err);
+        showError("Error: " + err.message);
+    }
+}
 
         // ==========
         // RENDER UI
@@ -746,28 +746,40 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
 
-        function processScannedURLReal(url) {
-          console.log("🔗 URL dari QR (setelah login):", url);
-          try {
-            const urlObj = new URL(url);
-            const id = urlObj.searchParams.get("id");
-            if (id) {
-              console.log("✅ ID ditemukan:", id);
-              currentId = id;
-              fetchData(id);
-            } else {
-              alert("ID tidak ditemukan dalam QR Code");
-            }
-          } catch (e) {
-            const match = url.match(/[?&]id=([^&]+)/);
-            if (match && match[1]) {
-              currentId = match[1];
-              fetchData(match[1]);
-            } else {
-              alert("Format QR Code tidak valid");
-            }
-          }
+       function processScannedURLReal(url) {
+    console.log("🔗 URL dari QR (setelah login):", url);
+    try {
+        const urlObj = new URL(url);
+        const id = urlObj.searchParams.get("id");
+        if (id) {
+            console.log("✅ ID ditemukan:", id);
+            currentId = id;
+            
+            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
+            optimisticApproved = false;
+            isApproved = false;
+            isSyncing = false;
+            
+            fetchData(id);
+        } else {
+            alert("ID tidak ditemukan dalam QR Code");
         }
+    } catch (e) {
+        const match = url.match(/[?&]id=([^&]+)/);
+        if (match && match[1]) {
+            currentId = match[1];
+            
+            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
+            optimisticApproved = false;
+            isApproved = false;
+            isSyncing = false;
+            
+            fetchData(match[1]);
+        } else {
+            alert("Format QR Code tidak valid");
+        }
+    }
+}
 
         // ==========================================
         // TOAST NOTIFICATION
